@@ -4,6 +4,7 @@ public class DalException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	public static final String NO_CONNECTION = "NO_CONNECTION";
+	public static final String TRANSACTION_ROLLBACKED = "TRANSACTION_ROLLBACKED";
 
 	private String code = null;
 

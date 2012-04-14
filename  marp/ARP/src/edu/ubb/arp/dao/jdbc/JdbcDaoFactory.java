@@ -16,7 +16,7 @@ import edu.ubb.arp.dao.impls.ResourcesJdbcDao;
 import edu.ubb.arp.dao.impls.UsersJdbcDao;
 import edu.ubb.arp.exceptions.DalException;
 
-public class JdbcDaoFactory extends DaoFactory{
+public class JdbcDaoFactory extends DaoFactory {
 	
 	private static final Logger logger = Logger.getLogger(JdbcDaoFactory.class);
 	
@@ -30,7 +30,7 @@ public class JdbcDaoFactory extends DaoFactory{
 			ds = (DataSource)envContext.lookup("jdbc/ARPDB");
 		} catch (NamingException e) {
 			logger.error("error while getting datasource",e);
-			throw new DalException(DalException.NO_CONNECTION, "valami", e);
+			throw new DalException(DalException.NO_CONNECTION, getClass().getName() + ".JdbcDaoFactory()", e);
 		}
 	}
 	
