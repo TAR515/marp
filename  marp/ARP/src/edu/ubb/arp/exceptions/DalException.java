@@ -16,7 +16,12 @@ public class DalException extends Exception {
 		super(message);
 		this.code = code;
 	}
-
+	
+	public DalException(String code, Throwable cause) {
+		super(cause);
+		this.code = code;
+	}
+	
 	public DalException(String code, String message, Throwable cause) {
 		super(message, cause);
 		this.code = code;

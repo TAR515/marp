@@ -24,6 +24,8 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 	
 	@Override
 	public Users loadUser(String userName) throws DalException {
+		logger.debug(getClass().getName() + ".loadUser() start");
+		
 		Users user = new Users();
 		
 		Connection connection = null;
@@ -43,10 +45,11 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 				user = (Users) fillObject(rs);
 			}
 		} catch (SQLException e) {
+			logger.error(getClass().getName() + ".loadUser()");
 			throw new DalException(e);
 		} finally {
 			closeSQLObjects(connection, rs, stmt);
-			logger.debug(getClass().getName()+".loadUser() exit");
+			logger.debug(getClass().getName() + ".loadUser() exit");
 		}	
 		
 		return user;

@@ -19,7 +19,7 @@ public class UserOperation {
 			UsersDao emberekDAO = instance.getUsersDao();
 			us = emberekDAO.loadUser(userName);
 		} catch (DalException e) {
-			System.out.println("Valami LOGIC LAYER: " + e);
+			System.out.println("Valami LOGIC LAYER: ");
 			e.printStackTrace();
 		}
 		
