@@ -26,7 +26,6 @@ public class AndroidServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		logger.debug("asdasd");
 		// EZ CSAK KIPROBALAS GYANANT VAN ITT !!! ( Marmint a servlet egessz resze... )
 		
 //		Users loginUser = userOperation.loginUser("Sanzi");
@@ -54,7 +53,7 @@ public class AndroidServlet extends HttpServlet {
 		}
 		userOperation = new UserOperation();
 		
-		Users u = userOperation.loginUser("Sanzi");
+		Users u = userOperation.getUser("Sanzi");
 		out.print(u);
 		
 	}

@@ -10,7 +10,7 @@ public class UserOperation {
 	
 	
 	
-	public Users loginUser(String userName) {
+	public Users getUser(String userName) {
 		Users us = new Users();
 		
 		DaoFactory instance;
