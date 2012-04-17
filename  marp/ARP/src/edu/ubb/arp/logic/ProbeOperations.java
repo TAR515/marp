@@ -8,19 +8,7 @@ import edu.ubb.arp.dao.DaoFactory;
 
 public class ProbeOperations {
 	DaoFactory instance;
-	private static Properties properties;
-	
-	static {
-		properties = new Properties();
-		try {
-			
-		  properties.load(new FileInputStream("/WEB-INF/ErrorMessages.properties"));
-		} catch (IOException e) {
-			System.out.println("Hiba a propertyben");
-			e.printStackTrace();
-		}
-	}
-	
+
 	
 	public void ProbeOperation() {
 		//try {
@@ -31,8 +19,6 @@ public class ProbeOperations {
 			String b = "one";
 			
 			System.out.println(myMap.get(b));*/
-			System.out.println(properties.getProperty("-10"));
-			System.out.println(properties.getProperty("RESOURCE_NOT_EXTISTS"));
 			
 		/*} catch (DalException e1) {
 			// TODO Auto-generated catch block
