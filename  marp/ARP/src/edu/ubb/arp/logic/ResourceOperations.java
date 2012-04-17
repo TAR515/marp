@@ -1,26 +1,14 @@
 package edu.ubb.arp.logic;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
-import edu.ubb.arp.dao.DaoFactory;
-import edu.ubb.arp.dao.GroupsDao;
-import edu.ubb.arp.dao.ResourcesDao;
-import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
-import edu.ubb.arp.dao.model.Groups;
-import edu.ubb.arp.dao.model.Resources;
-import edu.ubb.arp.exceptions.DalException;
 
 public class ResourceOperations {
 	
-	private static final Logger logger = Logger.getLogger(ResourceOperations.class);
+	//private static final Logger logger = Logger.getLogger(ResourceOperations.class);
 	
-	private ResourcesDao resourcesDao;
-	private GroupsDao groupsDao;
+	//private ResourcesDao resourcesDao;
+	//private GroupsDao groupsDao;
 	
-	
+	/* Kell ra tarolt eljaras ! -> Lasd ResourceJdbcDao <-
 	public ResourceOperations() throws Exception{
 		DaoFactory instance;
 		try {
@@ -70,5 +58,5 @@ public class ResourceOperations {
 			throw new Exception("error while init ResourceOperation class",e);
 		}
 		return loadResourcesByGroup;
-	}
+	}*/
 }

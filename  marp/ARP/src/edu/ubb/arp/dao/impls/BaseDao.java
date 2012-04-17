@@ -44,6 +44,17 @@ public abstract class BaseDao {
 			stmt.setNull(pos, Types.VARCHAR);
 		}
 	}
+	
+	protected void setByteList(CallableStatement stmt, int pos, byte[] value)
+			throws SQLException {
+		if (value != null) {
+			logger.debug("setBytes(" + pos + ", " + value + ")");
+			stmt.setBytes(pos, value);
+		} else {
+			logger.debug("setNull(" + pos + ", Types.INTEGER - Byte[] -)");
+			stmt.setNull(pos, Types.INTEGER);
+		}
+	}
 
 	protected void setArray(CallableStatement stmt, int pos, Array value)
 			throws SQLException {
@@ -154,6 +165,12 @@ public abstract class BaseDao {
 			stmt.setNull(pos, Types.INTEGER);
 		}
 	}
+	
+	protected void setInt(CallableStatement stmt, int pos, int value)
+			throws SQLException {
+		logger.debug("setInteger(" + pos + ", " + value + ")");
+		stmt.setInt(pos, value);
+	}
 
 	protected void setDouble(CallableStatement stmt, int pos, Double value)
 			throws SQLException {
@@ -176,7 +193,8 @@ public abstract class BaseDao {
 			throws SQLException {
 		if (value != null) {
 			logger.debug("setBoolean(" + pos + ", " + value + ")");
-			stmt.setString(pos, value.booleanValue() ? "Y" : "N");
+			//stmt.setString(pos, value.booleanValue() ? "Y" : "N");
+			stmt.setBoolean(pos, value);
 		} else {
 			logger.debug("setNull(" + pos + ", Types.VARCHAR)");
 			stmt.setNull(pos, Types.VARCHAR);
@@ -280,7 +298,7 @@ public abstract class BaseDao {
 			conn.setAutoCommit(false);
 			return conn;
 		} catch (Exception e) {
-			throw new DalException("500000", "Unable to connect to the database", e);
+			throw new DalException(-1, e);
 		}
 	}
 

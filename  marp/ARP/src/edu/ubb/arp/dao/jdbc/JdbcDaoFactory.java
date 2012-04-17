@@ -23,14 +23,15 @@ public class JdbcDaoFactory extends DaoFactory {
 	private DataSource ds = null;
 	
 	public JdbcDaoFactory() throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		Context initContext;
 		try {
 			initContext = new InitialContext();
 			Context envContext  = (Context)initContext.lookup("java:/comp/env");
 			ds = (DataSource)envContext.lookup("jdbc/ARPDB");
 		} catch (NamingException e) {
-			logger.error("error while getting datasource",e);
-			throw new DalException(DalException.NO_CONNECTION, getClass().getName() + ".JdbcDaoFactory()", e);
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, getClass().getName() + ".JdbcDaoFactory()", e);
 		}
 	}
 	

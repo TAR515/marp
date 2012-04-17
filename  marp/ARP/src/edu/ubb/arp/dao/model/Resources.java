@@ -11,6 +11,7 @@ public class Resources implements Serializable {
 
 	private int resourceID;
 	private String resourceName;
+	private boolean active;
 	private List<Users> users;
 	private ResourceTypes resourceTypes;
 	private List<Groups> groups;
@@ -21,6 +22,7 @@ public class Resources implements Serializable {
 	public Resources() {
 		this.resourceID = -1;
 		this.resourceName = null;
+		this.active = false;
 		this.users = null;
 		this.resourceTypes = null;
 		this.groups = null;
@@ -29,12 +31,13 @@ public class Resources implements Serializable {
 		this.leaderOfProjects = null;
 	}
 
-	public Resources(int resourceID, String resourceName, List<Users> users,
+	public Resources(int resourceID, String resourceName,boolean active, List<Users> users,
 			ResourceTypes resourceTypes, List<Groups> groups,
 			HashMap<Projects, Booking> booking,
 			HashMap<Requests, Boolean> requests, List<Projects> leaderOfProjects) {
 		this.resourceID = resourceID;
 		this.resourceName = resourceName;
+		this.active = active;
 		this.users = users;
 		this.resourceTypes = resourceTypes;
 		this.groups = groups;
@@ -111,22 +114,26 @@ public class Resources implements Serializable {
 		return serialVersionUID;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + ((booking == null) ? 0 : booking.hashCode());
 		result = prime * result + ((groups == null) ? 0 : groups.hashCode());
-		result = prime
-				* result
-				+ ((leaderOfProjects == null) ? 0 : leaderOfProjects.hashCode());
-		result = prime * result
-				+ ((requests == null) ? 0 : requests.hashCode());
+		result = prime * result + ((leaderOfProjects == null) ? 0 : leaderOfProjects.hashCode());
+		result = prime * result + ((requests == null) ? 0 : requests.hashCode());
 		result = prime * result + resourceID;
-		result = prime * result
-				+ ((resourceName == null) ? 0 : resourceName.hashCode());
-		result = prime * result
-				+ ((resourceTypes == null) ? 0 : resourceTypes.hashCode());
+		result = prime * result + ((resourceName == null) ? 0 : resourceName.hashCode());
+		result = prime * result + ((resourceTypes == null) ? 0 : resourceTypes.hashCode());
 		result = prime * result + ((users == null) ? 0 : users.hashCode());
 		return result;
 	}
@@ -140,6 +147,8 @@ public class Resources implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Resources other = (Resources) obj;
+		if (active != other.active)
+			return false;
 		if (booking == null) {
 			if (other.booking != null)
 				return false;
@@ -182,12 +191,13 @@ public class Resources implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Resources [resourceID=" + resourceID + ", resourceName="
-				+ resourceName + ", users=" + users + ", resourceTypes="
-				+ resourceTypes + ", groups=" + groups + ", booking=" + booking
-				+ ", requests=" + requests + ", leaderOfProjects="
-				+ leaderOfProjects + "]";
+		return "Resources [resourceID=" + resourceID + ", resourceName=" + resourceName + ", users=" + users + ", resourceTypes="
+				+ resourceTypes + ", groups=" + groups + ", active=" + active + ", booking=" + booking + ", requests=" + requests
+				+ ", leaderOfProjects=" + leaderOfProjects + "]";
 	}
+	
+	
+
 	
 	/*private void add(Groups group){
 		if(groups==null){

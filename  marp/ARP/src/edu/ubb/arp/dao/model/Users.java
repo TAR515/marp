@@ -10,7 +10,6 @@ public class Users implements Serializable {
 	private int userID;
 	private String userName;
 	private byte[] password;
-	private boolean hired;
 	private String phoneNumber;
 	private String email;
 	private List<Resources> resource = null;
@@ -19,7 +18,6 @@ public class Users implements Serializable {
 		this.userID = -1;
 		this.userName = null;
 		this.password = null;
-		this.hired = false;
 		this.phoneNumber = null;
 		this.email = null;
 		this.resource = null;
@@ -30,7 +28,6 @@ public class Users implements Serializable {
 		this.userID = userID;
 		this.userName = userName;
 		this.password = password;
-		this.hired = hired;
 		this.phoneNumber = phoneNumber;
 		this.email = email;
 		this.resource = resource;
@@ -58,14 +55,6 @@ public class Users implements Serializable {
 
 	public void setPassword(byte[] password) {
 		this.password = password;
-	}
-
-	public boolean isHired() {
-		return hired;
-	}
-
-	public void setHired(boolean hired) {
-		this.hired = hired;
 	}
 
 	public String getPhoneNumber() {
@@ -101,15 +90,11 @@ public class Users implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + (hired ? 1231 : 1237);
 		result = prime * result + Arrays.hashCode(password);
-		result = prime * result
-				+ ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
-		result = prime * result
-				+ ((resource == null) ? 0 : resource.hashCode());
+		result = prime * result + ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
+		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
 		result = prime * result + userID;
-		result = prime * result
-				+ ((userName == null) ? 0 : userName.hashCode());
+		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
 		return result;
 	}
 
@@ -126,8 +111,6 @@ public class Users implements Serializable {
 			if (other.email != null)
 				return false;
 		} else if (!email.equals(other.email))
-			return false;
-		if (hired != other.hired)
 			return false;
 		if (!Arrays.equals(password, other.password))
 			return false;
@@ -153,10 +136,10 @@ public class Users implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Users [userID=" + userID + ", userName=" + userName
-				+ ", password=" + Arrays.toString(password) + ", hired="
-				+ hired + ", phoneNumber=" + phoneNumber + ", email=" + email
-				+ ", resource=" + resource + "]";
+		return "Users [userID=" + userID + ", userName=" + userName + ", password=" + Arrays.toString(password)
+				+ ", phoneNumber=" + phoneNumber + ", email=" + email + ", resource=" + resource + "]";
 	}
+
+	
 
 }
