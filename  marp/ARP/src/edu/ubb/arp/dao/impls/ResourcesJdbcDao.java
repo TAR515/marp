@@ -21,44 +21,12 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		super(dataSource, maxResultSize);
 	}
 
-	public void createResource(Resources resource) throws DalException {
-		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
-		logger.debug(getClass().getName() + methodName + "-> START");
-
-		Connection connection = null;
-		java.sql.CallableStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			connection = getConnection();
-			stmt = createProcedure(connection, "new_resource", 5);
-
-			int paramIndex = 1;
-			setString(stmt, paramIndex++, resource.getResourceName());
-			setBoolean(stmt, paramIndex++, resource.isActive());
-			setString(stmt, paramIndex++, resource.getResourceTypes().getResourceTypeName());
-			setString(stmt, paramIndex++, resource.getGroups().get(0).getGroupName());
-			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
-
-			stmt.executeUpdate();
-			int errmsg = stmt.getInt("Oerrmsg");
-			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
-			}
-			connection.commit();
-		} catch (SQLException e) {
-			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
-			throw new DalException(-1, e);
-		} finally {
-			closeSQLObjects(connection, rs, stmt);
-			logger.debug(getClass().getName() + methodName + "-> EXIT");
-		}
-	}
 
 	@Override
-	public void createResource(String resourceName, boolean active, String resourceTypeName, String resourceGroupName)
+	public int createResource(String resourceName, boolean active, String resourceTypeName, String resourceGroupName)
 			throws DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
 
 		Connection connection = null;
@@ -76,7 +44,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
 
 			stmt.executeUpdate();
-			int errmsg = stmt.getInt("Oerrmsg");
+			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
@@ -89,13 +57,15 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
 	@Override
-	public void updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName,
+	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName,
 			String oldResourceGroupName, String newResourceName, boolean newActive, String newResourceTypeName,
 			String newResourceGroupName) throws DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
 
 		Connection connection = null;
@@ -117,7 +87,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
 
 			stmt.executeUpdate();
-			int errmsg = stmt.getInt("Oerrmsg");
+			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
@@ -130,11 +100,12 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-
+		return errmsg;
 	}
 
-	public void setActive(String resourceName, boolean active) throws DalException {
+	public int setActive(String resourceName, boolean active) throws DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
 
 		Connection connection = null;
@@ -150,7 +121,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
 
 			stmt.executeUpdate();
-			int errmsg = stmt.getInt("Oerrmsg");
+			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
@@ -163,8 +134,88 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
+	
+	public int addResourceToGroup(String resourceName, String groupName) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "add_resource_to_group", 3);
 
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, resourceName);
+			setString(stmt, paramIndex++, groupName);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+	
+	public int addResourceToGroups(String resourceName, String[] groupName) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+		
+		int i = 0;
+		while (errmsg > 0 && i < groupName.length) {
+			errmsg = addResourceToGroup(resourceName,groupName[i++]);
+		}
+		
+		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
+	}
+	
+	public int removeResourceFromGroup(String resourceName, String groupName) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "remove_resource_from_group", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, resourceName);
+			setString(stmt, paramIndex++, groupName);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
 	/*
 	 * Kell ra tarolt eljaras
 	 * 

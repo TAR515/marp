@@ -7,9 +7,9 @@ import edu.ubb.arp.exceptions.DalException;
 
 public interface GroupsDao {
 
-	public void createGroup(String groupName) throws DalException;
-	public void updateGroup(String oldGroupName,String newGroupName) throws DalException;
-	public void deleteGroup(String groupName) throws DalException;
+	public int createGroup(String groupName) throws DalException;
+	public int updateGroup(String oldGroupName,String newGroupName) throws DalException;
+	public int deleteGroup(String groupName) throws DalException;
 	
 	public ArrayList<Groups> loadGroupsByResourceId(Integer resourceId) throws DalException;
 	public Groups loadGroupByResourceId(Integer resourceId) throws DalException;

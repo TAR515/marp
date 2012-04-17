@@ -20,9 +20,10 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		super(dataSource);
 	}
 
-	public void createUser(String userName, byte[] password, String phoneNumber, String email, String resourceName,
+	public int createUser(String userName, byte[] password, String phoneNumber, String email, String resourceName,
 			boolean active, String resourceGroupName) throws DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
 
 		Connection connection = null;
@@ -43,7 +44,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
 
 			stmt.executeUpdate();
-			int errmsg = stmt.getInt("Oerrmsg");
+			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
@@ -56,10 +57,56 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
-	public void setActive(String resourceName, boolean active) throws DalException {
+	public int updateUser(String oldUserName, byte[] oldPassword, String oldGroup, String newUserName, byte[] newPassword,
+			String newPhoneNumber, String newEmail, String newResourceName, boolean newActive, String newGroup)
+			throws DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "update_user", 11);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, oldUserName);
+			setByteList(stmt, paramIndex++, oldPassword);
+			setString(stmt, paramIndex++, oldGroup);
+			setString(stmt, paramIndex++, newUserName);
+			setByteList(stmt, paramIndex++, newPassword);
+			setString(stmt, paramIndex++, newPhoneNumber);
+			setString(stmt, paramIndex++, newEmail);
+			setString(stmt, paramIndex++, newResourceName);
+			setBoolean(stmt, paramIndex++, newActive);
+			setString(stmt, paramIndex++, newGroup);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int setActive(String userName, boolean active) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
 
 		Connection connection = null;
@@ -70,12 +117,12 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			stmt = createProcedure(connection, "human_set_active", 3);
 
 			int paramIndex = 1;
-			setString(stmt, paramIndex++, resourceName);
+			setString(stmt, paramIndex++, userName);
 			setBoolean(stmt, paramIndex++, active);
 			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
 
 			stmt.executeUpdate();
-			int errmsg = stmt.getInt("Oerrmsg");
+			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
@@ -88,6 +135,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
 	@Override
