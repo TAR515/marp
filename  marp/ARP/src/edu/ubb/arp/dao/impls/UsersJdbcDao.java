@@ -3,10 +3,12 @@ package edu.ubb.arp.dao.impls;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.sql.DataSource;
 
 import edu.ubb.arp.dao.UsersDao;
+import edu.ubb.arp.dao.model.Groups;
 import edu.ubb.arp.dao.model.Users;
 import edu.ubb.arp.exceptions.DalException;
 
@@ -60,9 +62,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		return errmsg;
 	}
 
-	public int updateUser(String oldUserName, byte[] oldPassword, String oldGroup, String newUserName, byte[] newPassword,
-			String newPhoneNumber, String newEmail, String newResourceName, boolean newActive, String newGroup)
-			throws DalException {
+	public int changeUserName(String oldUserName, String newUserName) throws DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -72,19 +72,319 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		ResultSet rs = null;
 		try {
 			connection = getConnection();
-			stmt = createProcedure(connection, "update_user", 11);
+			stmt = createProcedure(connection, "update_user_name_by_user_name", 3);
 
 			int paramIndex = 1;
 			setString(stmt, paramIndex++, oldUserName);
-			setByteList(stmt, paramIndex++, oldPassword);
-			setString(stmt, paramIndex++, oldGroup);
 			setString(stmt, paramIndex++, newUserName);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int changePassword(String userName, byte[] oldPassword, byte[] newPassword) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "update_user_password_by_user_name", 4);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, userName);
+			setByteList(stmt, paramIndex++, oldPassword);
 			setByteList(stmt, paramIndex++, newPassword);
-			setString(stmt, paramIndex++, newPhoneNumber);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int changeEmail(String userName, String newEmail) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "update_user_email_by_user_name", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, userName);
 			setString(stmt, paramIndex++, newEmail);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int changePhoneNumber(String userName, String newPhoneNumber) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "update_user_phonenumber_by_user_name", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, userName);
+			setString(stmt, paramIndex++, newPhoneNumber);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int changeResourceName(String userName, String newResourceName) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "update_user_resource_name_by_user_name", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, userName);
 			setString(stmt, paramIndex++, newResourceName);
-			setBoolean(stmt, paramIndex++, newActive);
-			setString(stmt, paramIndex++, newGroup);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int changeUserName(int userID, String newUserName) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "update_user_name_by_user_id", 3);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, userID);
+			setString(stmt, paramIndex++, newUserName);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int changePassword(int userID, byte[] oldPassword, byte[] newPassword) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "update_user_password_by_user_id", 4);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, userID);
+			setByteList(stmt, paramIndex++, oldPassword);
+			setByteList(stmt, paramIndex++, newPassword);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int changeEmail(int userID, String newEmail) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "update_user_email_by_user_id", 3);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, userID);
+			setString(stmt, paramIndex++, newEmail);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int changePhoneNumber(int userID, String newPhoneNumber) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "update_user_phonenumber_by_user_id", 3);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, userID);
+			setString(stmt, paramIndex++, newPhoneNumber);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int changeResourceName(int userID, String newResourceName) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "update_user_resource_name_by_user_id", 3);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, userID);
+			setString(stmt, paramIndex++, newResourceName);
 			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
 
 			stmt.executeUpdate();
@@ -138,6 +438,136 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		return errmsg;
 	}
 
+	public int addUserToGroup(String userName, String groupName) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "add_user_to_group_by_user_name", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, userName);
+			setString(stmt, paramIndex++, groupName);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+	
+	public int addUserToGroup(Users user, Groups group) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "add_user_to_group_by_user_id", 3);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, user.getUserID());
+			setString(stmt, paramIndex++, group.getGroupName());
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+	
+	public int addUserToGroup(String userName, String[] groupNames) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		int i = 0;
+		while (errmsg >= 0 && i < groupNames.length) {
+			errmsg = addUserToGroup(userName, groupNames[i++]);
+		}
+
+		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
+	}
+	
+	public int addUserToGroups(Users user, List<Groups> groups) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		int i = 0;
+		while (errmsg >= 0 && i < groups.size()) {
+			errmsg = addUserToGroup(user, groups.get(i++));
+		}
+
+		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
+	}
+	
+	public int removeUserFromGroup(String userName, String groupName) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "remove_user_from_group_by_user_name", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, userName);
+			setString(stmt, paramIndex++, groupName);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg, methodName + DalException.errCodeToMessage(errmsg));
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
+			throw new DalException(-1, e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+	
 	@Override
 	public Users loadUser(String userName) throws DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
@@ -183,5 +613,4 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 
 		return retValue;
 	}
-
 }

@@ -1,5 +1,9 @@
 package edu.ubb.arp.dao;
 
+import java.util.List;
+
+import edu.ubb.arp.dao.model.Groups;
+import edu.ubb.arp.dao.model.Resources;
 import edu.ubb.arp.exceptions.DalException;
 
 public interface ResourcesDao {
@@ -19,6 +23,8 @@ public interface ResourcesDao {
 	public int createResource(String resourceName, boolean active, String resourceTypeName, String resourceGroupName)
 			throws DalException;
 
+	public int createResource(Resources resource) throws DalException;
+	
 	public int setActive(String resourceName, boolean active) throws DalException;
 
 	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName, String oldResourceGroupName,
@@ -26,10 +32,16 @@ public interface ResourcesDao {
 			throws DalException;
 
 	public int addResourceToGroup(String resourceName, String groupName) throws DalException;
+	
+	public int addResourceToGroup(Resources resource, Groups group) throws DalException;
 
-	public int addResourceToGroups(String resourceName, String[] groupName) throws DalException;
+	public int addResourceToGroups(String resourceName, String[] groupNames) throws DalException;
+	
+	public int addResourceToGroups(Resources resource, List<Groups> groups) throws DalException;
 	
 	public int removeResourceFromGroup(String resourceName, String groupName) throws DalException;
+	
+	public int removeResourceFromGroup(Resources resource, Groups group) throws DalException;
 
 	/*
 	 * public Resources LoadResourceByID(int id) throws DalException;

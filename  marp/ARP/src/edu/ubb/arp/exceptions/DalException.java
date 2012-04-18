@@ -8,11 +8,11 @@ public class DalException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	private static Properties properties;
-	
+	//private FileInputStream in = this.getClass().getClassLoader().getResourceAsStream("ErrorMessages.properties");
 	static {
 		properties = new Properties();
 		try {
-			
+			//c://arplogs//ErrorMessages.properties
 		  properties.load(new FileInputStream("c://arplogs//ErrorMessages.properties"));
 		} catch (IOException e) {
 			System.out.println("Hiba a propertyben");
@@ -20,6 +20,8 @@ public class DalException extends Exception {
 		}
 	}
 
+	
+	
 	private String errorMessage = null;
 	private int errorCode = 0;
 	

@@ -8,13 +8,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
+import edu.ubb.arp.logic.ProbeOperations;
+import edu.ubb.arp.logic.ResourceOperations;
+import edu.ubb.arp.logic.UserOperation;
+
 public class AndroidServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	//protected Logger logger = Logger.getLogger(AndroidServlet.class);
+	protected Logger logger = Logger.getLogger(AndroidServlet.class);
 
-	//UserOperation userOperation = new UserOperation();
-	//ResourceOperations resourceOperations = null;
+	UserOperation userOperation = new UserOperation();
+	ResourceOperations resourceOperations = null;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
@@ -40,9 +46,9 @@ public class AndroidServlet extends HttpServlet {
 		 * 
 		 * out.print(loadResourcesByGroupId); } catch (Exception e) { // TODO Auto-generated catch block e.printStackTrace(); }
 		 */
-		//ProbeOperations pr = new ProbeOperations();
-		//pr.ProbeOperation();
-		out.print("hy");
+		ProbeOperations pr = new ProbeOperations();
+		pr.ProbeOperation();
+		
 
 	}
 

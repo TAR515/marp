@@ -34,12 +34,6 @@ public class JdbcDaoFactory extends DaoFactory {
 			throw new DalException(-1, getClass().getName() + ".JdbcDaoFactory()", e);
 		}
 	}
-	
-	
-	public UsersDao getEmberekDAO() {
-		return new UsersJdbcDao(ds);
-	}
-
 
 	@Override
 	public UsersDao getUsersDao() {

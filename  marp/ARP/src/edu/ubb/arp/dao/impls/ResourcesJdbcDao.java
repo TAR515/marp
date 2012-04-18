@@ -3,10 +3,12 @@ package edu.ubb.arp.dao.impls;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.sql.DataSource;
 
 import edu.ubb.arp.dao.ResourcesDao;
+import edu.ubb.arp.dao.model.Groups;
 import edu.ubb.arp.dao.model.ResourceTypes;
 import edu.ubb.arp.dao.model.Resources;
 import edu.ubb.arp.exceptions.DalException;
@@ -20,7 +22,6 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 	public ResourcesJdbcDao(DataSource dataSource, int maxResultSize) {
 		super(dataSource, maxResultSize);
 	}
-
 
 	@Override
 	public int createResource(String resourceName, boolean active, String resourceTypeName, String resourceGroupName)
@@ -60,10 +61,32 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		return errmsg;
 	}
 
+	public int createResource(Resources resource) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		int errmsg2 = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		if (resource.getGroups().size() != 0) {
+			errmsg = createResource(resource.getResourceName(), resource.isActive(), resource.getResourceTypes()
+					.getResourceTypeName(), resource.getGroups().get(0).getGroupName());
+			if (errmsg > 0) { // createResource successfully
+				resource.getGroups().remove(0);
+				errmsg2 = addResourceToGroups(resource, resource.getGroups());
+			}
+			if (errmsg2 < 0) { // if is an error while add resources into groups the returned errmsg get that error code too.
+				errmsg = errmsg2;
+			}
+		} else
+			throw new DalException(-5, DalException.errCodeToMessage(-5));
+
+		return errmsg;
+	}
+
 	@Override
-	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName,
-			String oldResourceGroupName, String newResourceName, boolean newActive, String newResourceTypeName,
-			String newResourceGroupName) throws DalException {
+	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName, String oldResourceGroupName,
+			String newResourceName, boolean newActive, String newResourceTypeName, String newResourceGroupName)
+			throws DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -136,7 +159,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return errmsg;
 	}
-	
+
 	public int addResourceToGroup(String resourceName, String groupName) throws DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -170,16 +193,39 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		return errmsg;
 	}
 	
+	public int addResourceToGroup(Resources resource, Groups group) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+		errmsg = addResourceToGroup(resource.getResourceName(), group.getGroupName());
+		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
+	}
+	
 	public int addResourceToGroups(String resourceName, String[] groupName) throws DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
-		
+
 		int i = 0;
-		while (errmsg > 0 && i < groupName.length) {
-			errmsg = addResourceToGroup(resourceName,groupName[i++]);
+		while (errmsg >= 0 && i < groupName.length) {
+			errmsg = addResourceToGroup(resourceName, groupName[i++]);
 		}
-		
+
+		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
+	}
+	
+	public int addResourceToGroups(Resources resource, List<Groups> groups) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		int i = 0;
+		while (errmsg >= 0 && i < groups.size()) {
+			errmsg = addResourceToGroup(resource, groups.get(i++));
+		}
+
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
 		return errmsg;
 	}
@@ -216,6 +262,16 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return errmsg;
 	}
+
+	public int removeResourceFromGroup(Resources resource, Groups group) throws DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+		errmsg = removeResourceFromGroup(resource.getResourceName(), group.getGroupName());
+		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
+	}
+	
 	/*
 	 * Kell ra tarolt eljaras
 	 * 

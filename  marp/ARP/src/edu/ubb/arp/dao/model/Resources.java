@@ -1,6 +1,7 @@
 package edu.ubb.arp.dao.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -196,14 +197,22 @@ public class Resources implements Serializable {
 				+ ", leaderOfProjects=" + leaderOfProjects + "]";
 	}
 	
-	
-
-	
-	/*private void add(Groups group){
-		if(groups==null){
-			groups = new ArrayList<Groups>();
+	public void addGroupToGroups(Groups group) {
+		if(groups != null){
+			groups.add(group);
 		}
-		groups.add(group);
 	}
-*/
+	
+	public void removeGroupFromGroups(Groups group) {
+		if (group != null) {
+			groups.remove(group);
+		}
+	}
+	
+	public void removeGroupFromGroups(int index) {
+		if (groups.get(index) != null) {
+			groups.remove(index);
+		}
+	}
+
 }
