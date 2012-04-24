@@ -15,8 +15,6 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 
-import edu.ubb.arp.exceptions.DalException;
-
 public abstract class BaseDao {
 	protected Logger logger = Logger.getLogger(BaseDao.class);
 
@@ -292,13 +290,13 @@ public abstract class BaseDao {
 				+ "(" + sb.toString() + ") }");
 	}
 
-	protected Connection getConnection() throws DalException {
+	protected Connection getConnection() throws SQLException {
 		try {
 			Connection conn = dataSource.getConnection();
 			conn.setAutoCommit(false);
 			return conn;
 		} catch (Exception e) {
-			throw new DalException(-1, e);
+			throw new SQLException("BaseDao.getConnection()",e);
 		}
 	}
 

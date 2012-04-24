@@ -8,23 +8,21 @@ public class DalException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	private static Properties properties;
-	//private FileInputStream in = this.getClass().getClassLoader().getResourceAsStream("ErrorMessages.properties");
+	// private FileInputStream in = this.getClass().getClassLoader().getResourceAsStream("ErrorMessages.properties");
 	static {
 		properties = new Properties();
 		try {
-			//c://arplogs//ErrorMessages.properties
-		  properties.load(new FileInputStream("c://arplogs//ErrorMessages.properties"));
+			// c://arplogs//ErrorMessages.properties
+			properties.load(new FileInputStream("c://arplogs//ErrorMessages.properties"));
 		} catch (IOException e) {
 			System.out.println("Hiba a propertyben");
 			e.printStackTrace();
 		}
 	}
 
-	
-	
 	private String errorMessage = null;
 	private int errorCode = 0;
-	
+
 	public DalException(Throwable cause) {
 		super(cause);
 	}
@@ -50,7 +48,7 @@ public class DalException extends Exception {
 	public String getErrorMessage() {
 		return errorMessage;
 	}
-	
+
 	public int getErrorCode() {
 		return errorCode;
 	}
@@ -62,11 +60,11 @@ public class DalException extends Exception {
 			return super.getMessage();
 		}
 	}
-	
+
 	public static String errCodeToMessage(int errorCode) {
 		return properties.getProperty(Integer.toString(errorCode));
 	}
-	
+
 	public static int errMessageToCode(String errorMessage) {
 		return Integer.parseInt(properties.getProperty(errorMessage));
 	}

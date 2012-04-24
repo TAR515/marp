@@ -1,7 +1,6 @@
 package edu.ubb.arp.dao.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class Resources implements Serializable {
 	private List<Groups> groups;
 	private HashMap<Projects, Booking> booking;
 	private HashMap<Requests, Boolean> requests;
-	private List<Projects> leaderOfProjects;
+	private HashMap<Projects, Boolean> usersInProjects;
 
 	public Resources() {
 		this.resourceID = -1;
@@ -29,13 +28,12 @@ public class Resources implements Serializable {
 		this.groups = null;
 		this.booking = null;
 		this.requests = null;
-		this.leaderOfProjects = null;
+		this.usersInProjects = null;
 	}
 
-	public Resources(int resourceID, String resourceName,boolean active, List<Users> users,
-			ResourceTypes resourceTypes, List<Groups> groups,
-			HashMap<Projects, Booking> booking,
-			HashMap<Requests, Boolean> requests, List<Projects> leaderOfProjects) {
+	public Resources(int resourceID, String resourceName, boolean active, List<Users> users, ResourceTypes resourceTypes,
+			List<Groups> groups, HashMap<Projects, Booking> booking, HashMap<Requests, Boolean> requests,
+			HashMap<Projects, Boolean> usersInProjects) {
 		this.resourceID = resourceID;
 		this.resourceName = resourceName;
 		this.active = active;
@@ -44,7 +42,7 @@ public class Resources implements Serializable {
 		this.groups = groups;
 		this.booking = booking;
 		this.requests = requests;
-		this.leaderOfProjects = leaderOfProjects;
+		this.usersInProjects = usersInProjects;
 	}
 
 	public int getResourceID() {
@@ -103,12 +101,12 @@ public class Resources implements Serializable {
 		this.requests = requests;
 	}
 
-	public List<Projects> getLeaderOfProjects() {
-		return leaderOfProjects;
+	public HashMap<Projects, Boolean> getUsersInProjects() {
+		return usersInProjects;
 	}
 
-	public void setLeaderOfProjects(List<Projects> leaderOfProjects) {
-		this.leaderOfProjects = leaderOfProjects;
+	public void setUsersInProjects(HashMap<Projects, Boolean> usersInProjects) {
+		this.usersInProjects = usersInProjects;
 	}
 
 	public static long getSerialversionuid() {
@@ -130,12 +128,12 @@ public class Resources implements Serializable {
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + ((booking == null) ? 0 : booking.hashCode());
 		result = prime * result + ((groups == null) ? 0 : groups.hashCode());
-		result = prime * result + ((leaderOfProjects == null) ? 0 : leaderOfProjects.hashCode());
 		result = prime * result + ((requests == null) ? 0 : requests.hashCode());
 		result = prime * result + resourceID;
 		result = prime * result + ((resourceName == null) ? 0 : resourceName.hashCode());
 		result = prime * result + ((resourceTypes == null) ? 0 : resourceTypes.hashCode());
 		result = prime * result + ((users == null) ? 0 : users.hashCode());
+		result = prime * result + ((usersInProjects == null) ? 0 : usersInProjects.hashCode());
 		return result;
 	}
 
@@ -160,11 +158,6 @@ public class Resources implements Serializable {
 				return false;
 		} else if (!groups.equals(other.groups))
 			return false;
-		if (leaderOfProjects == null) {
-			if (other.leaderOfProjects != null)
-				return false;
-		} else if (!leaderOfProjects.equals(other.leaderOfProjects))
-			return false;
 		if (requests == null) {
 			if (other.requests != null)
 				return false;
@@ -187,28 +180,33 @@ public class Resources implements Serializable {
 				return false;
 		} else if (!users.equals(other.users))
 			return false;
+		if (usersInProjects == null) {
+			if (other.usersInProjects != null)
+				return false;
+		} else if (!usersInProjects.equals(other.usersInProjects))
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Resources [resourceID=" + resourceID + ", resourceName=" + resourceName + ", users=" + users + ", resourceTypes="
-				+ resourceTypes + ", groups=" + groups + ", active=" + active + ", booking=" + booking + ", requests=" + requests
-				+ ", leaderOfProjects=" + leaderOfProjects + "]";
+		return "Resources [resourceID=" + resourceID + ", resourceName=" + resourceName + ", active=" + active + ", users="
+				+ users + ", resourceTypes=" + resourceTypes + ", groups=" + groups + ", booking=" + booking + ", requests="
+				+ requests + ", usersInProjects=" + usersInProjects + "]";
 	}
-	
+
 	public void addGroupToGroups(Groups group) {
-		if(groups != null){
+		if (groups != null) {
 			groups.add(group);
 		}
 	}
-	
+
 	public void removeGroupFromGroups(Groups group) {
 		if (group != null) {
 			groups.remove(group);
 		}
 	}
-	
+
 	public void removeGroupFromGroups(int index) {
 		if (groups.get(index) != null) {
 			groups.remove(index);

@@ -1,12 +1,15 @@
 package edu.ubb.arp.logic;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.GroupsDao;
+import edu.ubb.arp.dao.ProjectsDao;
 import edu.ubb.arp.dao.ResourcesDao;
 import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
-import edu.ubb.arp.exceptions.BllExceptions;
-import edu.ubb.arp.exceptions.DalException;
 
 public class ProbeOperations {
 	DaoFactory instance;
@@ -22,27 +25,26 @@ public class ProbeOperations {
 			GroupsDao g = instance.getGroupsDao();
 			ResourcesDao r = instance.getResourceDao();
 			UsersDao u = instance.getUsersDao();
+			ProjectsDao p = instance.getProjectsDao();
+			
+			List<Integer> w = new ArrayList<Integer>();
+			w.add(9);
+			w.add(10);
+			w.add(11);
+			
+			List<Integer> rat = new ArrayList<Integer>();
+			rat.add(90);
+			rat.add(90);
+			rat.add(90);
 			
 			
-			//u.createUser("Arni33", HashCoding.hashString("1234"), "0713212397", "arni@gmail.com", "Smancz Arnold", Boolean.TRUE, "Team1");
-			//u.updateUser("Arni33", HashCoding.hashString("1234"), "Team1", "Arni44", HashCoding.hashString("12345"), "0713212396","arni99@gmail.com", "Smancz Arnoldd", Boolean.FALSE, "Team2");
-			//u.changePassword(1, HashCoding.hashString("123"), HashCoding.hashString("1234"));
-			String[] st = new String[2];
-			st[0] = "Team2";
-			st[1] = "Team3";
-			u.removeUserFromGroup("taim1100", st[0]);
-			
-			// g.createGroup("Group5");
-			/*String[] a = new String[2];
-			a[0] = "Group2";
-			a[1] = "Group3";
-			//r.addResourceToGroup("Laptop1", );
-			*///r.addResourceToGroup("Laptop1", "Group2");
+			int err = p.addResourceToProject("Project1", "Laptop2", w, rat);
+			System.out.println(err);
 			
 			
 			
 			
-		} catch (DalException e) {
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

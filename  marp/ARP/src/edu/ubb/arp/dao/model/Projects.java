@@ -11,35 +11,37 @@ public class Projects implements Serializable {
 
 	private int projectID;
 	private boolean openedStatus;
+	private int startWeek;
 	private int deadLine;
 	private String projectName;
 	private String nextRelease;
 	private Statuses currentStatus;
 	private HashMap<Resources, Booking> booking;
-	private List<Resources> projectLeaders;
+	private HashMap<Resources, Boolean> usersInProjects;
 
 	public Projects() {
 		this.projectID = -1;
 		this.openedStatus = false;
+		this.startWeek = -1;
 		this.deadLine = -1;
 		this.projectName = null;
 		this.nextRelease = null;
 		this.currentStatus = null;
 		this.booking = null;
-		this.projectLeaders = null;
+		this.usersInProjects = null;
 	}
 
-	public Projects(int projectID, boolean openedStatus, int deadLine,
-			String projectName, String nextRelease, Statuses currentStatus,
-			HashMap<Resources, Booking> booking, List<Resources> projectLeaders) {
+	public Projects(int projectID, boolean openedStatus, int startWeek, int deadLine, String projectName, String nextRelease,
+			Statuses currentStatus, HashMap<Resources, Booking> booking, HashMap<Resources, Boolean> usersInProjects) {
 		this.projectID = projectID;
 		this.openedStatus = openedStatus;
+		this.startWeek = startWeek;
 		this.deadLine = deadLine;
 		this.projectName = projectName;
 		this.nextRelease = nextRelease;
 		this.currentStatus = currentStatus;
 		this.booking = booking;
-		this.projectLeaders = projectLeaders;
+		this.usersInProjects = usersInProjects;
 	}
 
 	public int getProjectID() {
@@ -56,6 +58,14 @@ public class Projects implements Serializable {
 
 	public void setOpenedStatus(boolean openedStatus) {
 		this.openedStatus = openedStatus;
+	}
+
+	public int getStartWeek() {
+		return startWeek;
+	}
+
+	public void setStartWeek(int startWeek) {
+		this.startWeek = startWeek;
 	}
 
 	public int getDeadLine() {
@@ -98,12 +108,12 @@ public class Projects implements Serializable {
 		this.booking = booking;
 	}
 
-	public List<Resources> getProjectLeaders() {
-		return projectLeaders;
+	public HashMap<Resources, Boolean> getUsersInProjects() {
+		return usersInProjects;
 	}
 
-	public void setProjectLeaders(List<Resources> projectLeaders) {
-		this.projectLeaders = projectLeaders;
+	public void setUsersInProjects(HashMap<Resources, Boolean> usersInProjects) {
+		this.usersInProjects = usersInProjects;
 	}
 
 	public static long getSerialversionuid() {
@@ -115,17 +125,14 @@ public class Projects implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((booking == null) ? 0 : booking.hashCode());
-		result = prime * result
-				+ ((currentStatus == null) ? 0 : currentStatus.hashCode());
+		result = prime * result + ((currentStatus == null) ? 0 : currentStatus.hashCode());
 		result = prime * result + deadLine;
-		result = prime * result
-				+ ((nextRelease == null) ? 0 : nextRelease.hashCode());
+		result = prime * result + ((nextRelease == null) ? 0 : nextRelease.hashCode());
 		result = prime * result + (openedStatus ? 1231 : 1237);
 		result = prime * result + projectID;
-		result = prime * result
-				+ ((projectLeaders == null) ? 0 : projectLeaders.hashCode());
-		result = prime * result
-				+ ((projectName == null) ? 0 : projectName.hashCode());
+		result = prime * result + ((projectName == null) ? 0 : projectName.hashCode());
+		result = prime * result + startWeek;
+		result = prime * result + ((usersInProjects == null) ? 0 : usersInProjects.hashCode());
 		return result;
 	}
 
@@ -159,26 +166,26 @@ public class Projects implements Serializable {
 			return false;
 		if (projectID != other.projectID)
 			return false;
-		if (projectLeaders == null) {
-			if (other.projectLeaders != null)
-				return false;
-		} else if (!projectLeaders.equals(other.projectLeaders))
-			return false;
 		if (projectName == null) {
 			if (other.projectName != null)
 				return false;
 		} else if (!projectName.equals(other.projectName))
+			return false;
+		if (startWeek != other.startWeek)
+			return false;
+		if (usersInProjects == null) {
+			if (other.usersInProjects != null)
+				return false;
+		} else if (!usersInProjects.equals(other.usersInProjects))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Projects [projectID=" + projectID + ", openedStatus="
-				+ openedStatus + ", deadLine=" + deadLine + ", projectName="
-				+ projectName + ", nextRelease=" + nextRelease
-				+ ", currentStatus=" + currentStatus + ", booking=" + booking
-				+ ", projectLeaders=" + projectLeaders + "]";
+		return "Projects [projectID=" + projectID + ", openedStatus=" + openedStatus + ", startWeek=" + startWeek + ", deadLine="
+				+ deadLine + ", projectName=" + projectName + ", nextRelease=" + nextRelease + ", currentStatus=" + currentStatus
+				+ ", booking=" + booking + ", usersInProjects=" + usersInProjects + "]";
 	}
 
 }

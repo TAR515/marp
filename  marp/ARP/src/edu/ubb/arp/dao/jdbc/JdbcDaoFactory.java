@@ -1,5 +1,7 @@
 package edu.ubb.arp.dao.jdbc;
 
+import java.sql.SQLException;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -9,9 +11,11 @@ import org.apache.log4j.Logger;
 
 import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.GroupsDao;
+import edu.ubb.arp.dao.ProjectsDao;
 import edu.ubb.arp.dao.ResourcesDao;
 import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.impls.GroupsJdbcDao;
+import edu.ubb.arp.dao.impls.ProjectsJdbcDao;
 import edu.ubb.arp.dao.impls.ResourcesJdbcDao;
 import edu.ubb.arp.dao.impls.UsersJdbcDao;
 import edu.ubb.arp.exceptions.DalException;
@@ -22,7 +26,7 @@ public class JdbcDaoFactory extends DaoFactory {
 	
 	private DataSource ds = null;
 	
-	public JdbcDaoFactory() throws DalException {
+	public JdbcDaoFactory() throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		Context initContext;
 		try {
@@ -31,7 +35,7 @@ public class JdbcDaoFactory extends DaoFactory {
 			ds = (DataSource)envContext.lookup("jdbc/ARPDB");
 		} catch (NamingException e) {
 			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-1));
-			throw new DalException(-1, getClass().getName() + ".JdbcDaoFactory()", e);
+			throw new SQLException(getClass().getName() + ".JdbcDaoFactory()", e);
 		}
 	}
 
@@ -50,5 +54,9 @@ public class JdbcDaoFactory extends DaoFactory {
 	@Override
 	public GroupsDao getGroupsDao() {
 		return new GroupsJdbcDao(ds);
+	}
+	
+	public ProjectsDao getProjectsDao() {
+		return new ProjectsJdbcDao(ds);
 	}
 }
