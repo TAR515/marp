@@ -38,7 +38,7 @@ public class ProbeOperations {
 			rat.add(90);
 			
 			
-			int err = p.addResourceToProject("Project1", "Laptop2", w, rat);
+			int err = p.setProjectName("Project1", "Project1");
 			System.out.println(err);
 			
 			

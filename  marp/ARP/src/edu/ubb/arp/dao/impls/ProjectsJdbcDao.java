@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.sql.DataSource;
 
 import edu.ubb.arp.dao.ProjectsDao;
@@ -70,7 +69,8 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		return errmsg;
 	}
 
-	public int addUserToProject(String projectName, String userName, List<Integer> week, List<Integer> ratio, boolean isLeader) throws SQLException {
+	public int addUserToProject(String projectName, String userName, List<Integer> week, List<Integer> ratio, boolean isLeader)
+			throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -78,13 +78,13 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		Connection connection = null;
 		try {
 			connection = getConnection();
-			
+
 			errmsg = addUserToBookingByUserName(projectName, userName, week, ratio, isLeader, connection);
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
 				return errmsg;
 			}
-			
+
 			errmsg = addUserToUserInProject(projectName, userName, isLeader, connection);
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
@@ -101,8 +101,9 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 		return errmsg;
 	}
-	
-	public int addResourceToProject(String projectName, String resourceName, List<Integer> week, List<Integer> ratio) throws SQLException {
+
+	public int addResourceToProject(String projectName, String resourceName, List<Integer> week, List<Integer> ratio)
+			throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -110,13 +111,13 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		Connection connection = null;
 		try {
 			connection = getConnection();
-			
+
 			errmsg = addResourcesToBookingByResourceName(projectName, resourceName, week, ratio, connection);
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
 				return errmsg;
 			}
-			
+
 			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
@@ -127,9 +128,519 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 		return errmsg;
 	}
+
+	public int setOpenStatus(int projectID, boolean newOpenStatus) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "set_project_open_status_by_project_id", 3);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, projectID);
+			setBoolean(stmt, paramIndex++, newOpenStatus);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int setOpenStatus(String projectName, boolean newOpenStatus) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "set_project_open_status_by_project_name", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, projectName);
+			setBoolean(stmt, paramIndex++, newOpenStatus);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int setProjectName(int projectID, String newProjectName) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "set_project_name_by_project_id", 3);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, projectID);
+			setString(stmt, paramIndex++, newProjectName);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int setProjectName(String oldProjectName, String newProjectName) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "set_project_name_by_project_name", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, oldProjectName);
+			setString(stmt, paramIndex++, newProjectName);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int setDeadLine(int projectID, int newDeadLine) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "set_project_deadline_by_project_id", 3);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, projectID);
+			setInt(stmt, paramIndex++, newDeadLine);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int setDeadLine(String projectName, int newDeadLine) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "set_project_deadline_by_project_name", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, projectName);
+			setInt(stmt, paramIndex++, newDeadLine);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int setNextRelease(int projectID, String newNextRelease) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "set_project_next_release_version_by_project_id", 3);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, projectID);
+			setString(stmt, paramIndex++, newNextRelease);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int setNextRelease(String projectName, String newNextRelease) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "set_project_next_release_version_by_project_name", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, projectName);
+			setString(stmt, paramIndex++, newNextRelease);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int setCurrentStatus(int projectID, String newCurrentStatus) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "set_project_current_status_by_project_id", 3);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, projectID);
+			setString(stmt, paramIndex++, newCurrentStatus);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int setCurrentStatus(String projectName, String newCurrentStatus) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "set_project_current_status_by_project_name", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, projectName);
+			setString(stmt, paramIndex++, newCurrentStatus);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
+	public int removeUserFromProject(int projectID, int userID, int currentWeek) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "remove_user_from_project_by_user_id", 4);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, projectID);
+			setInt(stmt, paramIndex++, userID);
+			setInt(stmt, paramIndex++, currentWeek);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+	
+	public int removeUserFromProject(String projectName, String userName, int currentWeek) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "remove_user_from_project_by_user_name", 4);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, projectName);
+			setString(stmt, paramIndex++, userName);
+			setInt(stmt, paramIndex++, currentWeek);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+	
+	public int updateUserRatioInProject(String projectName,String userName, List<Integer> week, List<Integer> ratio, int newRatio) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		if (week.size() == ratio.size() && week.size() != 0) {
+			int currentRatio = ratio.get(0);
+			int fromWeek = week.get(0);
+			int r = 0;
+			int w = 0;
+			Connection connection = null;
+			
+			week.add(week.get(week.size() - 1) + 1);
+			ratio.add(ratio.get(ratio.size() - 1) + 1);
+			Iterator<Integer> weekIt = week.iterator();
+			Iterator<Integer> ratioIt = ratio.iterator();
+			
+			try {
+				connection = getConnection();
+				
+				while (weekIt.hasNext()) {
+					r = ratioIt.next();
+					w = weekIt.next();
+					if (r != currentRatio) { // end of a part
+						errmsg = updateUserRatioInBookingForMoreWeek(projectName, userName, fromWeek, w - 1, currentRatio,
+								connection);
+						if (errmsg < 0) {
+							logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+							return errmsg;
+						}
+						currentRatio = r;
+						fromWeek = w;
+					}
+				}
+				
+				if (errmsg < 0) {
+					logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+					return errmsg;
+				}
+				connection.commit();
+			} catch (SQLException e) {
+				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+				throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+			} finally {
+				closeSQLObjects(connection, null, null);
+				logger.debug(getClass().getName() + methodName + "-> EXIT");
+			}
+		} else {
+			logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(-5));
+			return -5; // WRONG_PARAMETERS
+		}
+
+		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
+	}
+	
+	public int updateResourceRatioInProject(String projectName,String resourceName, List<Integer> week, List<Integer> ratio, int newRatio) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		if (week.size() == ratio.size() && week.size() != 0) {
+			int currentRatio = ratio.get(0);
+			int fromWeek = week.get(0);
+			int r = 0;
+			int w = 0;
+			Connection connection = null;
+			
+			week.add(week.get(week.size() - 1) + 1);
+			ratio.add(ratio.get(ratio.size() - 1) + 1);
+			Iterator<Integer> weekIt = week.iterator();
+			Iterator<Integer> ratioIt = ratio.iterator();
+			
+			try {
+				connection = getConnection();
+				
+				while (weekIt.hasNext()) {
+					r = ratioIt.next();
+					w = weekIt.next();
+					if (r != currentRatio) { // end of a part
+						errmsg = updateResourceRatioInBookingForMoreWeek(projectName, resourceName, fromWeek, w - 1, currentRatio,
+								connection);
+						if (errmsg < 0) {
+							logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+							return errmsg;
+						}
+						currentRatio = r;
+						fromWeek = w;
+					}
+				}
+				
+				if (errmsg < 0) {
+					logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+					return errmsg;
+				}
+				connection.commit();
+			} catch (SQLException e) {
+				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+				throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+			} finally {
+				closeSQLObjects(connection, null, null);
+				logger.debug(getClass().getName() + methodName + "-> EXIT");
+			}
+		} else {
+			logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(-5));
+			return -5; // WRONG_PARAMETERS
+		}
+
+		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
+	}
 	
 	// User
-	
+
 	/** Add a user to UserInProject table by projectid and userid.
 	 * 
 	 * @param projectID
@@ -137,6 +648,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 	 * @param isLeader
 	 * @return errmsg
 	 * @throws SQLException */
+	@SuppressWarnings("unused")
 	private int addUserToUserInProject(int projectID, int userID, boolean isLeader, Connection con) throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -169,7 +681,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 		return errmsg;
 	}
-	
+
 	/** Add a user to UserInProject table by projectname and username. This do not close the connection or the transaction!
 	 * 
 	 * @param projectID
@@ -209,7 +721,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 		return errmsg;
 	}
-	
+
 	/** Insert into Booking table more coulumns (USER). This method dont close the connection or the transaction!
 	 * 
 	 * @param projectName
@@ -259,8 +771,9 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
 		return errmsg;
 	}
-	
-	/** Add a User to Booking.(USER) This method have a start week and an end week. The ratio between these are equals. This method dont close the connection or the transaction!
+
+	/** Add a User to Booking.(USER) This method have a start week and an end week. The ratio between these are equals. This method dont
+	 * close the connection or the transaction!
 	 * 
 	 * @param projectName
 	 * @param userName
@@ -271,8 +784,8 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 	 * @param con
 	 * @return
 	 * @throws SQLException */
-	private int addUserToBookingForMoreWeekByUserName(String projectName, String userName, int startWeek, int endWeek,
-			int ratio, boolean isLeader, Connection con) throws SQLException {
+	private int addUserToBookingForMoreWeekByUserName(String projectName, String userName, int startWeek, int endWeek, int ratio,
+			boolean isLeader, Connection con) throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -307,12 +820,11 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 		return errmsg;
 	}
-	
-	
+
 	// Resource
-	
-	/**
-	 *  Add a resource to Booking for more weeks. (NOT USER)
+
+	/** Add a resource to Booking for more weeks. (NOT USER)
+	 * 
 	 * @param projectID
 	 * @param resourceID
 	 * @param startWeek
@@ -321,10 +833,9 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 	 * @param isLeader
 	 * @param con
 	 * @return
-	 * @throws SQLException
-	 */
-	private int addResourceToBookingForMoreWeekByResourceID(int projectID, int resourceID, int startWeek, int endWeek, int ratio
-			, Connection con) throws SQLException {
+	 * @throws SQLException */
+	private int addResourceToBookingForMoreWeekByResourceID(int projectID, int resourceID, int startWeek, int endWeek, int ratio,
+			Connection con) throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -359,9 +870,9 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 		return errmsg;
 	}
-	
-	/**
-	 *  Add a resource to booking for more weeks. (NOT USER)
+
+	/** Add a resource to booking for more weeks. (NOT USER)
+	 * 
 	 * @param projectID
 	 * @param resourceID
 	 * @param week
@@ -369,10 +880,10 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 	 * @param isLeader
 	 * @param con
 	 * @return
-	 * @throws SQLException
-	 */
-	private int addResourcesToBookingByResourceID(int projectID, int resourceID, List<Integer> week, List<Integer> ratio
-			, Connection con) throws SQLException {
+	 * @throws SQLException */
+	@SuppressWarnings("unused")
+	private int addResourcesToBookingByResourceID(int projectID, int resourceID, List<Integer> week, List<Integer> ratio,
+			Connection con) throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -392,7 +903,8 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 				r = ratioIt.next();
 				w = weekIt.next();
 				if (r != currentRatio) { // end of a part
-					errmsg = addResourceToBookingForMoreWeekByResourceID(projectID, resourceID, fromWeek, w - 1, currentRatio, con);
+					errmsg = addResourceToBookingForMoreWeekByResourceID(projectID, resourceID, fromWeek, w - 1, currentRatio,
+							con);
 					if (errmsg < 0) {
 						logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
 						return errmsg;
@@ -409,7 +921,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
 		return errmsg;
 	}
-	
+
 	private int addResourcesToBookingByResourceName(String projectName, String resourceName, List<Integer> week,
 			List<Integer> ratio, Connection con) throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
@@ -450,8 +962,8 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		return errmsg;
 	}
 
-	private int addResourceToBookingForMoreWeekByResourceName(String projectName, String resourceName, int startWeek, int endWeek,
-			int ratio, Connection con) throws SQLException {
+	private int addResourceToBookingForMoreWeekByResourceName(String projectName, String resourceName, int startWeek,
+			int endWeek, int ratio, Connection con) throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -486,15 +998,83 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 		return errmsg;
 	}
+
+	private int updateUserRatioInBookingForMoreWeek(String projectName,String userName, int startWeek, int endWeek, int newRatio, Connection con) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = con;
+			stmt = createProcedure(connection, "update_user_ratio_in_project_for_n_weeks_by_user_name", 6);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, projectName);
+			setString(stmt, paramIndex++, userName);
+			setInt(stmt, paramIndex++, startWeek);
+			setInt(stmt, paramIndex++, endWeek);
+			setInt(stmt, paramIndex++, newRatio);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+	
+	private int updateResourceRatioInBookingForMoreWeek(String projectName,String resourceName, int startWeek, int endWeek, int newRatio, Connection con) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = con;
+			stmt = createProcedure(connection, "update_user_ratio_in_project_for_n_weeks_by_user_id", 6);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, projectName);
+			setString(stmt, paramIndex++, resourceName);
+			setInt(stmt, paramIndex++, startWeek);
+			setInt(stmt, paramIndex++, endWeek);
+			setInt(stmt, paramIndex++, newRatio);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
 	
 	// Others
-	
-	/**
-	 *  Returns the resourceId of a user. This method dont close the connection or the transaction.
+
+	/** Returns the resourceId of a user. This method dont close the connection or the transaction.
+	 * 
 	 * @param userName
 	 * @return resourceID or errmsg.
-	 * @throws SQLException
-	 */
+	 * @throws SQLException */
+	@SuppressWarnings("unused")
 	private int getResourceIDFromUserName(String userName, Connection con) throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -525,7 +1105,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 		return errmsg;
 	}
-	
+
 	/** Insert a project in the database. It do not insert in Booking or in UserInProject table. This dont close the connection or the
 	 * transaction.
 	 * 
@@ -574,10 +1154,6 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		return errmsg;
 	}
 
-	
-	
-	
-	
 	@Override
 	protected Object fillObject(ResultSet rs) throws SQLException {
 		// TODO Auto-generated method stub
