@@ -12,10 +12,12 @@ import org.apache.log4j.Logger;
 import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.GroupsDao;
 import edu.ubb.arp.dao.ProjectsDao;
+import edu.ubb.arp.dao.RequestsDao;
 import edu.ubb.arp.dao.ResourcesDao;
 import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.impls.GroupsJdbcDao;
 import edu.ubb.arp.dao.impls.ProjectsJdbcDao;
+import edu.ubb.arp.dao.impls.RequestsJdbcDao;
 import edu.ubb.arp.dao.impls.ResourcesJdbcDao;
 import edu.ubb.arp.dao.impls.UsersJdbcDao;
 import edu.ubb.arp.exceptions.DalException;
@@ -58,5 +60,10 @@ public class JdbcDaoFactory extends DaoFactory {
 	
 	public ProjectsDao getProjectsDao() {
 		return new ProjectsJdbcDao(ds);
+	}
+
+	@Override
+	public RequestsDao getRequestsDao() {
+		return new RequestsJdbcDao(ds);
 	}
 }

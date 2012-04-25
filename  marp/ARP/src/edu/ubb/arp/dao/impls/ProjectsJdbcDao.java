@@ -527,7 +527,41 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		return errmsg;
 	}
 	
-	public int updateUserRatioInProject(String projectName,String userName, List<Integer> week, List<Integer> ratio, int newRatio) throws SQLException {
+	public int removeResourceFromProject(String projectName, String resourceName, int currentWeek) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "remove_resource_from_project_by_resource_name", 4);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, projectName);
+			setString(stmt, paramIndex++, resourceName);
+			setInt(stmt, paramIndex++, currentWeek);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+	
+	public int updateUserRatioInProject(String projectName,String userName, List<Integer> week, List<Integer> ratio) throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -583,7 +617,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		return errmsg;
 	}
 	
-	public int updateResourceRatioInProject(String projectName,String resourceName, List<Integer> week, List<Integer> ratio, int newRatio) throws SQLException {
+	public int updateResourceRatioInProject(String projectName,String resourceName, List<Integer> week, List<Integer> ratio) throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -636,6 +670,41 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
+	}
+	
+	public int updateUserIsLeader(String projectName, String userName, int currentWeek, boolean isLeader) throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "update_user_in_project_to_leader_or_user", 5);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, projectName);
+			setString(stmt, paramIndex++, userName);
+			setInteger(stmt, paramIndex++, currentWeek);
+			setBoolean(stmt, paramIndex++, isLeader);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				return errmsg;
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, null, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
 		return errmsg;
 	}
 	
@@ -989,7 +1058,6 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 						+ " - " + endWeek);
 				return errmsg;
 			}
-			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
@@ -1042,7 +1110,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		java.sql.CallableStatement stmt = null;
 		try {
 			connection = con;
-			stmt = createProcedure(connection, "update_user_ratio_in_project_for_n_weeks_by_user_id", 6);
+			stmt = createProcedure(connection, "update_resource_ratio_in_project_for_n_weeks_by_resource_name", 6);
 
 			int paramIndex = 1;
 			setString(stmt, paramIndex++, projectName);

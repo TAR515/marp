@@ -37,5 +37,13 @@ public interface ProjectsDao {
 	public int removeUserFromProject(int projectID, int userID, int currentWeek) throws SQLException;
 	
 	public int removeUserFromProject(String projectName, String userName, int currentWeek) throws SQLException;
+	
+	public int removeResourceFromProject(String projectName, String resourceName, int currentWeek) throws SQLException;
+	
+	public int updateUserRatioInProject(String projectName,String userName, List<Integer> week, List<Integer> ratio) throws SQLException;
+	
+	public int updateResourceRatioInProject(String projectName,String resourceName, List<Integer> week, List<Integer> ratio) throws SQLException;
+	
+	public int updateUserIsLeader(String projectName, String userName, int currentWeek, boolean isLeader) throws SQLException;
 
 }

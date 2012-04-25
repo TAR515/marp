@@ -20,5 +20,7 @@ public abstract class DaoFactory {
 	public abstract GroupsDao getGroupsDao();
 
 	public abstract ProjectsDao getProjectsDao();
+	
+	public abstract RequestsDao getRequestsDao();
 
 }
