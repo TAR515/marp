@@ -10,6 +10,7 @@ import java.util.List;
 import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.GroupsDao;
 import edu.ubb.arp.dao.ProjectsDao;
+import edu.ubb.arp.dao.RequestsDao;
 import edu.ubb.arp.dao.ResourcesDao;
 import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
@@ -40,6 +41,7 @@ public class ProbeOperations {
 			ResourcesDao r = instance.getResourceDao();
 			UsersDao u = instance.getUsersDao();
 			ProjectsDao p = instance.getProjectsDao();
+			RequestsDao req = instance.getRequestsDao();
 			
 			List<Integer> w = new ArrayList<Integer>();
 			//w.add(5);
@@ -49,18 +51,14 @@ public class ProbeOperations {
 			w.add(10);
 			
 			List<Integer> rat = new ArrayList<Integer>();
+			rat.add(77);
+			rat.add(77);
 			rat.add(55);
-			rat.add(55);
-			rat.add(55);
-			//rat.add(30);
 			
 			
-			//int err = p.re
-			//int err = p.removeResourceFromProject("Project1", "Laptop1", 9)
-			//System.out.println(err);
-			long k = Long.MAX_VALUE;
-			System.out.println(k / 29030400);
-			
+			//int errmsg = req.createNewRequestForResource(w, rat, "Juuuh333", "Laptop1", "Project1");
+			int errmsg = req.removeExpiredRequests(9);
+			System.out.println(errmsg);
 			
 			
 		} catch (SQLException e) {
