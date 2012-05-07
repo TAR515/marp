@@ -9,30 +9,27 @@ public class Requests implements Serializable {
 	private int requestID;
 	private int date;
 	private double ratio;
-	private boolean rejected;
 	private Projects project;
 	private Resources sender;
 	private Resources resource;
-	private HashMap<Resources, Boolean> resources;
+	private HashMap<Resources, Integer> resources;
 
 	public Requests() {
 		this.requestID = -1;
 		this.date = -1;
 		this.ratio = -1;
-		this.rejected = false;
 		this.project = null;
 		this.sender = null;
 		this.resource = null;
 		this.resources = null;
 	}
 
-	public Requests(int requestID, int date, double ratio, boolean rejected,
+	public Requests(int requestID, int date, double ratio,
 			Projects project, Resources sender, Resources resource,
-			HashMap<Resources, Boolean> resources) {
+			HashMap<Resources, Integer> resources) {
 		this.requestID = requestID;
 		this.date = date;
 		this.ratio = ratio;
-		this.rejected = rejected;
 		this.project = project;
 		this.sender = sender;
 		this.resource = resource;
@@ -63,14 +60,6 @@ public class Requests implements Serializable {
 		this.ratio = ratio;
 	}
 
-	public boolean isRejected() {
-		return rejected;
-	}
-
-	public void setRejected(boolean rejected) {
-		this.rejected = rejected;
-	}
-
 	public Projects getProject() {
 		return project;
 	}
@@ -95,11 +84,11 @@ public class Requests implements Serializable {
 		this.resource = resource;
 	}
 
-	public HashMap<Resources, Boolean> getResources() {
+	public HashMap<Resources, Integer> getResources() {
 		return resources;
 	}
 
-	public void setResources(HashMap<Resources, Boolean> resources) {
+	public void setResources(HashMap<Resources, Integer> resources) {
 		this.resources = resources;
 	}
 
@@ -116,12 +105,9 @@ public class Requests implements Serializable {
 		long temp;
 		temp = Double.doubleToLongBits(ratio);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + (rejected ? 1231 : 1237);
 		result = prime * result + requestID;
-		result = prime * result
-				+ ((resource == null) ? 0 : resource.hashCode());
-		result = prime * result
-				+ ((resources == null) ? 0 : resources.hashCode());
+		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
+		result = prime * result + ((resources == null) ? 0 : resources.hashCode());
 		result = prime * result + ((sender == null) ? 0 : sender.hashCode());
 		return result;
 	}
@@ -142,10 +128,7 @@ public class Requests implements Serializable {
 				return false;
 		} else if (!project.equals(other.project))
 			return false;
-		if (Double.doubleToLongBits(ratio) != Double
-				.doubleToLongBits(other.ratio))
-			return false;
-		if (rejected != other.rejected)
+		if (Double.doubleToLongBits(ratio) != Double.doubleToLongBits(other.ratio))
 			return false;
 		if (requestID != other.requestID)
 			return false;
@@ -169,10 +152,8 @@ public class Requests implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Requests [requestID=" + requestID + ", date=" + date
-				+ ", ratio=" + ratio + ", rejected=" + rejected + ", project="
-				+ project + ", sender=" + sender + ", resource=" + resource
-				+ ", resources=" + resources + "]";
+		return "Requests [requestID=" + requestID + ", date=" + date + ", ratio=" + ratio + ", project=" + project + ", sender="
+				+ sender + ", resource=" + resource + ", resources=" + resources + "]";
 	}
 
 }

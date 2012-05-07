@@ -12,11 +12,11 @@ public class Resources implements Serializable {
 	private int resourceID;
 	private String resourceName;
 	private boolean active;
-	private List<Users> users;
+	private Users users;
 	private ResourceTypes resourceTypes;
 	private List<Groups> groups;
 	private HashMap<Projects, Booking> booking;
-	private HashMap<Requests, Boolean> requests;
+	private HashMap<Requests, Integer> requests;
 	private HashMap<Projects, Boolean> usersInProjects;
 
 	public Resources() {
@@ -31,8 +31,8 @@ public class Resources implements Serializable {
 		this.usersInProjects = null;
 	}
 
-	public Resources(int resourceID, String resourceName, boolean active, List<Users> users, ResourceTypes resourceTypes,
-			List<Groups> groups, HashMap<Projects, Booking> booking, HashMap<Requests, Boolean> requests,
+	public Resources(int resourceID, String resourceName, boolean active, Users users, ResourceTypes resourceTypes,
+			List<Groups> groups, HashMap<Projects, Booking> booking, HashMap<Requests, Integer> requests,
 			HashMap<Projects, Boolean> usersInProjects) {
 		this.resourceID = resourceID;
 		this.resourceName = resourceName;
@@ -61,11 +61,11 @@ public class Resources implements Serializable {
 		this.resourceName = resourceName;
 	}
 
-	public List<Users> getUsers() {
+	public Users getUsers() {
 		return users;
 	}
 
-	public void setUsers(List<Users> users) {
+	public void setUsers(Users users) {
 		this.users = users;
 	}
 
@@ -93,11 +93,11 @@ public class Resources implements Serializable {
 		this.booking = booking;
 	}
 
-	public HashMap<Requests, Boolean> getRequests() {
+	public HashMap<Requests, Integer> getRequests() {
 		return requests;
 	}
 
-	public void setRequests(HashMap<Requests, Boolean> requests) {
+	public void setRequests(HashMap<Requests, Integer> requests) {
 		this.requests = requests;
 	}
 
@@ -187,7 +187,7 @@ public class Resources implements Serializable {
 			return false;
 		return true;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Resources [resourceID=" + resourceID + ", resourceName=" + resourceName + ", active=" + active + ", users="

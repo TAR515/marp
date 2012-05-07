@@ -12,7 +12,7 @@ public class Users implements Serializable {
 	private byte[] password;
 	private String phoneNumber;
 	private String email;
-	private List<Resources> resource = null;
+	private Resources resource = null;
 
 	public Users() {
 		this.userID = -1;
@@ -23,8 +23,7 @@ public class Users implements Serializable {
 		this.resource = null;
 	}
 
-	public Users(int userID, String userName, byte[] password, boolean hired,
-			String phoneNumber, String email, List<Resources> resource) {
+	public Users(int userID, String userName, byte[] password, boolean hired, String phoneNumber, String email, Resources resource) {
 		this.userID = userID;
 		this.userName = userName;
 		this.password = password;
@@ -73,11 +72,11 @@ public class Users implements Serializable {
 		this.email = email;
 	}
 
-	public List<Resources> getResource() {
+	public Resources getResource() {
 		return resource;
 	}
 
-	public void setResource(List<Resources> resource) {
+	public void setResource(Resources resource) {
 		this.resource = resource;
 	}
 
@@ -139,7 +138,5 @@ public class Users implements Serializable {
 		return "Users [userID=" + userID + ", userName=" + userName + ", password=" + Arrays.toString(password)
 				+ ", phoneNumber=" + phoneNumber + ", email=" + email + ", resource=" + resource + "]";
 	}
-
-	
 
 }

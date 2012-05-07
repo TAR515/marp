@@ -2,7 +2,6 @@ package edu.ubb.arp.dao.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 
 import edu.ubb.arp.datastructures.Booking;
 

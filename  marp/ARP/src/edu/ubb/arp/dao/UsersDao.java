@@ -1,6 +1,7 @@
 package edu.ubb.arp.dao;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.ubb.arp.dao.model.Groups;
@@ -45,5 +46,8 @@ public interface UsersDao {
 
 	public Users loadUser(String userName) throws SQLException;
 	
+	public HashMap<String, Boolean> getAllActiveProjects(String userName) throws SQLException;
+	
+	public int checkUserNameAndPassword(String userName, byte[] password) throws SQLException;
 
 }
