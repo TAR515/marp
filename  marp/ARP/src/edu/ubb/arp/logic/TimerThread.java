@@ -1,7 +1,6 @@
 package edu.ubb.arp.logic;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -35,7 +34,7 @@ public class TimerThread implements Runnable {
 		logger.debug(getClass().getName() + methodName + "-> START");
 		
 		while (true) {
-			try {
+			/*try {
 				Thread.sleep( 3600000 ); // sleep for 1 hour
 				
 				int weekBeetween = weeksBetween(startDate.getTime(),currentDate.getTime());
@@ -57,7 +56,16 @@ public class TimerThread implements Runnable {
 			} catch (SQLException e) {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 				e.printStackTrace();
-			}	
+			}	*/
+			
+			try {
+				Thread.sleep(1000);
+				System.out.println("KKK");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 	}
 

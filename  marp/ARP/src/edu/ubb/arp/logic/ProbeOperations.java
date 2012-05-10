@@ -16,8 +16,13 @@ import edu.ubb.arp.dao.model.Users;
 
 public class ProbeOperations {
 	DaoFactory instance;
-	private Thread threads[];
-	public TimerThread objects[];
+
+	private static final TimerThread object = new TimerThread(); ;
+	private static final Thread thread = new Thread(object);
+
+	static {
+		thread.start();
+	}
 
 	public void ProbeOperation() {
 		String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
@@ -26,11 +31,7 @@ public class ProbeOperations {
 		DaoFactory instance;
 		
 		try {
-			objects = new TimerThread[ 1 ]; 
-		    objects[ 0 ] = new TimerThread(); 
-		    threads = new Thread[ 1 ]; 
-		    threads[ 0 ] = new Thread(objects[ 0 ]); 
-		    threads[ 0 ].start( ); 
+			
 		   
 			
 		    
