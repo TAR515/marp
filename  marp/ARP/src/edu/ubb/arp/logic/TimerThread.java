@@ -1,6 +1,5 @@
 package edu.ubb.arp.logic;
 
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -10,7 +9,6 @@ import org.apache.log4j.Logger;
 import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.RequestsDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
-import edu.ubb.arp.exceptions.DalErrorMessages;
 
 public class TimerThread implements Runnable {
 	private static final Logger logger = Logger.getLogger(JdbcDaoFactory.class);

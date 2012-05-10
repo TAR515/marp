@@ -55,7 +55,12 @@ public class CheckUserCommand extends BaseCommandOperations implements Command {
 		if (!errorCheck(response)) {
 			try {
 				int userExists = userDao.checkUserNameAndPassword(userName, HashCoding.hashString(password));
-				addInt("existsuser", userExists, response);
+				
+				if (userExists <= 0) { // This is an error.
+					response = setError(userExists);
+				} else {
+					response = addInt("existsuser", userExists, response);
+				}
 			} catch (SQLException e) {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 				response = setError(0);

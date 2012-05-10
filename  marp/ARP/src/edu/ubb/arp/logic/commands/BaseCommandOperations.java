@@ -1,10 +1,11 @@
 package edu.ubb.arp.logic.commands;
 
-import org.apache.log4j.Logger;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+
+import org.apache.log4j.Logger;
+
 
 public class BaseCommandOperations {
 	private static final Logger logger = Logger.getLogger(BaseCommandOperations.class);
@@ -34,7 +35,7 @@ public class BaseCommandOperations {
 	
 	public JSONArray addString(String key, String element, JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
-		JSONArray result = response;
+		JSONArray result = JSONArray.fromObject(response);
 		
 		if (key == null) {
 			logger.error(getClass().getName() + methodName + "parameter: key is null");
@@ -61,7 +62,7 @@ public class BaseCommandOperations {
 	 */
 	public JSONArray addInt(String key, int element, JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
-		JSONArray result = response;
+		JSONArray result = JSONArray.fromObject(response);
 		
 		if (key == null) {
 			logger.error(getClass().getName() + methodName + "parameter: key is null");
@@ -75,13 +76,13 @@ public class BaseCommandOperations {
 		JSONObject obj = new JSONObject();
 		obj.put(key, new Integer(element));
 		result.add(obj);
-		
+
 		return result;
 	}
 	
 	public JSONArray addBool(String key, boolean element, JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
-		JSONArray result = response;
+		JSONArray result = JSONArray.fromObject(response);
 		
 		if (key == null) {
 			logger.error(getClass().getName() + methodName + "parameter: key is null");
