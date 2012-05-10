@@ -10,31 +10,63 @@ public class BaseCommandOperations {
 	private static final Logger logger = Logger.getLogger(BaseCommandOperations.class);
 	// Setter methods
 	
-	public JSONArray setError(int errorCode, JSONArray response) {
-		JSONArray result = response;
+	/**
+	 * Creates an error JSONArray.
+	 * @param errorCode -inf - 0
+	 * @return Returns an error message in JSONArray if the errorCode <= 0 else returns unknown error.
+	 */
+	public JSONArray setError(int errorCode) {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONArray result = new JSONArray();
+		JSONObject errmsg = new JSONObject();
 		
-		if (result.size() > 0) { // The response is not empty.
-			while(result.size() > 0) {
-				result.remove(0);
-			}
+		if (errorCode <= 0) { // everithing is okey
+			errmsg.put("error", new Integer(errorCode));
+		} else { 
+			logger.error(getClass().getName() + methodName + "errorCode > 0");
+			errmsg.put("error", new Integer(-1));
 		}
 		
-		JSONObject errmsg = new JSONObject();
-		errmsg.put("error", new Integer(errorCode));
 		result.add(errmsg);
+		
+		return result;
+	}
+	
+	public JSONArray addString(String key, String element, JSONArray response) {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONArray result = response;
+		
+		if (key == null) {
+			logger.error(getClass().getName() + methodName + "parameter: key is null");
+			return setError(-1);
+		}
+		
+		if (result == null) {
+			result = new JSONArray();
+		}
+		
+		JSONObject obj = new JSONObject();
+		obj.put(key, element);
+		result.add(obj);
 		
 		return result;
 	}
 	
 	/**
 	 * Appends response with the parameter element, if the response were null create a new response with the parameter element.
-	 * @param key
+	 * @param key is not null.
 	 * @param element
-	 * @param response
-	 * @return
+	 * @param response 
+	 * @return unknown error if the parameter: key is null, else response appended with the new element.
 	 */
 	public JSONArray addInt(String key, int element, JSONArray response) {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONArray result = response;
+		
+		if (key == null) {
+			logger.error(getClass().getName() + methodName + "parameter: key is null");
+			return setError(-1);
+		}
 		
 		if (result == null) {
 			result = new JSONArray();
@@ -47,27 +79,81 @@ public class BaseCommandOperations {
 		return result;
 	}
 	
-	
-	
-	// Getter methods
-	
-	public String getString(int index, String key, JSONArray request) {
+	public JSONArray addBool(String key, boolean element, JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONArray result = response;
 		
-		String result = null;
-	
-		if (index <= request.size()) {
-			JSONObject obj = request.getJSONObject(index);
-			try {
-				result = obj.getString(key);
-			} catch (JSONException e) {
-				logger.error(getClass().getName() + methodName + e);
-				result = null;
-			}
+		if (key == null) {
+			logger.error(getClass().getName() + methodName + "parameter: key is null");
+			return setError(-1);
 		}
+		
+		if (result == null) {
+			result = new JSONArray();
+		}
+		
+		JSONObject obj = new JSONObject();
+		obj.put(key, new Boolean(element));
+		result.add(obj);
 		
 		return result;
 	}
+	
+	// Getter methods
+	
+	/**
+	 * 
+	 * @param index
+	 * @param key
+	 * @param request
+	 * @return
+	 * @throws IllegalStateException if the request do not contains the given element.
+	 */
+	public String getString(int index, String key, JSONArray request) throws IllegalStateException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		String result = null;
+		
+		try {
+			JSONObject obj = request.getJSONObject(index);
+			result = obj.getString(key);
+			
+			return result;
+		} catch (JSONException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw new IllegalStateException(e);
+		}	
+	}
+	
+	public int getInt(int index, String key, JSONArray request) throws IllegalStateException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int result = 0;
+		
+		try {
+			JSONObject obj = request.getJSONObject(index);
+			result = obj.getInt(key);
+			
+			return result;
+		} catch (JSONException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw new IllegalStateException(e);
+		}	
+	}
+	
+	public boolean getBool(int index, String key, JSONArray request) throws IllegalStateException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		boolean result = false;
+		
+		try {
+			JSONObject obj = request.getJSONObject(index);
+			result = obj.getBoolean(key);
+			
+			return result;
+		} catch (JSONException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw new IllegalStateException(e);
+		}	
+	}
+	
 	
 	// Others
 	

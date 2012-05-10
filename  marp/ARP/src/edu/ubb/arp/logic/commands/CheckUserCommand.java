@@ -2,10 +2,10 @@ package edu.ubb.arp.logic.commands;
 
 import java.sql.SQLException;
 
+import net.sf.json.JSONArray;
+
 import org.apache.log4j.Logger;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
@@ -31,7 +31,7 @@ public class CheckUserCommand extends BaseCommandOperations implements Command {
 			
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
-			response = setError(0, response);
+			response = setError(0);
 		}
 		
 	}
@@ -41,18 +41,27 @@ public class CheckUserCommand extends BaseCommandOperations implements Command {
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
+		String userName = null;
+		String password = null;
 		
-		String userName = getString(0,"username",request);
-		String password = getString(1,"password",request);
-
+		try {
+			userName = getString(0,"username",request);
+			password = getString(1,"password",request);
+		} catch (IllegalStateException e) {
+			logger.error(getClass().getName() + methodName + e);
+			response = setError(-1);
+		}
+		
 		if (!errorCheck(response)) {
-
 			try {
 				int userExists = userDao.checkUserNameAndPassword(userName, HashCoding.hashString(password));
 				addInt("existsuser", userExists, response);
-			} catch (SQLException | BllExceptions e) {
+			} catch (SQLException e) {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
-				response = setError(0, response);
+				response = setError(0);
+			} catch (BllExceptions e1) {
+				logger.error(getClass().getName() + methodName + "SQL Exception: " + e1);
+				response = setError(-1);
 			}
 		}
 		

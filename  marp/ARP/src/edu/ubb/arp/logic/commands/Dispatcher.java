@@ -1,7 +1,6 @@
 package edu.ubb.arp.logic.commands;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 
@@ -20,7 +19,7 @@ public class Dispatcher extends BaseCommandOperations {
 	
 		if (request.size() < 3) { // The request is empty.
 			logger.error(getClass().getName() + methodName + "The request is empty.");
-			response = setError(0, response);
+			response = setError(0);
 		}
 
 	}
@@ -29,7 +28,6 @@ public class Dispatcher extends BaseCommandOperations {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 
-		System.out.println(response.toString());
 		if (response.isEmpty()) { // There were not SQLException
 			Integer commandCode = request.getJSONObject(2).getInt("command");
 

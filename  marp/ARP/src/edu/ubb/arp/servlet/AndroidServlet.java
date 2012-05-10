@@ -35,18 +35,19 @@ public class AndroidServlet extends HttpServlet {
 		JSONObject fromObject1 = new JSONObject();
 		JSONObject fromObject2 = new JSONObject();
 		JSONObject fromObject3 = new JSONObject();
-		fromObject1.put("username", new String("K1321"));
+		fromObject1.put("username", new String("KKK"));
 		fromObject2.put("password", new Integer(1234));
 		fromObject3.put("command", new Integer(1));
-		
 		
 		JSONArray result = new JSONArray();
 		result.add(fromObject1);
 		result.add(fromObject2);
 		result.add(fromObject3);
 		 
-		 Dispatcher d = new Dispatcher(result);
-		 JSONArray ggg = d.getResult();
+		Dispatcher d = new Dispatcher(result);
+		 
+		
+		JSONArray ggg = d.getResult();
 
 		 System.out.println(ggg.toString());
 		/*
