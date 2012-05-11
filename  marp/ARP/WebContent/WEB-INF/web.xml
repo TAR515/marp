@@ -14,6 +14,13 @@
     <url-pattern>/AndroidServlet</url-pattern>
   </servlet-mapping>
   
+  <servlet> 
+    <servlet-name>InitServlet</servlet-name>
+    <servlet-class>edu.ubb.arp.servlet.InitServlet</servlet-class>
+    <load-on-startup>1</load-on-startup> 
+  </servlet>
+  
+  
   <resource-ref>
       <description>DB Connection</description>
       <res-ref-name>jdbc/ARPDB</res-ref-name>

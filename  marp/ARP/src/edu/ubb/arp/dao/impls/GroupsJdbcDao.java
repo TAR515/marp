@@ -17,7 +17,7 @@ public class GroupsJdbcDao extends BaseDao implements GroupsDao {
 		super(dataSource);
 	}
 
-	public int createGroup(String groupName) throws SQLException{
+	public void createGroup(String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -37,7 +37,7 @@ public class GroupsJdbcDao extends BaseDao implements GroupsDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -47,10 +47,9 @@ public class GroupsJdbcDao extends BaseDao implements GroupsDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int updateGroup(String oldGroupName, String newGroupName) throws SQLException {
+	public void updateGroup(String oldGroupName, String newGroupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -71,7 +70,7 @@ public class GroupsJdbcDao extends BaseDao implements GroupsDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -81,10 +80,9 @@ public class GroupsJdbcDao extends BaseDao implements GroupsDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int deleteGroup(String groupName) throws SQLException {
+	public void deleteGroup(String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -104,7 +102,7 @@ public class GroupsJdbcDao extends BaseDao implements GroupsDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -114,7 +112,6 @@ public class GroupsJdbcDao extends BaseDao implements GroupsDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
 	@Override

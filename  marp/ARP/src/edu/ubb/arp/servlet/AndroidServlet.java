@@ -2,6 +2,7 @@ package edu.ubb.arp.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,10 +14,12 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 
-import edu.ubb.arp.dao.model.Users;
+import edu.ubb.arp.dao.DaoFactory;
+import edu.ubb.arp.dao.GroupsDao;
+import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
+import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.ResourceOperations;
 import edu.ubb.arp.logic.UserOperation;
-import edu.ubb.arp.logic.commands.Dispatcher;
 
 public class AndroidServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -43,13 +46,29 @@ public class AndroidServlet extends HttpServlet {
 		result.add(fromObject1);
 		result.add(fromObject2);
 		result.add(fromObject3);
-		 
-		Dispatcher d = new Dispatcher(result);
+		 System.out.println(result);
+		//Dispatcher d = new Dispatcher(result);
 		 
 		
-		JSONArray ggg = d.getResult();
+		//JSONArray ggg = d.getResult();
 
-		 System.out.println(ggg.toString());
+		// System.out.println(ggg.toString());
+		 
+		 try {
+			DaoFactory df = JdbcDaoFactory.getInstance();
+			GroupsDao gd = df.getGroupsDao();
+			
+			gd.createGroup("Group10");
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("SQL probelm");
+			e.printStackTrace();
+		} catch (DalException e) {
+			System.out.println(e.getErrorCode());
+			e.printStackTrace();
+		}
+		 
 		/*
 		 * try { resourceOperations = new ResourceOperations();
 		 * 
@@ -59,6 +78,7 @@ public class AndroidServlet extends HttpServlet {
 		 */
 		//ProbeOperations pr = new ProbeOperations();
 		//pr.ProbeOperation();
+ 
 		
 
 	}

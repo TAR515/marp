@@ -32,7 +32,7 @@ public class Dispatcher extends BaseCommandOperations {
 			Integer commandCode = request.getJSONObject(2).getInt("command");
 
 			switch (commandCode) {
-			case 1: // check user
+			case 0: // check user
 				command = new CheckUserCommand(request);
 				response = command.execute();
 				break;

@@ -24,4 +24,6 @@ public class DalErrorMessages {
 	public static int errMessageToCode(String errorMessage) {
 		return Integer.parseInt(properties.getProperty(errorMessage));
 	}
+	
+	
 }
