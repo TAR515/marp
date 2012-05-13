@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 
 import edu.ubb.arp.dao.ProjectsDao;
 import edu.ubb.arp.datastructures.Booking;
-import edu.ubb.arp.exceptions.DalErrorMessages;
 import edu.ubb.arp.exceptions.DalException;
 
 public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
@@ -20,7 +19,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		super(dataSource);
 	}
 
-	public void createProject(String userName, List<Integer> ratio, String projectName, boolean openStatus, int startWeek,
+	public int createProject(String userName, List<Integer> ratio, String projectName, boolean openStatus, int startWeek,
 			int deadLine, String nextRelease, String statusName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -32,7 +31,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		try {
 			connection = getConnection();
 
-			createJustProject(projectName, openStatus, startWeek, deadLine, nextRelease, statusName, connection);
+			errmsg = createJustProject(projectName, openStatus, startWeek, deadLine, nextRelease, statusName, connection);
 
 			addUserToUserInProject(projectName, userName, Boolean.TRUE, connection);
 
@@ -48,7 +47,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
 		} catch(DalException e1) {
-			logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 			throw e1;
 		} finally {
 			closeSQLObjects(connection, null, null);
@@ -56,6 +55,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
 	}
 
 	public void addUserToProject(String projectName, String userName, List<Integer> week, List<Integer> ratio, boolean isLeader)
@@ -77,7 +77,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
 		} catch(DalException e1) {
-			logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 			throw e1;
 		} finally {
 			closeSQLObjects(connection, null, null);
@@ -102,7 +102,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
 		} catch(DalException e1) {
-			logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 			throw e1;
 		} finally {
 			closeSQLObjects(connection, null, null);
@@ -129,7 +129,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -161,7 +161,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -193,7 +193,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -225,7 +225,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -257,7 +257,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -289,7 +289,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -321,7 +321,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -353,7 +353,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -385,7 +385,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -417,7 +417,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -450,7 +450,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -483,7 +483,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -516,7 +516,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -566,14 +566,14 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 				throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
 			} catch (DalException e1) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw e1;
 			} finally {
 				closeSQLObjects(connection, null, null);
 				logger.debug(getClass().getName() + methodName + "-> EXIT");
 			}
 		} else {
-			logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(-5));
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-5));
 			throw new DalException(-5); // WRONG_PARAMETERS
 		}
 
@@ -613,7 +613,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 				}
 
 				if (errmsg < 0) {
-					logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+					logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 					throw new DalException(errmsg);
 				}
 				connection.commit();
@@ -621,14 +621,14 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 				throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
 			} catch(DalException e) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw e;
 			} finally {
 				closeSQLObjects(connection, null, null);
 				logger.debug(getClass().getName() + methodName + "-> EXIT");
 			}
 		} else {
-			logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(-5));
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-5));
 			throw new DalException(-5); // WRONG_PARAMETERS
 		}
 
@@ -656,7 +656,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 			connection.commit();
@@ -739,7 +739,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 		} catch (SQLException e) {
@@ -785,7 +785,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 						addUserToBookingForMoreWeekByUserName(projectName, userName, fromWeek, w - 1, currentRatio,
 							isLeader, con);
 					} catch(DalException e) {
-						logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+						logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 						throw e;
 					}
 					currentRatio = r;
@@ -793,7 +793,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 				}
 			}
 		} else {
-			logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(-5));
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-5));
 			throw new DalException(-5); // WRONG_PARAMETERS
 		}
 
@@ -836,7 +836,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg) + " " + startWeek
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg) + " " + startWeek
 						+ " - " + endWeek);
 				throw new DalException(errmsg);
 			}
@@ -941,7 +941,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 				}
 			}
 		} else {
-			logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(-5));
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(-5));
 			throw new DalException(-5); // WRONG_PARAMETERS
 		}
 
@@ -981,7 +981,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 				}
 			}
 		} else {
-			logger.error(getClass().getName() + DalErrorMessages.errCodeToMessage(-5));
+			logger.error(getClass().getName() + DalException.errCodeToMessage(-5));
 			throw new DalException(-5); // WRONG_PARAMETERS
 		}
 
@@ -1046,7 +1046,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 		} catch (SQLException e) {
@@ -1080,7 +1080,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 		} catch (SQLException e) {
@@ -1118,7 +1118,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 		} catch (SQLException e) {
@@ -1141,7 +1141,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 	 * @param con
 	 * @return errmsg
 	 * @throws SQLException */
-	private void createJustProject(String projectName, boolean openStatus, int startWeek, int deadLine, String nextRelease,
+	private int createJustProject(String projectName, boolean openStatus, int startWeek, int deadLine, String nextRelease,
 			String statusName, Connection con) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -1165,7 +1165,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt.executeUpdate();
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
 		} catch (SQLException e) {
@@ -1174,34 +1174,66 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		} finally {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
-	/*
-	 * public List<Booking> loadBooking(int projectID) throws SQLException, DalException { String methodName = "." +
-	 * Thread.currentThread().getStackTrace()[1].getMethodName() + "() "; int errmsg = 0; logger.debug(getClass().getName() +
-	 * methodName + "-> START");
-	 * 
-	 * Connection connection = null; java.sql.CallableStatement stmt = null; try { connection = getConnection(); stmt =
-	 * createProcedure(connection, "!!!", 2);
-	 * 
-	 * int paramIndex = 1; setInt(stmt, paramIndex++, projectID); stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
-	 * 
-	 * stmt.executeUpdate(); errmsg = stmt.getInt("Oerrmsg"); if (errmsg < 0) { logger.error(getClass().getName() + methodName +
-	 * DalException.errCodeToMessage(errmsg)); throw new DalException(errmsg); } connection.commit(); } catch (SQLException e) {
-	 * logger.error(getClass().getName() + methodName + "SQL Exception: " + e); throw new SQLException(getClass().getName() +
-	 * methodName + "SQL Exception: ", e); } finally { closeSQLObjects(connection, null, stmt); logger.debug(getClass().getName() +
-	 * methodName + "-> EXIT"); } return errmsg; }
-	 */
+	
+	@Override
+	public List<Booking> loadBooking(int projectID) throws SQLException, DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		List<Booking> result = new ArrayList<Booking>();
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		ResultSet rs = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "load_booking_by_project_id", 2);
+
+			int paramIndex = 1;
+			setInteger(stmt, paramIndex++, projectID);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			rs = stmt.executeQuery();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg);
+			}
+			
+			while (rs.next()) { 
+				result.add(fillBooking(rs)); 
+			}
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return result;
+	}
+	
+	protected Booking fillBooking(ResultSet rs) throws SQLException {
+		Booking result = new Booking();
+
+		result.setProjectID(getInt(rs, "ProjectID"));
+		result.setResourceID(getInt(rs, "ResourceID"));
+		result.setWeek(getInt(rs, "Week"));
+		result.setRatio(getInt(rs, "Ratio"));
+		result.setLeader(getBool(rs, "IsLeader"));
+
+		return result;
+	}
+	
 	@Override
 	protected Object fillObject(ResultSet rs) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public List<Booking> loadBooking(int projectID) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 }

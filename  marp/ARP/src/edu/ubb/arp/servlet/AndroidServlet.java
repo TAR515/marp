@@ -2,7 +2,6 @@ package edu.ubb.arp.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,20 +13,13 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 
-import edu.ubb.arp.dao.DaoFactory;
-import edu.ubb.arp.dao.GroupsDao;
-import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
-import edu.ubb.arp.exceptions.DalException;
-import edu.ubb.arp.logic.ResourceOperations;
-import edu.ubb.arp.logic.UserOperation;
+import edu.ubb.arp.logic.commands.Dispatcher;
 
 public class AndroidServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected Logger logger = Logger.getLogger(AndroidServlet.class);
 
-	UserOperation userOperation = new UserOperation();
-	ResourceOperations resourceOperations = null;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
@@ -38,28 +30,34 @@ public class AndroidServlet extends HttpServlet {
 		JSONObject fromObject1 = new JSONObject();
 		JSONObject fromObject2 = new JSONObject();
 		JSONObject fromObject3 = new JSONObject();
-		fromObject1.put("username", new String("KKK"));
+		JSONObject fromObject4 = new JSONObject();
+		fromObject1.put("username", new String("Juuuh333"));
 		fromObject2.put("password", new Integer(1234));
-		fromObject3.put("command", new Integer(1));
+		fromObject3.put("command", new Integer(131));
+		//fromObject4.put("newusername", "Juuuh333");
 		
 		JSONArray result = new JSONArray();
 		result.add(fromObject1);
 		result.add(fromObject2);
 		result.add(fromObject3);
+		//result.add(fromObject4);
 		 System.out.println(result);
-		//Dispatcher d = new Dispatcher(result);
+		Dispatcher d = new Dispatcher(result);
 		 
-		
-		//JSONArray ggg = d.getResult();
+		JSONArray ggg = d.getResult();
 
-		// System.out.println(ggg.toString());
+	 System.out.println(ggg.toString());
 		 
-		 try {
+		 /*try {
 			DaoFactory df = JdbcDaoFactory.getInstance();
-			GroupsDao gd = df.getGroupsDao();
+			ProjectsDao p = df.getProjectsDao();
 			
-			gd.createGroup("Group10");
+			List<Integer> asd = new ArrayList<Integer>();
+			asd.add(1);
 			
+			
+			List<Booking> er = p.loadBooking(1); 
+			System.out.println(er.toString());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			System.out.println("SQL probelm");
@@ -67,7 +65,7 @@ public class AndroidServlet extends HttpServlet {
 		} catch (DalException e) {
 			System.out.println(e.getErrorCode());
 			e.printStackTrace();
-		}
+		}*/
 		 
 		/*
 		 * try { resourceOperations = new ResourceOperations();

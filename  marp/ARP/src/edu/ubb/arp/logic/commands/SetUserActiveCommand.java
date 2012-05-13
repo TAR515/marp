@@ -10,17 +10,18 @@ import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.BllExceptions;
+import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.HashCoding;
 
-public class CheckUserCommand extends BaseCommandOperations implements Command {
-	private static final Logger logger = Logger.getLogger(CheckUserCommand.class);
+public class SetUserActiveCommand extends BaseCommandOperations implements Command {
+	private static final Logger logger = Logger.getLogger(SetUserActiveCommand.class);
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private UsersDao userDao = null;
 	
 	
-	public CheckUserCommand(JSONArray request) {
+	public SetUserActiveCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
 		try {
@@ -32,7 +33,8 @@ public class CheckUserCommand extends BaseCommandOperations implements Command {
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			response = setError(0);
-		}	
+		}
+		
 	}
 	
 	
@@ -41,11 +43,11 @@ public class CheckUserCommand extends BaseCommandOperations implements Command {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 		String userName = null;
-		String password = null;
+		Boolean active = false;
 		
 		try {
 			userName = getString(0,"username",request);
-			password = getString(1,"password",request);
+			active = getBool(3,"active", request);
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			response = setError(-1);
@@ -53,19 +55,14 @@ public class CheckUserCommand extends BaseCommandOperations implements Command {
 		
 		if (!errorCheck(response)) {
 			try {
-				int errmsg = userDao.checkUserNameAndPassword(userName, HashCoding.hashString(password));
-				
-				if (errmsg <= 0) {
-					response = setError(errmsg);
-				} else {
-					response = addInt("existsuser", errmsg, response);
-				}
+				int userFired = userDao.setActive(userName, active);
+				addInt("userfired", userFired, response);
+			} catch (DalException e) {
+				logger.error(getClass().getName() + methodName + e.getErrorMessage());
+				response = setError(e.getErrorCode());	
 			} catch (SQLException e) {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 				response = setError(0);
-			} catch (BllExceptions e1) {
-				logger.error(getClass().getName() + methodName + e1);
-				response = setError(-1);
 			}
 		}
 		

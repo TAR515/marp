@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.RequestsDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
-import edu.ubb.arp.exceptions.DalErrorMessages;
+import edu.ubb.arp.exceptions.DalException;
 
 public class TimerThread implements Runnable {
 	private static final Logger logger = Logger.getLogger(JdbcDaoFactory.class);
@@ -44,14 +44,17 @@ public class TimerThread implements Runnable {
 					instance = JdbcDaoFactory.getInstance();
 					requests = instance.getRequestsDao();	
 					
-					errmsg = requests.removeExpiredRequests(currentWeek);
+					requests.removeExpiredRequests(currentWeek);
 					if (errmsg < 0) {
-						logger.error(getClass().getName() + methodName + DalErrorMessages.errCodeToMessage(errmsg));
+						logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 					}
 				}
 
 			} catch (InterruptedException e) {
 				logger.error(getClass().getName() + methodName + "InterruptedException: " + e);
+				e.printStackTrace();
+			} catch (DalException e) {
+				logger.error(getClass().getName() + methodName + e.getErrorMessage());
 				e.printStackTrace();
 			} catch (SQLException e) {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);

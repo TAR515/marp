@@ -3,22 +3,24 @@ package edu.ubb.arp.dao;
 import java.sql.SQLException;
 import java.util.List;
 
+import edu.ubb.arp.exceptions.DalException;
+
 public interface RequestsDao {
 
-	public int createNewRequestForUser(List<Integer> week, List<Integer> ratio, String senderUserName, String targetUserName,
-			String projectName) throws SQLException;
+	public void createNewRequestForUser(List<Integer> week, List<Integer> ratio, String senderUserName, String targetUserName,
+			String projectName) throws SQLException, DalException;
 	
-	public int createNewRequestForResource(List<Integer> week, List<Integer> ratio, String senderUserName,
-			String targetResourceName, String projectName) throws SQLException;
+	public void createNewRequestForResource(List<Integer> week, List<Integer> ratio, String senderUserName,
+			String targetResourceName, String projectName) throws SQLException, DalException;
 	
-	public int updateRequestRatioOfUser(List<Integer> week, List<Integer> ratio, String senderUserName,
-			String targetUserName, String projectName) throws SQLException;
+	public void updateRequestRatioOfUser(List<Integer> week, List<Integer> ratio, String senderUserName,
+			String targetUserName, String projectName) throws SQLException, DalException;
 	
-	public int updateRequestRatioOfResource(List<Integer> week, List<Integer> ratio, String senderUserName,
-			String targetResourceName, String projectName) throws SQLException;
+	public void updateRequestRatioOfResource(List<Integer> week, List<Integer> ratio, String senderUserName,
+			String targetResourceName, String projectName) throws SQLException, DalException;
 	
-	public int removeRequestFromSomebody(int resourceID, int requestID, int projectID) throws SQLException;
+	public void removeRequestFromSomebody(int resourceID, int requestID, int projectID) throws SQLException, DalException;
 	
-	public int removeExpiredRequests(int currentWeek) throws SQLException;
+	public void removeExpiredRequests(int currentWeek) throws SQLException, DalException;
 	
 }

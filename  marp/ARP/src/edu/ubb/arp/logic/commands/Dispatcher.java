@@ -36,6 +36,42 @@ public class Dispatcher extends BaseCommandOperations {
 				command = new CheckUserCommand(request);
 				response = command.execute();
 				break;
+			case 101: // insert user
+				command = new InsertNewUserCommand(request);
+				response = command.execute();
+				break;
+			case 111: // fire / hire user
+				command = new SetUserActiveCommand(request);
+				response = command.execute();
+				break;
+			case 121: // change user name
+				command = new ChangeUserNameCommand(request);
+				response = command.execute();
+				break;
+			case 122: // change user password
+				command = new ChangeUserPasswordCommand(request);
+				response = command.execute();
+				break;
+			case 123: // change user email
+				command = new ChangeUserEmailCommand(request);
+				response = command.execute();
+				break;
+			case 124: // change user phone number
+				command = new ChangeUserPhoneNumberCommand(request);
+				response = command.execute();
+				break;
+			case 125: // change user resource name
+				command = new ChangeUserResourceNameCommand(request);
+				response = command.execute();
+				break;
+			case 130: // get active projects
+				command = new LoadProjectsUserIsWorkingOnCommand(request);
+				response = command.execute();
+				break;
+			case 131: // get user data
+				command = new LoadUserDataCommand(request);
+				response = command.execute();
+				break;
 			default:
 				System.out.println("default command");
 				break;

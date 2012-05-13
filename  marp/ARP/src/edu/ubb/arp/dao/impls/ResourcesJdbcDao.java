@@ -3,6 +3,8 @@ package edu.ubb.arp.dao.impls;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -11,6 +13,7 @@ import edu.ubb.arp.dao.ResourcesDao;
 import edu.ubb.arp.dao.model.Groups;
 import edu.ubb.arp.dao.model.ResourceTypes;
 import edu.ubb.arp.dao.model.Resources;
+import edu.ubb.arp.dao.model.Users;
 import edu.ubb.arp.exceptions.DalException;
 
 public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
@@ -25,7 +28,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 
 	@Override
 	public int createResource(String resourceName, boolean active, String resourceTypeName, String resourceGroupName)
-			throws SQLException {
+			throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -48,7 +51,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -61,32 +64,10 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		return errmsg;
 	}
 
-	public int createResource(Resources resource) throws SQLException {
-		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
-		int errmsg = 0;
-		int errmsg2 = 0;
-		logger.debug(getClass().getName() + methodName + "-> START");
-
-		if (resource.getGroups().size() != 0) {
-			errmsg = createResource(resource.getResourceName(), resource.isActive(), resource.getResourceTypes()
-					.getResourceTypeName(), resource.getGroups().get(0).getGroupName());
-			if (errmsg > 0) { // createResource successfully
-				resource.getGroups().remove(0);
-				errmsg2 = addResourceToGroups(resource, resource.getGroups());
-			}
-			if (errmsg2 < 0) { // if is an error while add resources into groups the returned errmsg get that error code too.
-				errmsg = errmsg2;
-			}
-		} else
-			throw new NullPointerException(getClass().getName() + methodName + "Null Pointer: resource.groups = NULL");
-
-		return errmsg;
-	}
-
 	@Override
-	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName, String oldResourceGroupName,
-			String newResourceName, boolean newActive, String newResourceTypeName, String newResourceGroupName)
-					throws SQLException {
+	public void updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName,
+			String oldResourceGroupName, String newResourceName, boolean newActive, String newResourceTypeName,
+			String newResourceGroupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -113,7 +94,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -123,10 +104,9 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int setActive(String resourceName, boolean active) throws SQLException {
+	public void setActive(String resourceName, boolean active) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -147,7 +127,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -157,10 +137,9 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int addResourceToGroup(String resourceName, String groupName) throws SQLException {
+	public void addResourceToGroup(String resourceName, String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -180,7 +159,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -190,47 +169,60 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
-	
-	public int addResourceToGroup(Resources resource, Groups group) throws SQLException {
-		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
-		int errmsg = 0;
-		logger.debug(getClass().getName() + methodName + "-> START");
-		errmsg = addResourceToGroup(resource.getResourceName(), group.getGroupName());
-		logger.debug(getClass().getName() + methodName + "-> EXIT");
-		return errmsg;
-	}
-	
-	public int addResourceToGroups(String resourceName, String[] groupName) throws SQLException {
+
+	public void addResourceToGroup(Resources resource, Groups group) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
 
-		int i = 0;
-		while (errmsg >= 0 && i < groupName.length) {
-			errmsg = addResourceToGroup(resourceName, groupName[i++]);
+		try {
+			addResourceToGroup(resource.getResourceName(), group.getGroupName());
+		} catch (DalException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+			throw e;
+		} finally {
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-
-		logger.debug(getClass().getName() + methodName + "-> EXIT");
-		return errmsg;
 	}
-	
-	public int addResourceToGroups(Resources resource, List<Groups> groups) throws SQLException {
+
+	public void addResourceToGroups(String resourceName, String[] groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
 
-		int i = 0;
-		while (errmsg >= 0 && i < groups.size()) {
-			errmsg = addResourceToGroup(resource, groups.get(i++));
+		try {
+			int i = 0;
+			while (errmsg >= 0 && i < groupName.length) {
+				addResourceToGroup(resourceName, groupName[i++]);
+			}
+		} catch (DalException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+			throw e;
+		} finally {
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-
-		logger.debug(getClass().getName() + methodName + "-> EXIT");
-		return errmsg;
 	}
-	
-	public int removeResourceFromGroup(String resourceName, String groupName) throws SQLException {
+
+	public void addResourceToGroups(Resources resource, List<Groups> groups) throws SQLException, DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		try {
+			int i = 0;
+			while (errmsg >= 0 && i < groups.size()) {
+				addResourceToGroup(resource, groups.get(i++));
+			}
+		} catch (DalException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+			throw e;
+		} finally {
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+	}
+
+	public void removeResourceFromGroup(String resourceName, String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -250,7 +242,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -260,35 +252,24 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int removeResourceFromGroup(Resources resource, Groups group) throws SQLException {
+	public void removeResourceFromGroup(Resources resource, Groups group) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
-		errmsg = removeResourceFromGroup(resource.getResourceName(), group.getGroupName());
-		logger.debug(getClass().getName() + methodName + "-> EXIT");
-		return errmsg;
+
+		try {
+			removeResourceFromGroup(resource.getResourceName(), group.getGroupName());
+		} catch (DalException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+			throw e;
+		} finally {
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+
 	}
-	
-	/*
-	 * Kell ra tarolt eljaras
-	 * 
-	 * @Override public Resources LoadResourceByID(int id) throws DalException { logger.debug(getClass().getName() +
-	 * ".LoadResourceByID() -> START");
-	 * 
-	 * Resources retvalue = new Resources(); Connection connection = null; java.sql.CallableStatement stmt = null; ResultSet rs = null;
-	 * try { connection = getConnection(); stmt = createProcedure(connection, "load_resource_by_id", 1);
-	 * 
-	 * int paramIndex = 1; setInteger(stmt, paramIndex++, id);
-	 * 
-	 * rs = stmt.executeQuery(); while (rs.next()) { retvalue = (Resources) fillObject(rs); } } catch (SQLException e) {
-	 * logger.error(getClass().getName() + ".LoadResourceByID() -> NO_CONNECTION"); throw new DalException(DalException.NO_CONNECTION,
-	 * e); } finally { closeSQLObjects(connection, rs, stmt); logger.debug(getClass().getName() + ".LoadResourceByID() -> EXIT"); }
-	 * 
-	 * return retvalue; }
-	 */
+
 	/*
 	 * Kell ra tarolt eljaras!
 	 * 
@@ -307,6 +288,72 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 	 * return retvalue; }
 	 */
 
+	public List<Resources> loadResources(List<Integer> resourceID) throws DalException, SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		List<Resources> result = new ArrayList<Resources>();
+		Connection connection = null;
+		logger.debug(getClass().getName() + methodName + "-> START");
+		
+		try {
+			connection = getConnection();
+			
+			Iterator<Integer> it = resourceID.iterator();
+			
+			while(it.hasNext()) {
+				result.add(loadResource(it.next(),connection));
+			}
+		} catch(SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		}catch (DalException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+			throw e;
+		} finally {
+			closeSQLObjects(connection, null, null);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return result;
+	}
+	
+	
+	private Resources loadResource(int resourceID, Connection con) throws SQLException, DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		Resources result = null;
+		logger.debug(getClass().getName() + methodName + "-> START");
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = con;
+			stmt = createProcedure(connection, "load_resource_by_resource_id", 2);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, resourceID);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			rs = stmt.executeQuery();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg);
+			}
+			
+			while (rs.next()) { 
+				result = (Resources) fillObject(rs); 
+			}
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(null, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return result;
+	}
+	
+	
 	@Override
 	protected Object fillObject(ResultSet rs) throws SQLException {
 		Resources resource = new Resources();
@@ -314,12 +361,19 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		resource.setResourceID(getLong(rs, "ResourceID").intValue());
 		resource.setResourceName(getString(rs, "ResourceName"));
 		resource.setActive(getBool(rs, "Active"));
+		
 		ResourceTypes rt = new ResourceTypes();
-
-		rt.setResourceTypesID(getLong(rs, "ResourceTypeID").intValue());
 		rt.setResourceTypeName(getString(rs, "ResourceTypeName"));
 		resource.setResourceTypes(rt);
-
+		
+		try {
+			Users users = new Users();
+			users.setUserName(getString(rs, "UserName"));
+			resource.setUsers(users);
+		} catch(SQLException e) {
+			resource.setUsers(null);
+		}
+		
 		return resource;
 	}
 

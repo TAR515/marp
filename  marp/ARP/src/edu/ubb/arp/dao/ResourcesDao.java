@@ -22,28 +22,28 @@ public interface ResourcesDao {
 	 * @throws DalException
 	 *             The exception contains ErrorCode and ErrorMessage of the problem that arises */
 	public int createResource(String resourceName, boolean active, String resourceTypeName, String resourceGroupName)
-			throws SQLException;
-
-	public int createResource(Resources resource) throws SQLException;
+			throws SQLException, DalException;
 	
-	public int setActive(String resourceName, boolean active) throws SQLException;
+	public void setActive(String resourceName, boolean active) throws SQLException, DalException;
 
-	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName, String oldResourceGroupName,
+	public void updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName, String oldResourceGroupName,
 			String newResourceName, boolean newActive, String newResourceTypeName, String newResourceGroupName)
-					throws SQLException;
+					throws SQLException, DalException;
 
-	public int addResourceToGroup(String resourceName, String groupName) throws SQLException;
+	public void addResourceToGroup(String resourceName, String groupName) throws SQLException, DalException;
 	
-	public int addResourceToGroup(Resources resource, Groups group) throws SQLException;
+	public void addResourceToGroup(Resources resource, Groups group) throws SQLException, DalException;
 
-	public int addResourceToGroups(String resourceName, String[] groupNames) throws SQLException;
+	public void addResourceToGroups(String resourceName, String[] groupNames) throws SQLException, DalException;
 	
-	public int addResourceToGroups(Resources resource, List<Groups> groups) throws SQLException;
+	public void addResourceToGroups(Resources resource, List<Groups> groups) throws SQLException, DalException;
 	
-	public int removeResourceFromGroup(String resourceName, String groupName) throws SQLException;
+	public void removeResourceFromGroup(String resourceName, String groupName) throws SQLException, DalException;
 	
-	public int removeResourceFromGroup(Resources resource, Groups group) throws SQLException;
+	public void removeResourceFromGroup(Resources resource, Groups group) throws SQLException, DalException;
 
+	public List<Resources> loadResources(List<Integer> resourceID) throws DalException, SQLException;
+	
 	/*
 	 * public Resources LoadResourceByID(int id) throws DalException;
 	 * 

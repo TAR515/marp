@@ -8,7 +8,7 @@ import edu.ubb.arp.exceptions.DalException;
 
 public interface ProjectsDao {
 
-	public void createProject(String userName, List<Integer> ratio, String projectName, boolean openStatus, int startWeek,
+	public int createProject(String userName, List<Integer> ratio, String projectName, boolean openStatus, int startWeek,
 			int deadLine, String nextRelease, String statusName) throws SQLException, DalException;
 
 	public void addUserToProject(String projectName, String userName, List<Integer> week, List<Integer> ratio, boolean isLeader)
@@ -49,6 +49,6 @@ public interface ProjectsDao {
 	
 	public void updateUserIsLeader(String projectName, String userName, int currentWeek, boolean isLeader) throws SQLException, DalException;
 	
-	public List<Booking> loadBooking(int projectID) throws SQLException;
-
+	public List<Booking> loadBooking(int projectID) throws SQLException, DalException;
+	
 }

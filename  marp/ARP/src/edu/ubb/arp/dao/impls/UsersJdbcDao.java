@@ -26,7 +26,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 	}
 
 	public int createUser(String userName, byte[] password, String phoneNumber, String email, String resourceName,
-			boolean active, String resourceGroupName) throws SQLException {
+			boolean active, String resourceGroupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -52,7 +52,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -65,14 +65,13 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		return errmsg;
 	}
 
-	public int changeUserName(String oldUserName, String newUserName) throws SQLException {
+	public int changeUserName(String oldUserName, String newUserName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
 
 		Connection connection = null;
 		java.sql.CallableStatement stmt = null;
-		ResultSet rs = null;
 		try {
 			connection = getConnection();
 			stmt = createProcedure(connection, "update_user_name_by_user_name", 3);
@@ -86,20 +85,20 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
 		} finally {
-			closeSQLObjects(connection, rs, stmt);
+			closeSQLObjects(connection, null, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
 		return errmsg;
 	}
 
-	public int changePassword(String userName, byte[] oldPassword, byte[] newPassword) throws SQLException {
+	public int changePassword(String userName, byte[] oldPassword, byte[] newPassword) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -121,7 +120,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -134,7 +133,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		return errmsg;
 	}
 
-	public int changeEmail(String userName, String newEmail) throws SQLException {
+	public int changeEmail(String userName, String newEmail) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -155,7 +154,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -168,7 +167,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		return errmsg;
 	}
 
-	public int changePhoneNumber(String userName, String newPhoneNumber) throws SQLException {
+	public int changePhoneNumber(String userName, String newPhoneNumber) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -189,7 +188,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -202,7 +201,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		return errmsg;
 	}
 
-	public int changeResourceName(String userName, String newResourceName) throws SQLException {
+	public int changeResourceName(String userName, String newResourceName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -223,7 +222,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -236,7 +235,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		return errmsg;
 	}
 
-	public int changeUserName(int userID, String newUserName) throws SQLException {
+	public void changeUserName(int userID, String newUserName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -257,7 +256,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -267,10 +266,9 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int changePassword(int userID, byte[] oldPassword, byte[] newPassword) throws SQLException {
+	public void changePassword(int userID, byte[] oldPassword, byte[] newPassword) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -292,7 +290,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -302,10 +300,9 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int changeEmail(int userID, String newEmail) throws SQLException {
+	public void changeEmail(int userID, String newEmail) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -326,7 +323,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -336,10 +333,9 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int changePhoneNumber(int userID, String newPhoneNumber) throws SQLException {
+	public void changePhoneNumber(int userID, String newPhoneNumber) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -360,7 +356,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -370,10 +366,9 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int changeResourceName(int userID, String newResourceName) throws SQLException {
+	public void changeResourceName(int userID, String newResourceName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -394,7 +389,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -404,10 +399,9 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int setActive(String userName, boolean active) throws SQLException {
+	public int setActive(String userName, boolean active) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -428,7 +422,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -441,7 +435,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		return errmsg;
 	}
 
-	public int addUserToGroup(String userName, String groupName) throws SQLException {
+	public void addUserToGroup(String userName, String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -462,7 +456,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -472,10 +466,9 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int addUserToGroup(Users user, Groups group) throws SQLException {
+	public void addUserToGroup(Users user, Groups group) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -496,7 +489,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -506,38 +499,45 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
-	public int addUserToGroup(String userName, String[] groupNames) throws SQLException {
+	public void addUserToGroup(String userName, String[] groupNames) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
 
-		int i = 0;
-		while (errmsg >= 0 && i < groupNames.length) {
-			errmsg = addUserToGroup(userName, groupNames[i++]);
+		try {
+			int i = 0;
+			while (errmsg >= 0 && i < groupNames.length) {
+				addUserToGroup(userName, groupNames[i++]);
+			}
+		} catch(DalException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+			throw e;
+		} finally {
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-
-		logger.debug(getClass().getName() + methodName + "-> EXIT");
-		return errmsg;
 	}
 
-	public int addUserToGroups(Users user, List<Groups> groups) throws SQLException {
+	public void addUserToGroups(Users user, List<Groups> groups) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
-
-		int i = 0;
-		while (errmsg >= 0 && i < groups.size()) {
-			errmsg = addUserToGroup(user, groups.get(i++));
+		
+		try {
+			int i = 0;
+			while (errmsg >= 0 && i < groups.size()) {
+				addUserToGroup(user, groups.get(i++));
+			}
+		} catch(DalException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+			throw e;
+		} finally {
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-
-		logger.debug(getClass().getName() + methodName + "-> EXIT");
-		return errmsg;
 	}
 
-	public int removeUserFromGroup(String userName, String groupName) throws SQLException {
+	public void removeUserFromGroup(String userName, String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -558,7 +558,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return errmsg;
+				throw new DalException(errmsg);
 			}
 			connection.commit();
 		} catch (SQLException e) {
@@ -568,7 +568,6 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
-		return errmsg;
 	}
 
 	/** @param userName
@@ -610,9 +609,11 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 	/** @param userName
 	 * @return null if the user do not exists or he/she doesn't work on any project else returns the projects he/she is working on.
 	 * @throws SQLException */
-	public HashMap<String, Boolean> getAllActiveProjects(String userName) throws SQLException {
+	public HashMap<String, Boolean> getAllActiveProjects(String userName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
+		String projectName = null;
+		Boolean isLeader = null;
 		logger.debug(getClass().getName() + methodName + "-> START");
 		HashMap<String, Boolean> resoult = new HashMap<String, Boolean>();
 
@@ -631,16 +632,14 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return null;
+				throw new DalException(errmsg);
 			}
-			String projectName = null;
-			Boolean isLeader = null;
 
 			while (rs.next()) {
 				projectName = getString(rs, "ProjectName");
 				isLeader = getBool(rs, "IsLeader");
 				resoult.put(projectName, isLeader);
-			}
+			}	
 
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
@@ -653,7 +652,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 	}
 
 	@Override
-	public Users loadUser(String userName) throws SQLException {
+	public Users loadUser(String userName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -676,7 +675,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			errmsg = stmt.getInt("Oerrmsg");
 			if (errmsg < 0) {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				return null;
+				throw new DalException(errmsg);
 			}
 			while (rs.next()) {
 				user = (Users) fillObject(rs);
