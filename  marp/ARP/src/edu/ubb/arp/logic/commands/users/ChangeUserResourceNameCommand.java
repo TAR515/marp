@@ -1,37 +1,33 @@
-package edu.ubb.arp.logic.commands;
+package edu.ubb.arp.logic.commands.users;
 
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 
 import edu.ubb.arp.dao.DaoFactory;
-import edu.ubb.arp.dao.ProjectsDao;
+import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
-import edu.ubb.arp.dao.model.Projects;
-import edu.ubb.arp.dao.model.ResourcesWorkingOnProject;
 import edu.ubb.arp.exceptions.DalException;
+import edu.ubb.arp.logic.commands.BaseCommandOperations;
+import edu.ubb.arp.logic.commands.Command;
 
-public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations implements Command{
-	private static final Logger logger = Logger.getLogger(LoadProjectsUserIsWorkingOnCommand.class);
+public class ChangeUserResourceNameCommand extends BaseCommandOperations implements Command {
+	private static final Logger logger = Logger.getLogger(ChangeUserResourceNameCommand.class);
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
-	private ProjectsDao projectsDao = null;
+	private UsersDao userDao = null;
 	
 	
-	public LoadProjectsUserIsWorkingOnCommand(JSONArray request) {
+	public ChangeUserResourceNameCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
 		try {
 			this.response = new JSONArray();
 			this.instance = JdbcDaoFactory.getInstance();
-			this.projectsDao = instance.getProjectsDao();
+			this.userDao = instance.getUsersDao();
 			this.request = request;
 			
 		} catch (SQLException e) {
@@ -47,10 +43,11 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 		String userName = null;
-		List<ResourcesWorkingOnProject> activeProjects = null;
+		String newResourceName = null;
 		
 		try {
 			userName = getString(0,"username",request);
+			newResourceName = getString(0,"newresourcename",request);
 			
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
@@ -59,30 +56,12 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 		
 		if (!errorCheck(response)) {
 			try {
-				activeProjects = projectsDao.getAllActiveProjects(userName);
-	
-				Iterator<ResourcesWorkingOnProject> itr = activeProjects.iterator();
-				ResourcesWorkingOnProject current = null;
+				int userResourceNameChanged = userDao.changeResourceName(userName, newResourceName);
+				response = addInt("userresourcenamechanged", userResourceNameChanged, response);
 				
-				while(itr.hasNext()) {
-					JSONObject project = new JSONObject();
-					current = itr.next();
-					
-					project.put("projectid", current.getProjectID());
-					project.put("projectname", current.getProjectName());
-					project.put("openedstatus", current.isOpenedStatus());
-					project.put("startweek", current.getStartWeek());
-					project.put("deadline", current.getDeadLine());
-					project.put("nextrelease", current.getNextRelease());
-					project.put("statusname", current.getStatusName());
-					project.put("isleader", current.isLeader());
-					
-					response.add(project);
-				}
-					
 			} catch (DalException e) {
 				logger.error(getClass().getName() + methodName + e.getErrorMessage());
-				response = setError(e.getErrorCode());
+				response = setError(e.getErrorCode());	
 			} catch (SQLException e) {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 				response = setError(0);

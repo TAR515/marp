@@ -3,7 +3,6 @@ package edu.ubb.arp.dao;
 import java.sql.SQLException;
 import java.util.List;
 
-import edu.ubb.arp.dao.model.Projects;
 import edu.ubb.arp.dao.model.ResourcesWorkingOnProject;
 import edu.ubb.arp.datastructures.Booking;
 import edu.ubb.arp.exceptions.DalException;
@@ -19,15 +18,15 @@ public interface ProjectsDao {
 	public void addResourceToProject(String projectName, String resourceName, List<Integer> week, List<Integer> ratio)
 			throws SQLException, DalException;
 
-	public void setOpenStatus(int projectID, boolean openStatus) throws SQLException, DalException;
+	public int setOpenStatus(int projectID, boolean openStatus) throws SQLException, DalException;
 
 	public void setOpenStatus(String projectName, boolean openStatus) throws SQLException, DalException;
 
-	public void setProjectName(int projectID, String newProjectName) throws SQLException, DalException;
+	public int setProjectName(int projectID, String newProjectName) throws SQLException, DalException;
 
 	public void setProjectName(String oldProjectName, String newProjectName) throws SQLException, DalException;
 
-	public void setDeadLine(int projectID, int newDeadLine) throws SQLException, DalException;
+	public int setDeadLine(int projectID, int newDeadLine) throws SQLException, DalException;
 
 	public void setDeadLine(String projectName, int newDeadLine) throws SQLException, DalException;
 

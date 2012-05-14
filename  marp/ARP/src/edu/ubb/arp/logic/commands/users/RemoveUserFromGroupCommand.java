@@ -1,4 +1,4 @@
-package edu.ubb.arp.logic.commands;
+package edu.ubb.arp.logic.commands.users;
 
 import java.sql.SQLException;
 
@@ -10,23 +10,25 @@ import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
+import edu.ubb.arp.logic.commands.BaseCommandOperations;
+import edu.ubb.arp.logic.commands.Command;
 
-public class ChangeUserPhoneNumberCommand extends BaseCommandOperations implements Command {
-	private static final Logger logger = Logger.getLogger(ChangeUserPhoneNumberCommand.class);
+public class RemoveUserFromGroupCommand extends BaseCommandOperations implements Command{
+	private static final Logger logger = Logger.getLogger(RemoveUserFromGroupCommand.class);
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private UsersDao userDao = null;
 	
-	
-	public ChangeUserPhoneNumberCommand(JSONArray request) {
+	public RemoveUserFromGroupCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
 		try {
 			this.response = new JSONArray();
 			this.instance = JdbcDaoFactory.getInstance();
 			this.userDao = instance.getUsersDao();
-			this.request = request;	
+			this.request = request;
+			
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			response = setError(0);
@@ -34,38 +36,41 @@ public class ChangeUserPhoneNumberCommand extends BaseCommandOperations implemen
 		
 	}
 	
-	
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
+		
 		String userName = null;
-		String newPhoneNumber = null;
+		String groupName = null; 
 		
 		try {
 			userName = getString(0,"username",request);
-			newPhoneNumber = getString(0,"newphonenumber",request);
+			groupName = getString(0,"groupname",request);
 			
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
+			System.out.println("illegal state exception");
 			response = setError(-1);
 		}
 		
 		if (!errorCheck(response)) {
 			try {
-				int userPhoneNumberChanged = userDao.changePhoneNumber(userName, newPhoneNumber);
-				response = addInt("userphonenumberchanged", userPhoneNumberChanged, response);
-			} catch (DalException e) {
+				int userRemovedFromoGroup = userDao.removeUserFromGroup(userName, groupName);
+				response = addInt("userremovedfromgroup", userRemovedFromoGroup, response);
+			}
+			catch (DalException e) {
 				logger.error(getClass().getName() + methodName + e.getErrorMessage());
 				response = setError(e.getErrorCode());
-			} catch (SQLException e) {
+			}
+			catch (SQLException e) {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 				response = setError(0);
-			} 
+			}
 		}
 		
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
 		return response;
-	}
 
+	}
 }

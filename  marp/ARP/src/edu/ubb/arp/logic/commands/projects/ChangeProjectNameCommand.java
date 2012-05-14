@@ -1,4 +1,4 @@
-package edu.ubb.arp.logic.commands;
+package edu.ubb.arp.logic.commands.projects;
 
 import java.sql.SQLException;
 
@@ -7,25 +7,26 @@ import net.sf.json.JSONArray;
 import org.apache.log4j.Logger;
 
 import edu.ubb.arp.dao.DaoFactory;
-import edu.ubb.arp.dao.UsersDao;
+import edu.ubb.arp.dao.ProjectsDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
+import edu.ubb.arp.logic.commands.BaseCommandOperations;
+import edu.ubb.arp.logic.commands.Command;
 
-public class ChangeUserEmailCommand extends BaseCommandOperations implements Command {
-	private static final Logger logger = Logger.getLogger(ChangeUserEmailCommand.class);
+public class ChangeProjectNameCommand extends BaseCommandOperations implements Command {
+	private static final Logger logger = Logger.getLogger(ChangeProjectNameCommand.class);
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
-	private UsersDao userDao = null;
+	private ProjectsDao projectDao = null;
 	
-	
-	public ChangeUserEmailCommand(JSONArray request) {
+	public ChangeProjectNameCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
 		try {
 			this.response = new JSONArray();
 			this.instance = JdbcDaoFactory.getInstance();
-			this.userDao = instance.getUsersDao();
+			this.projectDao = instance.getProjectsDao();
 			this.request = request;
 			
 		} catch (SQLException e) {
@@ -35,38 +36,41 @@ public class ChangeUserEmailCommand extends BaseCommandOperations implements Com
 		
 	}
 	
-	
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
-		String userName = null;
-		String newEmail = null;
+		
+		int projectID = 0;
+		String newProjectName = null; 
 		
 		try {
-			userName = getString(0,"username",request);
-			newEmail = getString(0,"newemail",request);
+			projectID = getInt(0,"projectid",request);
+			newProjectName = getString(0,"newprojectname",request);
 			
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
+			System.out.println("illegal state exception");
 			response = setError(-1);
 		}
 		
 		if (!errorCheck(response)) {
 			try {
-				int userEmailChanged = userDao.changeEmail(userName, newEmail);
-				response = addInt("useremailchanged", userEmailChanged, response);
-			} catch (DalException e) {
+				int projectNameChanged = projectDao.setProjectName(projectID, newProjectName);
+				response = addInt("projectnamechanged", projectNameChanged, response);
+			}
+			catch (DalException e) {
 				logger.error(getClass().getName() + methodName + e.getErrorMessage());
 				response = setError(e.getErrorCode());
-			} catch (SQLException e) {
+			}
+			catch (SQLException e) {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 				response = setError(0);
-			} 
+			}
 		}
 		
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
 		return response;
-	}
 
+	}
 }

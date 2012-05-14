@@ -111,7 +111,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 	}
 
-	public void setOpenStatus(int projectID, boolean newOpenStatus) throws SQLException, DalException {
+	public int setOpenStatus(int projectID, boolean newOpenStatus) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -141,6 +141,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			closeSQLObjects(connection, null, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
 	public void setOpenStatus(String projectName, boolean newOpenStatus) throws SQLException, DalException {
@@ -175,7 +176,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 	}
 
-	public void setProjectName(int projectID, String newProjectName) throws SQLException, DalException {
+	public int setProjectName(int projectID, String newProjectName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -205,6 +206,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			closeSQLObjects(connection, null, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
 	public void setProjectName(String oldProjectName, String newProjectName) throws SQLException, DalException {
@@ -239,7 +241,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		}
 	}
 
-	public void setDeadLine(int projectID, int newDeadLine) throws SQLException, DalException {
+	public int setDeadLine(int projectID, int newDeadLine) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -269,6 +271,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			closeSQLObjects(connection, null, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
 	public void setDeadLine(String projectName, int newDeadLine) throws SQLException, DalException {

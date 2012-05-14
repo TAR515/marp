@@ -11,10 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 
-import edu.ubb.arp.logic.commands.Dispatcher;
+import edu.ubb.arp.logic.Dispatcher;
 
 public class AndroidServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -31,8 +32,8 @@ public class AndroidServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.print("Client ip: " + request.getRemoteAddr());
-		System.out.print(" User-Agent: " + request.getHeader("user-agent"));
+		System.out.println("[!	Client ip: " + request.getRemoteAddr());
+		System.out.println("	  User-Agent: " + request.getHeader("user-agent"));
 	
 		StringBuilder sb = new StringBuilder();
 	    BufferedReader br = request.getReader();
@@ -40,7 +41,7 @@ public class AndroidServlet extends HttpServlet {
 	    while( (str = br.readLine()) != null ){
 	        sb.append(str);
 	    }    
-	    System.out.println(sb.toString() );
+	    System.out.println("  	Keres: " + sb.toString() );
 	    
 	    try {
 	        JSONArray requestArray = new JSONArray();
@@ -54,7 +55,20 @@ public class AndroidServlet extends HttpServlet {
 			
 	        responseArray = dp.getResult();
 	    }
-	    System.out.println(" Valasz: " + responseArray.toString());
+		
+		/*JSONObject o = new JSONObject();
+		o.put("username", "Juuuh333");
+		o.put("command", 130);
+		o.put("password", "fuck");
+		
+		JSONArray a = new JSONArray();
+		a.add(o);
+		
+		 dp = new Dispatcher(a);
+			
+	    responseArray = dp.getResult();
+		*/
+	    System.out.println(" 	Valasz: " + responseArray.toString());
         PrintWriter out = response.getWriter();
 		out.println(responseArray);
 	}
