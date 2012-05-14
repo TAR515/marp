@@ -47,8 +47,6 @@ public interface UsersDao {
 
 	public Users loadUser(String userName) throws SQLException, DalException;
 	
-	public HashMap<String, Boolean> getAllActiveProjects(String userName) throws SQLException, DalException;
-	
 	public int checkUserNameAndPassword(String userName, byte[] password) throws SQLException;
 
 }

@@ -3,13 +3,14 @@ package edu.ubb.arp.dao.impls;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.model.Groups;
+import edu.ubb.arp.dao.model.Projects;
 import edu.ubb.arp.dao.model.ResourceTypes;
 import edu.ubb.arp.dao.model.Resources;
 import edu.ubb.arp.dao.model.Users;
@@ -606,51 +607,6 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		return errmsg;
 	}
 
-	/** @param userName
-	 * @return null if the user do not exists or he/she doesn't work on any project else returns the projects he/she is working on.
-	 * @throws SQLException */
-	public HashMap<String, Boolean> getAllActiveProjects(String userName) throws SQLException, DalException {
-		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
-		int errmsg = 0;
-		String projectName = null;
-		Boolean isLeader = null;
-		logger.debug(getClass().getName() + methodName + "-> START");
-		HashMap<String, Boolean> resoult = new HashMap<String, Boolean>();
-
-		Connection connection = null;
-		java.sql.CallableStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			connection = getConnection();
-			stmt = createProcedure(connection, "load_projects_user_is_working_on", 2);
-
-			int paramIndex = 1;
-			setString(stmt, paramIndex++, userName);
-			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
-
-			rs = stmt.executeQuery();
-			errmsg = stmt.getInt("Oerrmsg");
-			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				throw new DalException(errmsg);
-			}
-
-			while (rs.next()) {
-				projectName = getString(rs, "ProjectName");
-				isLeader = getBool(rs, "IsLeader");
-				resoult.put(projectName, isLeader);
-			}	
-
-		} catch (SQLException e) {
-			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
-			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
-		} finally {
-			closeSQLObjects(connection, rs, stmt);
-			logger.debug(getClass().getName() + methodName + "-> EXIT");
-		}
-		return resoult;
-	}
-
 	@Override
 	public Users loadUser(String userName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
@@ -690,7 +646,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 
 		return user;
 	}
-
+	
 	@Override
 	protected Object fillObject(ResultSet rs) throws SQLException {
 		Users retValue = new Users();

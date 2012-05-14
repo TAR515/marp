@@ -46,7 +46,7 @@ public class ChangeUserNameCommand extends BaseCommandOperations implements Comm
 		
 		try {
 			oldUserName = getString(0,"username",request);
-			newUserName = getString(3,"newusername", request);
+			newUserName = getString(0,"newusername", request);
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			response = setError(-1);

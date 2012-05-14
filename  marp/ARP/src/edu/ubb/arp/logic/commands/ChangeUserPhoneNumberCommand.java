@@ -44,7 +44,7 @@ public class ChangeUserPhoneNumberCommand extends BaseCommandOperations implemen
 		
 		try {
 			userName = getString(0,"username",request);
-			newPhoneNumber = getString(3,"newphonenumber",request);
+			newPhoneNumber = getString(0,"newphonenumber",request);
 			
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);

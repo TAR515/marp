@@ -47,7 +47,7 @@ public class SetUserActiveCommand extends BaseCommandOperations implements Comma
 		
 		try {
 			userName = getString(0,"username",request);
-			active = getBool(3,"active", request);
+			active = getBool(0,"active", request);
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			response = setError(-1);

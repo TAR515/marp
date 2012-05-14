@@ -45,7 +45,7 @@ public class ChangeUserResourceNameCommand extends BaseCommandOperations impleme
 		
 		try {
 			userName = getString(0,"username",request);
-			newResourceName = getString(3,"newresourcename",request);
+			newResourceName = getString(0,"newresourcename",request);
 			
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);

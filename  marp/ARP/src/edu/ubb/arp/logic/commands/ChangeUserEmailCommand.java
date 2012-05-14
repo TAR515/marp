@@ -45,7 +45,7 @@ public class ChangeUserEmailCommand extends BaseCommandOperations implements Com
 		
 		try {
 			userName = getString(0,"username",request);
-			newEmail = getString(3,"newemail",request);
+			newEmail = getString(0,"newemail",request);
 			
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);

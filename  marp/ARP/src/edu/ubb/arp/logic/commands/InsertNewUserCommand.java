@@ -50,12 +50,12 @@ public class InsertNewUserCommand extends BaseCommandOperations implements Comma
 		
 		try {
 			userName = getString(0,"username",request);
-			password = getString(1,"password",request);
-			phoneNumber = getString(3,"phonenumber",request);
-			email = getString(4,"email",request);
-			resourceName = getString(5,"resourcename",request);
-			active = getBool(6, "active", request);
-			resourceGroupName = getString(7,"resourcegroupname",request);
+			password = getString(0,"password",request);
+			phoneNumber = getString(0,"phonenumber",request);
+			email = getString(0,"email",request);
+			resourceName = getString(0,"resourcename",request);
+			active = getBool(0, "active", request);
+			resourceGroupName = getString(0,"resourcegroupname",request);
 			
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);

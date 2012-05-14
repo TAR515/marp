@@ -4,12 +4,16 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import edu.ubb.arp.dao.ProjectsDao;
+import edu.ubb.arp.dao.model.Projects;
+import edu.ubb.arp.dao.model.Resources;
+import edu.ubb.arp.dao.model.Statuses;
 import edu.ubb.arp.datastructures.Booking;
 import edu.ubb.arp.exceptions.DalException;
 
@@ -1226,6 +1230,68 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		result.setLeader(getBool(rs, "IsLeader"));
 
 		return result;
+	}
+	
+	public List<Projects> getAllActiveProjects(String userName) throws SQLException, DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+		List<Projects> resoult = null;
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			resoult = new ArrayList<Projects>();
+			stmt = createProcedure(connection, "load_projects_user_is_working_on", 2);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, userName);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			rs = stmt.executeQuery();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg);
+			}
+
+			while (rs.next()) {
+				resoult.add(fillProjectsWithIsLeader(rs));
+			}	
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return resoult;
+	}
+
+	
+	protected Projects fillProjectsWithIsLeader(ResultSet rs) throws SQLException {
+		Projects retValue = new Projects();
+		Statuses statuses = new Statuses();
+		Booking booking = new Booking();
+		HashMap<Resources, Booking> bookings = new HashMap<Resources, Booking>();
+		Resources r = new Resources();
+		
+		statuses.setStatusName(getString(rs, "StatusName"));
+		booking.setLeader(getBool(rs, "IsLeader"));
+		bookings.put(r, booking);
+		
+		retValue.setProjectID(getInt(rs, "ProjectID"));
+		retValue.setProjectName(getString(rs, "ProjectName"));
+		retValue.setOpenedStatus(getBool(rs, "OpenedStatus"));
+		retValue.setStartWeek(getInt(rs, "StartWeek"));
+		retValue.setDeadLine(getInt(rs, "Deadline"));
+		retValue.setNextRelease(getString(rs, "NextRelease"));
+		retValue.setCurrentStatus(statuses);
+		retValue.setBooking(bookings);
+			
+		return retValue;
 	}
 	
 	@Override

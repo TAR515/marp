@@ -48,8 +48,8 @@ public class ChangeUserPasswordCommand extends BaseCommandOperations implements 
 		
 		try {
 			userName = getString(0,"username",request);
-			oldPassword = getString(1,"password", request);
-			newPassword = getString(3,"newpassword",request);
+			oldPassword = getString(0,"password", request);
+			newPassword = getString(0,"newpassword",request);
 			
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);

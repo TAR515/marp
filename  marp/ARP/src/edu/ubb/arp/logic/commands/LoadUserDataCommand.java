@@ -46,8 +46,7 @@ public class LoadUserDataCommand extends BaseCommandOperations implements Comman
 		String userName = null;
 		
 		try {
-			userName = getString(0,"username",request);
-			
+			userName = getString(0,"username",request);	
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			response = setError(-1);
@@ -56,7 +55,7 @@ public class LoadUserDataCommand extends BaseCommandOperations implements Comman
 		if (!errorCheck(response)) {
 			try {
 				user = userDao.loadUser(userName);
-				
+
 				JSONObject userData = new JSONObject();
 				userData.put("userid", user.getUserID());
 				userData.put("username", user.getUserName());

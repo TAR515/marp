@@ -1,8 +1,8 @@
 package edu.ubb.arp.logic.commands;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import net.sf.json.JSONArray;
@@ -11,8 +11,10 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 
 import edu.ubb.arp.dao.DaoFactory;
+import edu.ubb.arp.dao.ProjectsDao;
 import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
+import edu.ubb.arp.dao.model.Projects;
 import edu.ubb.arp.exceptions.DalException;
 
 public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations implements Command{
@@ -20,7 +22,7 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
-	private UsersDao userDao = null;
+	private ProjectsDao projectsDao = null;
 	
 	
 	public LoadProjectsUserIsWorkingOnCommand(JSONArray request) {
@@ -29,7 +31,7 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 		try {
 			this.response = new JSONArray();
 			this.instance = JdbcDaoFactory.getInstance();
-			this.userDao = instance.getUsersDao();
+			this.projectsDao = instance.getProjectsDao();
 			this.request = request;
 			
 		} catch (SQLException e) {
@@ -42,10 +44,11 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 	
 	@Override
 	public JSONArray execute() {
-		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		return request;
+		/*String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 		String userName = null;
-		HashMap<String, Boolean> activeProjects = null;
+		List<Projects> activeProjects = null;
 		
 		try {
 			userName = getString(0,"username",request);
@@ -57,7 +60,7 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 		
 		if (!errorCheck(response)) {
 			try {
-				activeProjects = userDao.getAllActiveProjects(userName);
+				activeProjects = projectsDao.getAllActiveProjects(userName);
 	
 				Set<String> s = activeProjects.keySet();
 				Iterator<String> i = s.iterator();
@@ -82,7 +85,7 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 		}
 		
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
-		return response;
+		return response;*/
 	}
 
 }

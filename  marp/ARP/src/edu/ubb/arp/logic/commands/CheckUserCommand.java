@@ -45,7 +45,7 @@ public class CheckUserCommand extends BaseCommandOperations implements Command {
 		
 		try {
 			userName = getString(0,"username",request);
-			password = getString(1,"password",request);
+			password = getString(0,"password",request);
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			response = setError(-1);

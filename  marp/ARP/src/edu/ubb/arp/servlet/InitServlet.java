@@ -11,15 +11,22 @@ import edu.ubb.arp.logic.TimerThread;
 public class InitServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Logger logger = Logger.getLogger(AndroidServlet.class);
-
+	private TimerThread object = null;
+	Thread thread = null;
+	
 	  public void init(ServletConfig config) throws ServletException {
 	    super.init(config);
 	    logger.debug("SERVER STARTED");
 	    
 	    
-	    TimerThread object = new TimerThread(); ;
-		Thread thread = new Thread(object);
+	    object = new TimerThread(); ;
+		thread = new Thread(object);
 		thread.start();
 	    
+	  }
+	  
+	  public void destroy() {                                          
+		  thread.stop();
+		  thread.destroy();
 	  }
 }

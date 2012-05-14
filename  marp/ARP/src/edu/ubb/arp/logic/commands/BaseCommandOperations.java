@@ -177,4 +177,9 @@ public class BaseCommandOperations {
 		return false;
 	}
 	
+	
+	// Getters from JSONARRAY
+	
+	
+	
 }
