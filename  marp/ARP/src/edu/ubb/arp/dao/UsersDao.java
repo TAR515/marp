@@ -1,7 +1,6 @@
 package edu.ubb.arp.dao;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 
 import edu.ubb.arp.dao.model.Groups;
@@ -35,15 +34,15 @@ public interface UsersDao {
 	
 	public int setActive(String userName, boolean active) throws SQLException, DalException;
 	
-	public void addUserToGroup(String userName, String groupName) throws SQLException, DalException;
+	public int addUserToGroup(String userName, String groupName) throws SQLException, DalException;
 	
-	public void addUserToGroup(Users user, Groups group) throws SQLException, DalException;
+	public int addUserToGroup(Users user, Groups group) throws SQLException, DalException;
 	
-	public void addUserToGroup(String userName, String[] groupName) throws SQLException, DalException;
+	public int addUserToGroup(String userName, String[] groupName) throws SQLException, DalException;
 	
-	public void addUserToGroups(Users users, List<Groups> groups) throws SQLException, DalException;
+	public int addUserToGroups(Users users, List<Groups> groups) throws SQLException, DalException;
 	
-	public void removeUserFromGroup(String userName, String groupName) throws SQLException, DalException;
+	public int removeUserFromGroup(String userName, String groupName) throws SQLException, DalException;
 
 	public Users loadUser(String userName) throws SQLException, DalException;
 	

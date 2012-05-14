@@ -22,6 +22,11 @@ public class AndroidServlet extends HttpServlet {
 
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out = response.getWriter();
+		out.println("This is an Android Server.");
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		StringBuilder sb = new StringBuilder();
 	    BufferedReader br = request.getReader();
 	    String str;
@@ -38,10 +43,6 @@ public class AndroidServlet extends HttpServlet {
 
 		PrintWriter out = response.getWriter();
 		out.println(responseArray);
-	}
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
 	}
 
 }

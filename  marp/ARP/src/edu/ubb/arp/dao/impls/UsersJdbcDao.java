@@ -3,14 +3,12 @@ package edu.ubb.arp.dao.impls;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.model.Groups;
-import edu.ubb.arp.dao.model.Projects;
 import edu.ubb.arp.dao.model.ResourceTypes;
 import edu.ubb.arp.dao.model.Resources;
 import edu.ubb.arp.dao.model.Users;
@@ -436,7 +434,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		return errmsg;
 	}
 
-	public void addUserToGroup(String userName, String groupName) throws SQLException, DalException {
+	public int addUserToGroup(String userName, String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -467,9 +465,10 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
-	public void addUserToGroup(Users user, Groups group) throws SQLException, DalException {
+	public int addUserToGroup(Users user, Groups group) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -500,9 +499,10 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
-	public void addUserToGroup(String userName, String[] groupNames) throws SQLException, DalException {
+	public int addUserToGroup(String userName, String[] groupNames) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -510,7 +510,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		try {
 			int i = 0;
 			while (errmsg >= 0 && i < groupNames.length) {
-				addUserToGroup(userName, groupNames[i++]);
+				errmsg = addUserToGroup(userName, groupNames[i++]);
 			}
 		} catch(DalException e) {
 			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
@@ -518,9 +518,10 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		} finally {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
-	public void addUserToGroups(Users user, List<Groups> groups) throws SQLException, DalException {
+	public int addUserToGroups(Users user, List<Groups> groups) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -528,7 +529,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		try {
 			int i = 0;
 			while (errmsg >= 0 && i < groups.size()) {
-				addUserToGroup(user, groups.get(i++));
+				errmsg = addUserToGroup(user, groups.get(i++));
 			}
 		} catch(DalException e) {
 			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
@@ -536,9 +537,10 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		} finally {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
-	public void removeUserFromGroup(String userName, String groupName) throws SQLException, DalException {
+	public int removeUserFromGroup(String userName, String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -569,6 +571,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
 	/** @param userName

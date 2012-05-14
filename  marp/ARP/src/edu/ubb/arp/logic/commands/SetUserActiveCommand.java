@@ -9,9 +9,7 @@ import org.apache.log4j.Logger;
 import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
-import edu.ubb.arp.exceptions.BllExceptions;
 import edu.ubb.arp.exceptions.DalException;
-import edu.ubb.arp.logic.HashCoding;
 
 public class SetUserActiveCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(SetUserActiveCommand.class);
