@@ -4,16 +4,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import edu.ubb.arp.dao.ProjectsDao;
-import edu.ubb.arp.dao.model.Projects;
-import edu.ubb.arp.dao.model.Resources;
-import edu.ubb.arp.dao.model.Statuses;
+import edu.ubb.arp.dao.model.ResourcesWorkingOnProject;
 import edu.ubb.arp.datastructures.Booking;
 import edu.ubb.arp.exceptions.DalException;
 
@@ -1232,18 +1229,18 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		return result;
 	}
 	
-	public List<Projects> getAllActiveProjects(String userName) throws SQLException, DalException {
+	public List<ResourcesWorkingOnProject> getAllActiveProjects(String userName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
-		List<Projects> resoult = null;
+		List<ResourcesWorkingOnProject> resoult = null;
 
 		Connection connection = null;
 		java.sql.CallableStatement stmt = null;
 		ResultSet rs = null;
 		try {
 			connection = getConnection();
-			resoult = new ArrayList<Projects>();
+			resoult = new ArrayList<ResourcesWorkingOnProject>();
 			stmt = createProcedure(connection, "load_projects_user_is_working_on", 2);
 
 			int paramIndex = 1;
@@ -1271,16 +1268,8 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 	}
 
 	
-	protected Projects fillProjectsWithIsLeader(ResultSet rs) throws SQLException {
-		Projects retValue = new Projects();
-		Statuses statuses = new Statuses();
-		Booking booking = new Booking();
-		HashMap<Resources, Booking> bookings = new HashMap<Resources, Booking>();
-		Resources r = new Resources();
-		
-		statuses.setStatusName(getString(rs, "StatusName"));
-		booking.setLeader(getBool(rs, "IsLeader"));
-		bookings.put(r, booking);
+	protected ResourcesWorkingOnProject fillProjectsWithIsLeader(ResultSet rs) throws SQLException {
+		ResourcesWorkingOnProject retValue = new ResourcesWorkingOnProject();
 		
 		retValue.setProjectID(getInt(rs, "ProjectID"));
 		retValue.setProjectName(getString(rs, "ProjectName"));
@@ -1288,8 +1277,8 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		retValue.setStartWeek(getInt(rs, "StartWeek"));
 		retValue.setDeadLine(getInt(rs, "Deadline"));
 		retValue.setNextRelease(getString(rs, "NextRelease"));
-		retValue.setCurrentStatus(statuses);
-		retValue.setBooking(bookings);
+		retValue.setStatusName(getString(rs, "StatusName"));
+		retValue.setLeader(getBool(rs, "IsLeader"));
 			
 		return retValue;
 	}

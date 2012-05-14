@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import edu.ubb.arp.dao.model.Projects;
+import edu.ubb.arp.dao.model.ResourcesWorkingOnProject;
 import edu.ubb.arp.datastructures.Booking;
 import edu.ubb.arp.exceptions.DalException;
 
@@ -52,5 +53,5 @@ public interface ProjectsDao {
 	
 	public List<Booking> loadBooking(int projectID) throws SQLException, DalException;
 	
-	public List<Projects> getAllActiveProjects(String userName) throws SQLException, DalException;
+	public List<ResourcesWorkingOnProject> getAllActiveProjects(String userName) throws SQLException, DalException;
 }

@@ -17,7 +17,7 @@ public class Dispatcher extends BaseCommandOperations {
 		this.response = new JSONArray();
 		this.request = request;
 	
-		if (request.getJSONObject(0).size() < 3) { // The request is empty.
+		if (request == null || request.getJSONObject(0).size() < 3) { // The request is empty.
 			logger.error(getClass().getName() + methodName + "The request is empty.");
 			response = setError(0);
 		}
@@ -88,5 +88,4 @@ public class Dispatcher extends BaseCommandOperations {
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
 		return response;
 	}
-
 }

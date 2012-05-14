@@ -1,14 +1,21 @@
 package edu.ubb.arp.logic.commands;
 
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 
 import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.ProjectsDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
+import edu.ubb.arp.dao.model.Projects;
+import edu.ubb.arp.dao.model.ResourcesWorkingOnProject;
+import edu.ubb.arp.exceptions.DalException;
 
 public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations implements Command{
 	private static final Logger logger = Logger.getLogger(LoadProjectsUserIsWorkingOnCommand.class);
@@ -37,11 +44,10 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 	
 	@Override
 	public JSONArray execute() {
-		return request;
-		/*String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 		String userName = null;
-		List<Projects> activeProjects = null;
+		List<ResourcesWorkingOnProject> activeProjects = null;
 		
 		try {
 			userName = getString(0,"username",request);
@@ -55,16 +61,21 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 			try {
 				activeProjects = projectsDao.getAllActiveProjects(userName);
 	
-				Set<String> s = activeProjects.keySet();
-				Iterator<String> i = s.iterator();
-				while(i.hasNext()) {
-					Object key = i.next();
-					Object value = activeProjects.get(key);
-					
+				Iterator<ResourcesWorkingOnProject> itr = activeProjects.iterator();
+				ResourcesWorkingOnProject current = null;
+				
+				while(itr.hasNext()) {
 					JSONObject project = new JSONObject();
+					current = itr.next();
+					project.put("projectid", current.getProjectID());
+					project.put("projectname", current.getProjectName());
+					project.put("openedstatus", current.isOpenedStatus());
+					project.put("startweek", current.getStartWeek());
+					project.put("deadline", current.getDeadLine());
+					project.put("nextrelease", current.getNextRelease());
+					project.put("statusname", current.getStatusName());
+					project.put("isleader", current.isLeader());
 					
-					project.put("projectname",key);
-					project.put("isleader",value);
 					response.add(project);
 				}
 					
@@ -78,7 +89,7 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 		}
 		
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
-		return response;*/
+		return response;
 	}
 
 }
