@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.CheckUserCommand;
 import edu.ubb.arp.logic.commands.Command;
+import edu.ubb.arp.logic.commands.LoadProjectTableCommand;
 import edu.ubb.arp.logic.commands.LoadProjectsUserIsWorkingOnCommand;
 import edu.ubb.arp.logic.commands.LoadUserDataCommand;
 import edu.ubb.arp.logic.commands.projects.ChangeProjectDeadlineCommand;
@@ -53,6 +54,10 @@ public class Dispatcher extends BaseCommandOperations {
 				switch (commandCode) {
 				case 0: // check user
 					command = new CheckUserCommand(request);
+					response = command.execute();
+					break;
+				case 1: 
+					command = new LoadProjectTableCommand(request);
 					response = command.execute();
 					break;
 				case 101: // insert user

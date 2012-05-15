@@ -3,7 +3,6 @@ package edu.ubb.arp.logic.commands;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -13,7 +12,6 @@ import org.apache.log4j.Logger;
 import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.ProjectsDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
-import edu.ubb.arp.dao.model.Projects;
 import edu.ubb.arp.dao.model.ResourcesWorkingOnProject;
 import edu.ubb.arp.exceptions.DalException;
 
