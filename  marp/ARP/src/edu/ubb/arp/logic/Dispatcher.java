@@ -10,9 +10,30 @@ import edu.ubb.arp.logic.commands.Command;
 import edu.ubb.arp.logic.commands.LoadProjectTableCommand;
 import edu.ubb.arp.logic.commands.LoadProjectsUserIsWorkingOnCommand;
 import edu.ubb.arp.logic.commands.LoadUserDataCommand;
+import edu.ubb.arp.logic.commands.projects.AddResourceToprojectCommand;
+import edu.ubb.arp.logic.commands.projects.AddUserToProjectCommand;
+import edu.ubb.arp.logic.commands.projects.ChangeProjectCurrentStatusCommand;
 import edu.ubb.arp.logic.commands.projects.ChangeProjectDeadlineCommand;
 import edu.ubb.arp.logic.commands.projects.ChangeProjectNameCommand;
+import edu.ubb.arp.logic.commands.projects.ChangeProjectNextReleaseCommand;
 import edu.ubb.arp.logic.commands.projects.ChangeProjectOpenedStatusCommand;
+import edu.ubb.arp.logic.commands.projects.InsertNewProjectCommand;
+import edu.ubb.arp.logic.commands.projects.RemoveResourceFromProjectCommand;
+import edu.ubb.arp.logic.commands.projects.RemoveUserFromProjectCommand;
+import edu.ubb.arp.logic.commands.projects.UpdateResourceRatioCommand;
+import edu.ubb.arp.logic.commands.projects.UpdateUserIsLeaderCommand;
+import edu.ubb.arp.logic.commands.projects.UpdateUserRatioCommand;
+import edu.ubb.arp.logic.commands.requests.CreateNewRequestForResourceCommand;
+import edu.ubb.arp.logic.commands.requests.CreateNewRequestForUserCommand;
+import edu.ubb.arp.logic.commands.requests.RemoveExpiredRequestsCommand;
+import edu.ubb.arp.logic.commands.requests.RemoveRequestFromSomebodyCommand;
+import edu.ubb.arp.logic.commands.requests.UpdateRequestRatioOfResourceCommand;
+import edu.ubb.arp.logic.commands.requests.UpdateRequestRatioOfUserCommand;
+import edu.ubb.arp.logic.commands.resources.AddResourceToGroupCommand;
+import edu.ubb.arp.logic.commands.resources.InsertNewResourceCommand;
+import edu.ubb.arp.logic.commands.resources.RemoveResourceFromGroupCommand;
+import edu.ubb.arp.logic.commands.resources.SetResourceActiveCommand;
+import edu.ubb.arp.logic.commands.resources.UpdateResourceCommand;
 import edu.ubb.arp.logic.commands.users.AddUserToGroupCommand;
 import edu.ubb.arp.logic.commands.users.ChangeUserEmailCommand;
 import edu.ubb.arp.logic.commands.users.ChangeUserNameCommand;
@@ -60,7 +81,6 @@ public class Dispatcher extends BaseCommandOperations {
 					command = new LoadProjectTableCommand(request);
 					response = command.execute();
 					break;
-				// Users
 				case 101: // insert user
 					command = new InsertNewUserCommand(request);
 					response = command.execute();
@@ -107,6 +127,26 @@ public class Dispatcher extends BaseCommandOperations {
 					break;
 				//------------------------------------------------------
 				// Project commands
+				case 201: // create new project
+					command = new InsertNewProjectCommand(request);
+					response = command.execute();
+					break;
+				case 202: // add user to project
+					command = new AddUserToProjectCommand(request);
+					response = command.execute();
+					break;
+				case 203: // add resource to project
+					command = new AddResourceToprojectCommand(request);
+					response = command.execute();
+					break;
+				case 211: // remove user from project
+					command = new RemoveUserFromProjectCommand(request);
+					response = command.execute();
+					break;
+				case 212: // remove resource from project
+					command = new RemoveResourceFromProjectCommand(request);
+					response = command.execute();
+					break;
 				case 221: // change project opened status
 					command = new ChangeProjectOpenedStatusCommand(request);
 					response = command.execute();
@@ -117,6 +157,74 @@ public class Dispatcher extends BaseCommandOperations {
 					break;
 				case 223: // change project deadline
 					command = new ChangeProjectDeadlineCommand(request);
+					response = command.execute();
+					break;
+				case 224: // change project next release
+					command = new ChangeProjectNextReleaseCommand(request);
+					response = command.execute();
+					break;
+				case 225: // change project current status
+					command = new ChangeProjectCurrentStatusCommand(request);
+					response = command.execute();
+					break;
+				case 226: // update user ratio in project
+					command = new UpdateUserRatioCommand(request);
+					response = command.execute();
+					break;
+				case 227: // update resource ratio in project
+					command = new UpdateResourceRatioCommand(request);
+					response = command.execute();
+					break;
+				case 228: // update user isleader in project
+					command = new UpdateUserIsLeaderCommand(request);
+					response = command.execute();
+					break;
+				//------------------------------------------------------
+				// Resource commands
+				case 301: // insert new resource
+					command = new InsertNewResourceCommand(request);
+					response = command.execute();
+					break;
+				case 302: // add resource to group 
+					command = new AddResourceToGroupCommand(request);
+					response = command.execute();
+					break;
+				case 312: // remove resource from group 
+					command = new RemoveResourceFromGroupCommand(request);
+					response = command.execute();
+					break;
+				case 321: // update resource 
+					command = new UpdateResourceCommand(request);
+					response = command.execute();
+					break;
+				case 322: // buy/sell resource 
+					command = new SetResourceActiveCommand(request);
+					response = command.execute();
+					break;
+				//------------------------------------------------------
+				// Resource commands
+				case 401: // create new request for user  
+					command = new CreateNewRequestForUserCommand(request);
+					response = command.execute();
+					break;	
+				case 402: // create new resquest for resource  
+					command = new CreateNewRequestForResourceCommand(request);
+					response = command.execute();
+					break;
+				case 411: // remove request from somebody  
+					command = new RemoveRequestFromSomebodyCommand(request);
+					response = command.execute();
+					break;
+				case 412: // remove expired requests  
+					command = new RemoveExpiredRequestsCommand(request);
+					response = command.execute();
+					break;
+				case 421: // update request ratio of user  
+					command = new UpdateRequestRatioOfUserCommand(request);
+					response = command.execute();
+					break;
+				case 422: // update request ratio of ratio  
+					command = new UpdateRequestRatioOfResourceCommand(request);
 					response = command.execute();
 					break;
 				default:
