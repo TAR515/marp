@@ -16,7 +16,7 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		super(dataSource);
 	}
 
-	public void createNewRequestForUser(List<Integer> week, List<Integer> ratio, String senderUserName, String targetUserName,
+	public int createNewRequestForUser(List<Integer> week, List<Integer> ratio, String senderUserName, String targetUserName,
 			String projectName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -41,7 +41,7 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 					r = ratioIt.next();
 					w = weekIt.next();
 					if (r != currentRatio) { // end of a part
-						createNewRequestToUserForMoreWeeks(fromWeek, w - 1, currentRatio, senderUserName,
+						errmsg = createNewRequestToUserForMoreWeeks(fromWeek, w - 1, currentRatio, senderUserName,
 							targetUserName, projectName, connection);
 						
 						currentRatio = r;
@@ -66,9 +66,10 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		}
 
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
 	}
 
-	public void createNewRequestForResource(List<Integer> week, List<Integer> ratio, String senderUserName,
+	public int createNewRequestForResource(List<Integer> week, List<Integer> ratio, String senderUserName,
 			String targetResourceName, String projectName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -93,7 +94,7 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 					r = ratioIt.next();
 					w = weekIt.next();
 					if (r != currentRatio) { // end of a part
-						createNewRequestToResourceForMoreWeeks(fromWeek, w - 1, currentRatio, senderUserName,
+						errmsg = createNewRequestToResourceForMoreWeeks(fromWeek, w - 1, currentRatio, senderUserName,
 							targetResourceName, projectName, connection);
 						currentRatio = r;
 						fromWeek = w;
@@ -117,9 +118,10 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		}
 
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
 	}
 
-	public void updateRequestRatioOfUser(List<Integer> week, List<Integer> ratio, String senderUserName,
+	public int updateRequestRatioOfUser(List<Integer> week, List<Integer> ratio, String senderUserName,
 			String targetUserName, String projectName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -144,7 +146,7 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 					r = ratioIt.next();
 					w = weekIt.next();
 					if (r != currentRatio) { // end of a part
-						updateRequestRatioOfUserForMoreWeeks(fromWeek, w - 1, currentRatio, senderUserName,
+						errmsg = updateRequestRatioOfUserForMoreWeeks(fromWeek, w - 1, currentRatio, senderUserName,
 							targetUserName, projectName, connection);
 						currentRatio = r;
 						fromWeek = w;
@@ -168,9 +170,10 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		}
 
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
 	}
 	
-	public void updateRequestRatioOfResource(List<Integer> week, List<Integer> ratio, String senderUserName,
+	public int updateRequestRatioOfResource(List<Integer> week, List<Integer> ratio, String senderUserName,
 			String targetResourceName, String projectName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -195,7 +198,7 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 					r = ratioIt.next();
 					w = weekIt.next();
 					if (r != currentRatio) { // end of a part
-						updateRequestRatioOfResourceForMoreWeeks(fromWeek, w - 1, currentRatio, senderUserName,
+						errmsg = updateRequestRatioOfResourceForMoreWeeks(fromWeek, w - 1, currentRatio, senderUserName,
 							targetResourceName, projectName, connection);
 						currentRatio = r;
 						fromWeek = w;
@@ -223,9 +226,10 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		}
 
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
+		return errmsg;
 	}
 	
-	public void removeRequestFromSomebody(int resourceID, int requestID, int projectID) throws SQLException, DalException {
+	public int removeRequestFromSomebody(int resourceID, int requestID, int projectID) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -248,15 +252,18 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
 		} finally {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
+			closeSQLObjects(connection, null, stmt);
 		}
+		return errmsg;
 	}
 	
-	public void removeExpiredRequests(int currentWeek) throws SQLException, DalException {
+	public int removeExpiredRequests(int currentWeek) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -284,11 +291,12 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		} finally {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 	
 	// PRIVATE
 
-	private void createNewRequestToUserForMoreWeeks(int startWeek, int endWeek, int ratio, String senderUserName,
+	private int createNewRequestToUserForMoreWeeks(int startWeek, int endWeek, int ratio, String senderUserName,
 			String targetUserName, String projectName, Connection con) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -321,9 +329,10 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		} finally {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
-	private void createNewRequestToResourceForMoreWeeks(int startWeek, int endWeek, int ratio, String senderUserName,
+	private int createNewRequestToResourceForMoreWeeks(int startWeek, int endWeek, int ratio, String senderUserName,
 			String targetResourceName, String projectName, Connection con) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -356,9 +365,10 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		} finally {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
-	private void updateRequestRatioOfUserForMoreWeeks(int startWeek, int endWeek, int ratio, String senderUserName,
+	private int updateRequestRatioOfUserForMoreWeeks(int startWeek, int endWeek, int ratio, String senderUserName,
 			String targetUserName, String projectName, Connection con) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -391,9 +401,10 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		} finally {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 	
-	private void updateRequestRatioOfResourceForMoreWeeks(int startWeek, int endWeek, int ratio, String senderUserName,
+	private int updateRequestRatioOfResourceForMoreWeeks(int startWeek, int endWeek, int ratio, String senderUserName,
 			String targetResourceName, String projectName, Connection con) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -425,6 +436,7 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		} finally {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 	
 	

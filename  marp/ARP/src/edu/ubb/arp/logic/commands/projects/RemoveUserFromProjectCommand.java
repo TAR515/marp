@@ -13,14 +13,14 @@ import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
 
-public class ChangeProjectOpenedStatusCommand extends BaseCommandOperations implements Command {
-	private static final Logger logger = Logger.getLogger(ChangeProjectOpenedStatusCommand.class);
+public class RemoveUserFromProjectCommand extends BaseCommandOperations implements Command {
+	private static final Logger logger = Logger.getLogger(RemoveUserFromProjectCommand.class);
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
 	
-	public ChangeProjectOpenedStatusCommand (JSONArray request) {
+	public RemoveUserFromProjectCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
 		try {
@@ -41,12 +41,14 @@ public class ChangeProjectOpenedStatusCommand extends BaseCommandOperations impl
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 		
-		int projectID = 0;
-		boolean openedStatus = false; 
+		String projectName = null;
+		String targetUserName = null;
+		int currentWeek = 0;
 		
 		try {
-			projectID = getInt(0,"projectid",request);
-			openedStatus = getBool(0,"openedstatus",request);
+			projectName = getString(0,"projectname", request);
+			targetUserName = getString(0,"targetusername",request);
+			currentWeek = getInt(0,"currentweek", request);
 			
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
@@ -56,8 +58,8 @@ public class ChangeProjectOpenedStatusCommand extends BaseCommandOperations impl
 		
 		if (!errorCheck(response)) {
 			try {
-				int projectOpenStatusChanged = projectDao.setOpenStatus(projectID, openedStatus);
-				response = addInt("projectopenstatuschanged", projectOpenStatusChanged, response);
+				int userRemovedFromProject = projectDao.removeUserFromProject(projectName, targetUserName, currentWeek);
+				response = addInt("userremovedfromproject", userRemovedFromProject, response);
 			} catch (DalException e) {
 				logger.error(getClass().getName() + methodName + e.getErrorMessage());
 				response = setError(e.getErrorCode());

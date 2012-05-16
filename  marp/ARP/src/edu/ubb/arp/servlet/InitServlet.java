@@ -25,7 +25,8 @@ public class InitServlet extends HttpServlet {
 	    
 	  }
 	  
-	  public void destroy() {                                          
+	  @SuppressWarnings("deprecation")
+	public void destroy() {                                          
 		  thread.stop();
 		  thread.destroy();
 	  }

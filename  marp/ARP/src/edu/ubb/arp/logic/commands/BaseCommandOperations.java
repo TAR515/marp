@@ -7,7 +7,7 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 
 
-public class BaseCommandOperations {
+public class BaseCommandOperations implements BaseCommandOperationsInterface {
 	private static final Logger logger = Logger.getLogger(BaseCommandOperations.class);
 	// Setter methods
 	
@@ -110,49 +110,55 @@ public class BaseCommandOperations {
 	 * @return
 	 * @throws IllegalStateException if the request do not contains the given element.
 	 */
-	public String getString(int index, String key, JSONArray request) throws IllegalStateException {
+	public String getString(int index, String key, JSONArray request) throws JSONException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		String result = null;
 		
 		try {
 			JSONObject obj = request.getJSONObject(index);
 			result = obj.getString(key);
-			
-			return result;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw new JSONException(e);
 		} catch (JSONException e) {
 			logger.error(getClass().getName() + methodName + e);
-			throw new IllegalStateException(e);
+			throw e;
 		}	
+		return result;
 	}
 	
-	public int getInt(int index, String key, JSONArray request) throws IllegalStateException {
+	public int getInt(int index, String key, JSONArray request) throws JSONException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int result = 0;
 		
 		try {
 			JSONObject obj = request.getJSONObject(index);
 			result = obj.getInt(key);
-			
-			return result;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw new JSONException(e);
 		} catch (JSONException e) {
 			logger.error(getClass().getName() + methodName + e);
-			throw new IllegalStateException(e);
+			throw e;
 		}	
+		return result;
 	}
 	
-	public boolean getBool(int index, String key, JSONArray request) throws IllegalStateException {
+	public boolean getBool(int index, String key, JSONArray request) throws JSONException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		boolean result = false;
 		
 		try {
 			JSONObject obj = request.getJSONObject(index);
 			result = obj.getBoolean(key);
-			
-			return result;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw new JSONException(e);
 		} catch (JSONException e) {
 			logger.error(getClass().getName() + methodName + e);
-			throw new IllegalStateException(e);
+			throw e;
 		}	
+		return result;
 	}
 	
 	
@@ -177,9 +183,75 @@ public class BaseCommandOperations {
 		return false;
 	}
 	
+	public JSONArray getJSONArray(int index , JSONArray request ) throws JSONException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONArray array = new JSONArray();
+		
+		try {
+			array = request.getJSONArray(index);
+		} catch (IndexOutOfBoundsException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw new JSONException(e);
+		} catch (JSONException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw e;
+		}
+		return array;
+	}
 	
-	// Getters from JSONARRAY
+	public JSONObject getJSONObject(int index , JSONArray request) throws JSONException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONObject object = new JSONObject();
+		
+		try {
+			object = request.getJSONObject(index);
+		} catch (IndexOutOfBoundsException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw new JSONException(e);
+		} catch (JSONException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw e;
+		}
+		return object;
+	}
 	
 	
+	public JSONArray makeCheckUserRequest(JSONArray request) throws JSONException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONArray response = new JSONArray();
+		JSONObject o = new JSONObject();
+		
+		try {
+			o.put("username", getString(0, "username", request));
+			o.put("password", getString(0, "password", request));
+			o.put("command", getInt(0, "command", request));
+
+			response.add(o);
+		} catch(JSONException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw e;
+		}
+		return response;
+	}
+	// true - if user exists
+	public boolean checkResponseIfLoginSuccessfull(JSONArray response) {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		boolean retValue = false;
+		
+		try {
+			if(errorCheck(response)) {
+				if (getInt(0,"error",response) == -8) {
+					return false;
+				}
+			} else if (getInt(0, "existsuser", response) == 1) {
+				retValue = true;
+			}
+		} catch(JSONException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw e;
+		}
+		
+		return retValue;
+	}
 	
 }

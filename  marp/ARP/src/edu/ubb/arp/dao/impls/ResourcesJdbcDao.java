@@ -65,7 +65,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 	}
 
 	@Override
-	public void updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName,
+	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName,
 			String oldResourceGroupName, String newResourceName, boolean newActive, String newResourceTypeName,
 			String newResourceGroupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
@@ -104,9 +104,10 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
-	public void setActive(String resourceName, boolean active) throws SQLException, DalException {
+	public int setActive(String resourceName, boolean active) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -137,9 +138,10 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
-	public void addResourceToGroup(String resourceName, String groupName) throws SQLException, DalException {
+	public int addResourceToGroup(String resourceName, String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -169,6 +171,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
 	public void addResourceToGroup(Resources resource, Groups group) throws SQLException, DalException {
@@ -222,7 +225,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 	}
 
-	public void removeResourceFromGroup(String resourceName, String groupName) throws SQLException, DalException {
+	public int removeResourceFromGroup(String resourceName, String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -252,6 +255,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			closeSQLObjects(connection, rs, stmt);
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
 	public void removeResourceFromGroup(Resources resource, Groups group) throws SQLException, DalException {

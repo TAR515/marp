@@ -2,6 +2,7 @@ package edu.ubb.arp.logic.commands;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -88,6 +89,7 @@ public class LoadProjectTableCommand extends BaseCommandOperations implements Co
 				}
 				
 				List<Integer> resourceIDList = new ArrayList<Integer>(resourceIDSet);
+				Collections.sort(resourceIDList);
 				
 				resources = resourcesDao.loadResources(resourceIDList);
 				

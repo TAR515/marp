@@ -60,6 +60,7 @@ public class Dispatcher extends BaseCommandOperations {
 					command = new LoadProjectTableCommand(request);
 					response = command.execute();
 					break;
+				// Users
 				case 101: // insert user
 					command = new InsertNewUserCommand(request);
 					response = command.execute();
@@ -133,4 +134,5 @@ public class Dispatcher extends BaseCommandOperations {
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
 		return response;
 	}
+	
 }

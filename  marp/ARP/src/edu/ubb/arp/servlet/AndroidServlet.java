@@ -3,6 +3,8 @@ package edu.ubb.arp.servlet;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,12 +18,15 @@ import net.sf.json.JSONException;
 import org.apache.log4j.Logger;
 
 import edu.ubb.arp.logic.Dispatcher;
+import edu.ubb.arp.logic.commands.BaseCommandOperations;
+import edu.ubb.arp.logic.commands.BaseCommandOperationsInterface;
 
-public class AndroidServlet extends HttpServlet {
+public class AndroidServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	private JSONArray responseArray = null;
-	private Dispatcher dp = null;
 	protected Logger logger = Logger.getLogger(AndroidServlet.class);
+	
+	private Dispatcher dp = null;
+	private BaseCommandOperationsInterface baseCommands;
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
@@ -31,8 +36,11 @@ public class AndroidServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("[!	Client ip: " + request.getRemoteAddr());
-		System.out.println("	  User-Agent: " + request.getHeader("user-agent"));
+		JSONArray responseArray = new JSONArray();
+		baseCommands = new BaseCommandOperations();
+		
+		System.out.print("---------------- " + getCurrentDate() + " - Client ip: " + request.getRemoteAddr() + " ----------------");
+		System.out.println("				User-Agent: " + request.getHeader("user-agent") + "\n");
 		
 		StringBuilder sb = new StringBuilder();
 		BufferedReader br = request.getReader();
@@ -41,52 +49,82 @@ public class AndroidServlet extends HttpServlet {
 			sb.append(str);
 		}
 
-		System.out.println("  	Keres: " + sb.toString());
-
+		System.out.println("KERES: \n" + sb.toString());
+		
+		JSONArray requestArray = stringBuilderToJSONArray(sb);
 		try {
-			JSONArray requestArray = new JSONArray();
-			requestArray = JSONArray.fromObject(sb.toString());
-
-			dp = new Dispatcher(requestArray);
-
-			responseArray = dp.getResult();
-		} catch (JSONException e) {
-			dp = new Dispatcher(null);
-
-			responseArray = dp.getResult();
+			HttpSession session = request.getSession(false);
+			if (session == null) {
+				System.out.println("NINCS SESSION, CSINALOK EGYET!!!");
+			    session = request.getSession(true);
+			    session.setMaxInactiveInterval(30);
+			    
+			    JSONArray checkUserComm = baseCommands.makeCheckUserRequest(requestArray);
+			    JSONArray checkUserCommResponse = executeCommand(checkUserComm);
+	
+			    if ( baseCommands.checkResponseIfLoginSuccessfull(checkUserCommResponse) ) { // User exists
+			    	System.out.println("User exists");
+			    	responseArray = executeCommand(requestArray);
+			    	
+			    	String userName = baseCommands.getString(0, "username", requestArray);
+			    	String password = baseCommands.getString(0, "password", requestArray);
+			    	
+			    	session.setAttribute("username", userName);
+			    	session.setAttribute("password", password);
+			    } else { // User not exists.
+			    	System.out.println("User not exists");
+			    	responseArray = baseCommands.setError(-8);
+			    	session.invalidate();
+			    }
+			    
+			} else {
+				System.out.println("VAN SESSION!!!");
+				session.setMaxInactiveInterval(30);
+				
+				responseArray = executeCommand(requestArray);
+			}
+		} catch(Exception e) {
+			logger.error(getClass().getName() + " doPost " + e);
+			responseArray = baseCommands.setError(-9);
 		}
-		
-		/*session = request.getSession(true);
-		if (session.isNew()) { // There is no session.
-			System.out.println("NINCS SESSION, CSINALOK EGYET!!!");
-			session.setMaxInactiveInterval(60);
-			session.setAttribute("username", responseArray.getJSONObject(0).get("username"));
-			session.setAttribute("password", responseArray.getJSONObject(0).get("password"));
-		} else {
-			System.out.println("VAN SESSION!!!");
-		}*/
-		
-		HttpSession session = request.getSession(false);
-		if (session == null) {
-			System.out.println("NINCS SESSION, CSINALOK EGYET!!!");
-		    session = request.getSession(true);
-		    session.setMaxInactiveInterval(10);
-		} else {
-			session.setMaxInactiveInterval(10);
-		}
 
-		/*
-		 * JSONObject o = new JSONObject(); o.put("username", "Juuuh333"); o.put("command", 130); o.put("password", "fuck");
-		 * 
-		 * JSONArray a = new JSONArray(); a.add(o);
-		 * 
-		 * dp = new Dispatcher(a);
-		 * 
-		 * responseArray = dp.getResult();
-		 */
-		System.out.println(" 	Valasz: " + responseArray.toString());
+	
+		System.out.println("VALASZ: \n" + responseArray.toString());
+		System.out.println("---------------- " + getCurrentDate() + " - Client ip: " + request.getRemoteAddr() + " ----------------");
 		PrintWriter out = response.getWriter();
 		out.println(responseArray);
 	}
-
+	
+	private JSONArray stringBuilderToJSONArray(StringBuilder stringBuilder) {
+		JSONArray retValue = new JSONArray();
+		
+		try {
+			retValue = JSONArray.fromObject(stringBuilder.toString());
+		} catch (JSONException e) {
+			dp = new Dispatcher(null);
+			retValue = baseCommands.setError(-1);
+		} 
+		
+		return retValue;
+	}
+	
+	private JSONArray executeCommand(JSONArray request) {
+		JSONArray retVal = new JSONArray();
+		
+		try {
+			dp = new Dispatcher(request);
+			retVal = dp.getResult();
+		} catch (JSONException e) {
+			dp = new Dispatcher(null);
+			retVal = dp.getResult();
+		}
+		
+		return retVal;
+	}
+	
+	public String getCurrentDate() {
+		Calendar currentDate = Calendar.getInstance();
+		SimpleDateFormat formatter= new SimpleDateFormat("yyyy.MM.dd/HH:mm:ss");
+		return formatter.format(currentDate.getTime());
+	}
 }

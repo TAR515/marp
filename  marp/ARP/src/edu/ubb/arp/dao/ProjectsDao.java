@@ -12,10 +12,10 @@ public interface ProjectsDao {
 	public int createProject(String userName, List<Integer> ratio, String projectName, boolean openStatus, int startWeek,
 			int deadLine, String nextRelease, String statusName) throws SQLException, DalException;
 
-	public void addUserToProject(String projectName, String userName, List<Integer> week, List<Integer> ratio, boolean isLeader)
+	public int addUserToProject(String projectName, String userName, List<Integer> week, List<Integer> ratio, boolean isLeader)
 			throws SQLException, DalException;
 
-	public void addResourceToProject(String projectName, String resourceName, List<Integer> week, List<Integer> ratio)
+	public int addResourceToProject(String projectName, String resourceName, List<Integer> week, List<Integer> ratio)
 			throws SQLException, DalException;
 
 	public int setOpenStatus(int projectID, boolean openStatus) throws SQLException, DalException;
@@ -30,25 +30,25 @@ public interface ProjectsDao {
 
 	public void setDeadLine(String projectName, int newDeadLine) throws SQLException, DalException;
 
-	public void setNextRelease(int projectID, String newNextRelease) throws SQLException, DalException;
+	public int setNextRelease(int projectID, String newNextRelease) throws SQLException, DalException;
 
 	public void setNextRelease(String projectName, String newNextRelease) throws SQLException, DalException;
 
-	public void setCurrentStatus(int projectID, String newCurrentStatus) throws SQLException, DalException;
+	public int setCurrentStatus(int projectID, String newCurrentStatus) throws SQLException, DalException;
 
 	public void setCurrentStatus(String projectName, String newCurrentStatus) throws SQLException, DalException;
 	
 	public void removeUserFromProject(int projectID, int userID, int currentWeek) throws SQLException, DalException;
 	
-	public void removeUserFromProject(String projectName, String userName, int currentWeek) throws SQLException, DalException;
+	public int removeUserFromProject(String projectName, String userName, int currentWeek) throws SQLException, DalException;
 	
-	public void removeResourceFromProject(String projectName, String resourceName, int currentWeek) throws SQLException, DalException;
+	public int removeResourceFromProject(String projectName, String resourceName, int currentWeek) throws SQLException, DalException;
 	
-	public void updateUserRatioInProject(String projectName,String userName, List<Integer> week, List<Integer> ratio) throws SQLException, DalException;
+	public int updateUserRatioInProject(String projectName,String userName, List<Integer> week, List<Integer> ratio) throws SQLException, DalException;
 	
-	public void updateResourceRatioInProject(String projectName,String resourceName, List<Integer> week, List<Integer> ratio) throws SQLException, DalException;
+	public int updateResourceRatioInProject(String projectName,String resourceName, List<Integer> week, List<Integer> ratio) throws SQLException, DalException;
 	
-	public void updateUserIsLeader(String projectName, String userName, int currentWeek, boolean isLeader) throws SQLException, DalException;
+	public int updateUserIsLeader(String projectName, String userName, int currentWeek, boolean isLeader) throws SQLException, DalException;
 	
 	public List<Booking> loadBooking(int projectID) throws SQLException, DalException;
 	

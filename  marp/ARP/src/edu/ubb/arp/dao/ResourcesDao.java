@@ -24,13 +24,13 @@ public interface ResourcesDao {
 	public int createResource(String resourceName, boolean active, String resourceTypeName, String resourceGroupName)
 			throws SQLException, DalException;
 	
-	public void setActive(String resourceName, boolean active) throws SQLException, DalException;
+	public int setActive(String resourceName, boolean active) throws SQLException, DalException;
 
-	public void updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName, String oldResourceGroupName,
+	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName, String oldResourceGroupName,
 			String newResourceName, boolean newActive, String newResourceTypeName, String newResourceGroupName)
 					throws SQLException, DalException;
 
-	public void addResourceToGroup(String resourceName, String groupName) throws SQLException, DalException;
+	public int addResourceToGroup(String resourceName, String groupName) throws SQLException, DalException;
 	
 	public void addResourceToGroup(Resources resource, Groups group) throws SQLException, DalException;
 
@@ -38,7 +38,7 @@ public interface ResourcesDao {
 	
 	public void addResourceToGroups(Resources resource, List<Groups> groups) throws SQLException, DalException;
 	
-	public void removeResourceFromGroup(String resourceName, String groupName) throws SQLException, DalException;
+	public int removeResourceFromGroup(String resourceName, String groupName) throws SQLException, DalException;
 	
 	public void removeResourceFromGroup(Resources resource, Groups group) throws SQLException, DalException;
 

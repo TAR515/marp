@@ -1,8 +1,10 @@
 package edu.ubb.arp.logic.commands.projects;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 
 import org.apache.log4j.Logger;
 
@@ -13,14 +15,14 @@ import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
 
-public class ChangeProjectOpenedStatusCommand extends BaseCommandOperations implements Command {
-	private static final Logger logger = Logger.getLogger(ChangeProjectOpenedStatusCommand.class);
+public class AddUserToProjectCommand extends BaseCommandOperations implements Command {
+	private static final Logger logger = Logger.getLogger(AddUserToProjectCommand.class);
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
 	
-	public ChangeProjectOpenedStatusCommand (JSONArray request) {
+	public AddUserToProjectCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
 		try {
@@ -41,23 +43,36 @@ public class ChangeProjectOpenedStatusCommand extends BaseCommandOperations impl
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 		
-		int projectID = 0;
-		boolean openedStatus = false; 
+		String projectName = null;
+		String targetUserName = null;
+		boolean isLeader = false;
+		ArrayList <Integer> ratio = null;
+		ArrayList <Integer> week = null;
 		
 		try {
-			projectID = getInt(0,"projectid",request);
-			openedStatus = getBool(0,"openedstatus",request);
+			targetUserName = getString(0,"targetusername",request);
+			projectName = getString(0,"projectname", request);
+			isLeader = getBool(0,"isleader", request);
+			ratio = new ArrayList<Integer>();
+			week = new ArrayList<Integer>();
+			for(int j = 0;j<getJSONArray(1, request).size();j++){
+				ratio.add(getInt(j,"ratio", getJSONArray(1, request)));
+				week.add(getInt(j,"week", getJSONArray(2, request)));
+			}
 			
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			System.out.println("illegal state exception");
 			response = setError(-1);
+		} catch (JSONException e) {
+			logger.error(getClass().getName() + methodName + e);
+			response = setError(-1);
 		}
 		
 		if (!errorCheck(response)) {
 			try {
-				int projectOpenStatusChanged = projectDao.setOpenStatus(projectID, openedStatus);
-				response = addInt("projectopenstatuschanged", projectOpenStatusChanged, response);
+				int userAddedToProject = projectDao.addUserToProject(projectName, targetUserName, week, ratio, isLeader);
+				response = addInt("useraddedtoproject", userAddedToProject, response);
 			} catch (DalException e) {
 				logger.error(getClass().getName() + methodName + e.getErrorMessage());
 				response = setError(e.getErrorCode());

@@ -57,12 +57,10 @@ public class ChangeProjectDeadlineCommand extends BaseCommandOperations implemen
 			try {
 				int projectDeadLine = projectDao.setDeadLine(projectID, newDeadline);
 				response = addInt("projectdeadlinechanged", projectDeadLine, response);
-			}
-			catch (DalException e) {
+			} catch (DalException e) {
 				logger.error(getClass().getName() + methodName + e.getErrorMessage());
 				response = setError(e.getErrorCode());
-			}
-			catch (SQLException e) {
+			} catch (SQLException e) {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 				response = setError(0);
 			}

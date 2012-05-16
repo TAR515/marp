@@ -58,12 +58,10 @@ public class ChangeProjectNameCommand extends BaseCommandOperations implements C
 			try {
 				int projectNameChanged = projectDao.setProjectName(projectID, newProjectName);
 				response = addInt("projectnamechanged", projectNameChanged, response);
-			}
-			catch (DalException e) {
+			} catch (DalException e) {
 				logger.error(getClass().getName() + methodName + e.getErrorMessage());
 				response = setError(e.getErrorCode());
-			}
-			catch (SQLException e) {
+			} catch (SQLException e) {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 				response = setError(0);
 			}

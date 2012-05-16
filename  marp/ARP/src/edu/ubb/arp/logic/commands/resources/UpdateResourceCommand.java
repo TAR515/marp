@@ -1,4 +1,4 @@
-package edu.ubb.arp.logic.commands.projects;
+package edu.ubb.arp.logic.commands.resources;
 
 import java.sql.SQLException;
 
@@ -7,26 +7,26 @@ import net.sf.json.JSONArray;
 import org.apache.log4j.Logger;
 
 import edu.ubb.arp.dao.DaoFactory;
-import edu.ubb.arp.dao.ProjectsDao;
+import edu.ubb.arp.dao.ResourcesDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
 
-public class ChangeProjectOpenedStatusCommand extends BaseCommandOperations implements Command {
-	private static final Logger logger = Logger.getLogger(ChangeProjectOpenedStatusCommand.class);
+public class UpdateResourceCommand extends BaseCommandOperations implements Command {
+	private static final Logger logger = Logger.getLogger(UpdateResourceCommand.class);
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
-	private ProjectsDao projectDao = null;
+	private ResourcesDao resourceDao = null;
 	
-	public ChangeProjectOpenedStatusCommand (JSONArray request) {
+	public UpdateResourceCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
 		try {
 			this.response = new JSONArray();
 			this.instance = JdbcDaoFactory.getInstance();
-			this.projectDao = instance.getProjectsDao();
+			this.resourceDao = instance.getResourceDao();
 			this.request = request;
 			
 		} catch (SQLException e) {
@@ -41,12 +41,24 @@ public class ChangeProjectOpenedStatusCommand extends BaseCommandOperations impl
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 		
-		int projectID = 0;
-		boolean openedStatus = false; 
+		String oldResourceName = null;
+		boolean oldActive = false;
+		String oldResourceTypeName = null;
+		String oldResourceGroupName = null;
+		String newResourceName = null;
+		boolean newActive = false;
+		String newResourceTypeName = null;
+		String newResourceGroupName = null;
 		
 		try {
-			projectID = getInt(0,"projectid",request);
-			openedStatus = getBool(0,"openedstatus",request);
+			oldResourceName = getString(0,"oldresourcename", request);
+			oldActive = getBool(0,"oldactive", request);
+			oldResourceTypeName = getString(0,"oldresourcetypename", request);
+			oldResourceGroupName = getString(0,"oldresourcegroupname", request);
+			newResourceName = getString(0,"newresourcename", request);
+			newActive = getBool(0,"newactive", request);
+			newResourceTypeName = getString(0,"newresourcetypename", request);
+			newResourceGroupName = getString(0,"newresourcegroupname", request);
 			
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
@@ -56,8 +68,8 @@ public class ChangeProjectOpenedStatusCommand extends BaseCommandOperations impl
 		
 		if (!errorCheck(response)) {
 			try {
-				int projectOpenStatusChanged = projectDao.setOpenStatus(projectID, openedStatus);
-				response = addInt("projectopenstatuschanged", projectOpenStatusChanged, response);
+				int setActive = resourceDao.updateResource(oldResourceName, oldActive, oldResourceTypeName, oldResourceGroupName, newResourceName, newActive, newResourceTypeName, newResourceGroupName);
+				response = addInt("setactive", setActive, response);
 			} catch (DalException e) {
 				logger.error(getClass().getName() + methodName + e.getErrorMessage());
 				response = setError(e.getErrorCode());
