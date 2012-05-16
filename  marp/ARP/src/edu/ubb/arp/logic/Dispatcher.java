@@ -77,10 +77,16 @@ public class Dispatcher extends BaseCommandOperations {
 					command = new CheckUserCommand(request);
 					response = command.execute();
 					break;
-				case 1: 
+				case 1: // get active projects
+					command = new LoadProjectsUserIsWorkingOnCommand(request);
+					response = command.execute();
+					break;	
+				case 2: 
 					command = new LoadProjectTableCommand(request);
 					response = command.execute();
-					break;
+					break;	
+					
+				// Users
 				case 101: // insert user
 					command = new InsertNewUserCommand(request);
 					response = command.execute();
@@ -115,10 +121,6 @@ public class Dispatcher extends BaseCommandOperations {
 					break;
 				case 125: // change user resource name
 					command = new ChangeUserResourceNameCommand(request);
-					response = command.execute();
-					break;
-				case 130: // get active projects
-					command = new LoadProjectsUserIsWorkingOnCommand(request);
 					response = command.execute();
 					break;
 				case 131: // get user data
