@@ -17,6 +17,8 @@ import net.sf.json.JSONException;
 
 import org.apache.log4j.Logger;
 
+import sun.security.action.GetIntegerAction;
+
 import edu.ubb.arp.logic.Dispatcher;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.BaseCommandOperationsInterface;
@@ -58,26 +60,34 @@ public class AndroidServlet extends HttpServlet{
 				System.out.println("NINCS SESSION, CSINALOK EGYET!!!");
 			    session = request.getSession(true);
 			    session.setMaxInactiveInterval(30);
+			  
+			    int originalCommand = baseCommands.getInt(0, "command", requestArray);
+			    requestArray = baseCommands.changeInt(0, "command", 0, requestArray);
 			    
-			    JSONArray checkUserComm = baseCommands.makeCheckUserRequest(requestArray);
-			    JSONArray checkUserCommResponse = executeCommand(checkUserComm);
-	
-			    if ( baseCommands.checkResponseIfLoginSuccessfull(checkUserCommResponse) ) { // User exists
-			    	System.out.println("User exists");
-			    	responseArray = executeCommand(requestArray);
-			    	
-			    	String userName = baseCommands.getString(0, "username", requestArray);
-			    	String password = baseCommands.getString(0, "password", requestArray);
-			    	
-			    	session.setAttribute("username", userName);
-			    	session.setAttribute("password", password);
-			    } else { // User not exists.
-			    	System.out.println("User not exists");
-			    	responseArray = baseCommands.setError(-8);
-			    	session.invalidate();
+			    responseArray = executeCommand(requestArray);
+			    System.out.println("response: " + responseArray.toString() + " originalCOmm: " + originalCommand);
+			    if (originalCommand != 0) { // If the orriginal command were not the user check.
+			    	System.out.println("Original is not 0");
+			    	if (baseCommands.checkResponseIfLoginSuccessfull(responseArray)) { // User exists
+			    		System.out.println("User exists!");
+			    		System.out.println("OriginalCommand: " + originalCommand);
+			    		requestArray = baseCommands.changeInt(0, "command", originalCommand, requestArray);
+			    		System.out.println("REQUEST ARRAY: " + requestArray.toString());
+			    		responseArray = executeCommand(requestArray);
+				    	
+				    	String userName = baseCommands.getString(0, "username", requestArray);
+				    	String password = baseCommands.getString(0, "password", requestArray);
+				    	
+				    	session.setAttribute("username", userName);
+				    	session.setAttribute("password", password);
+			    	} else {
+			    		System.out.println("User exists!");
+			    		System.out.println("User not exists");
+				    	responseArray = baseCommands.setError(-8);
+				    	session.invalidate();
+			    	}
 			    }
-			    
-			} else {
+			}  else {
 				System.out.println("VAN SESSION!!!");
 				session.setMaxInactiveInterval(30);
 				
@@ -92,7 +102,7 @@ public class AndroidServlet extends HttpServlet{
 		System.out.println("VALASZ: \n" + responseArray.toString());
 		System.out.println("---------------- " + getCurrentDate() + " - Client ip: " + request.getRemoteAddr() + " ----------------");
 		PrintWriter out = response.getWriter();
-		out.println(responseArray);
+		out.println(responseArray);	
 	}
 	
 	private JSONArray stringBuilderToJSONArray(StringBuilder stringBuilder) {

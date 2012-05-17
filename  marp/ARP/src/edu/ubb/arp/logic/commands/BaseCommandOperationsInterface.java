@@ -29,5 +29,7 @@ public interface BaseCommandOperationsInterface {
 	public JSONArray makeCheckUserRequest(JSONArray request) throws JSONException;
 
 	public boolean checkResponseIfLoginSuccessfull(JSONArray response);
+	
+	public JSONArray changeInt(int index, String key, int value, JSONArray request) throws JSONException;
 
 }

@@ -236,22 +236,35 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 	// true - if user exists
 	public boolean checkResponseIfLoginSuccessfull(JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
-		boolean retValue = false;
 		
 		try {
 			if(errorCheck(response)) {
 				if (getInt(0,"error",response) == -8) {
 					return false;
+				} else {
+					return true;
 				}
-			} else if (getInt(0, "existsuser", response) == 1) {
-				retValue = true;
+			} else {
+				return true;
 			}
 		} catch(JSONException e) {
 			logger.error(getClass().getName() + methodName + e);
 			throw e;
 		}
-		
-		return retValue;
 	}
+	
+	public JSONArray changeInt(int index, String key, int value, JSONArray request) throws JSONException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONArray result = JSONArray.fromObject(request);
+		
+		try {
+			result.getJSONObject(index).put("command", value);
+		} catch(ArrayIndexOutOfBoundsException|JSONException e) {
+			logger.error(getClass().getName() + methodName + e);
+			throw new JSONException(e);
+		}
+		return result;
+	}
+	
 	
 }
