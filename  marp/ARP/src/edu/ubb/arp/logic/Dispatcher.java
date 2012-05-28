@@ -31,6 +31,7 @@ import edu.ubb.arp.logic.commands.requests.UpdateRequestRatioOfResourceCommand;
 import edu.ubb.arp.logic.commands.requests.UpdateRequestRatioOfUserCommand;
 import edu.ubb.arp.logic.commands.resources.AddResourceToGroupCommand;
 import edu.ubb.arp.logic.commands.resources.InsertNewResourceCommand;
+import edu.ubb.arp.logic.commands.resources.LoadResourceEngagedCommand;
 import edu.ubb.arp.logic.commands.resources.RemoveResourceFromGroupCommand;
 import edu.ubb.arp.logic.commands.resources.SetResourceActiveCommand;
 import edu.ubb.arp.logic.commands.resources.UpdateResourceCommand;
@@ -189,6 +190,10 @@ public class Dispatcher extends BaseCommandOperations {
 					break;
 				case 302: // add resource to group 
 					command = new AddResourceToGroupCommand(request);
+					response = command.execute();
+					break;
+				case 303: // load resource engages (ratio) 
+					command = new LoadResourceEngagedCommand(request);
 					response = command.execute();
 					break;
 				case 312: // remove resource from group 
