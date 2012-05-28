@@ -44,6 +44,8 @@ public interface ResourcesDao {
 
 	public List<Resources> loadResources(List<Integer> resourceID) throws DalException, SQLException;
 	
+	public List<Integer> loadResourceEngages(int resourceID, int startWeek, int endWeek) throws DalException, SQLException;
+	
 	/*
 	 * public Resources LoadResourceByID(int id) throws DalException;
 	 * 

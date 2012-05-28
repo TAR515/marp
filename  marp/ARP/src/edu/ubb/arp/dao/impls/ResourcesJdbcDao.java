@@ -320,6 +320,44 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		return result;
 	}
 	
+	public List<Integer> loadResourceEngages(int resourceID, int startWeek, int endWeek) throws DalException, SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		List<Integer> result = new ArrayList<Integer>();
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		ResultSet rs = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "load_resource_ratio", 4);
+
+			int paramIndex = 1;
+			setInteger(stmt, paramIndex++, resourceID);
+			setInteger(stmt, paramIndex++, startWeek);
+			setInteger(stmt, paramIndex++, endWeek);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			rs = stmt.executeQuery();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg);
+			}
+			
+			while (rs.next()) { 
+				result.add(getInt(rs, "ratio"));
+			}
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return result;
+	}
 	
 	private Resources loadResource(int resourceID, Connection con) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

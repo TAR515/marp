@@ -354,6 +354,15 @@ public abstract class BaseDao {
 		return retVal;
 	}
 	
+	protected Integer getInt(ResultSet rs, int columnIndex) throws SQLException {
+		Integer retVal = null;
+		Integer value = rs.getInt(columnIndex);
+		if (!rs.wasNull()) {
+			retVal = value;
+		}
+		return retVal;
+	}
+	
 	protected String getString(ResultSet rs, String columnName)
 			throws SQLException {
 		String retVal = null;
