@@ -1,5 +1,6 @@
 package edu.ubb.arp.servlet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -9,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
@@ -17,13 +19,14 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 
 import edu.ubb.arp.logic.Dispatcher;
+import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.BaseCommandOperationsInterface;
 
 public class AndroidServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	protected Logger logger = Logger.getLogger(AndroidServlet.class);
 	
-	private Dispatcher dp = null;
+	private Dispatcher dispatcher = null;
 	private BaseCommandOperationsInterface baseCommands;
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -34,7 +37,7 @@ public class AndroidServlet extends HttpServlet{
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		/*JSONArray responseArray = new JSONArray();
+		JSONArray responseArray = new JSONArray();
 		baseCommands = new BaseCommandOperations();
 		
 		System.out.print("---------------- " + getCurrentDate() + " - Client ip: " + request.getRemoteAddr() + " ----------------");
@@ -98,27 +101,7 @@ public class AndroidServlet extends HttpServlet{
 		System.out.println("VALASZ: \n" + responseArray.toString());
 		System.out.println("---------------- " + getCurrentDate() + " - Client ip: " + request.getRemoteAddr() + " ----------------");
 		PrintWriter out = response.getWriter();
-		out.println(responseArray);	*/
-		
-		
-JSONObject fromObject1 = new JSONObject();
-		
-		fromObject1.put("username", new String("Vaim1101"));
-		fromObject1.put("password", new String("adi1984"));
-		fromObject1.put("command", new Integer(303));
-		fromObject1.put("resourceid", new Integer(10));
-		fromObject1.put("startweek", new Integer(1));
-		fromObject1.put("endweek", new Integer(24));
-	
-		JSONArray result = new JSONArray();
-		result.add(fromObject1);
-		
-		System.out.println(result.toString());
-		Dispatcher d = new Dispatcher(result);
-		 
-		JSONArray ggg = d.getResult();
-
-	    System.out.println(ggg.toString());
+		out.println(responseArray);	
 	}
 	
 	private JSONArray stringBuilderToJSONArray(StringBuilder stringBuilder) {
@@ -127,7 +110,7 @@ JSONObject fromObject1 = new JSONObject();
 		try {
 			retValue = JSONArray.fromObject(stringBuilder.toString());
 		} catch (JSONException e) {
-			dp = new Dispatcher(null);
+			dispatcher = new Dispatcher(null);
 			retValue = baseCommands.setError(-1);
 		} 
 		
@@ -138,11 +121,11 @@ JSONObject fromObject1 = new JSONObject();
 		JSONArray retVal = new JSONArray();
 		
 		try {
-			dp = new Dispatcher(request);
-			retVal = dp.getResult();
+			dispatcher = new Dispatcher(request);
+			retVal = dispatcher.getResult();
 		} catch (JSONException e) {
-			dp = new Dispatcher(null);
-			retVal = dp.getResult();
+			dispatcher = new Dispatcher(null);
+			retVal = dispatcher.getResult();
 		}
 		
 		return retVal;

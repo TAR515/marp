@@ -46,7 +46,7 @@ public class LoadUserDataCommand extends BaseCommandOperations implements Comman
 		String userName = null;
 		
 		try {
-			userName = getString(0,"username",request);	
+			userName = getString(0,"targetusername",request);	
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			response = setError(-1);

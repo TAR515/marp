@@ -20,28 +20,18 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		super(dataSource);
 	}
 
-	public int createProject(String userName, List<Integer> ratio, String projectName, boolean openStatus, int startWeek,
+	public int createProject(String userName, String projectName, boolean openStatus, int startWeek,
 			int deadLine, String nextRelease, String statusName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
 
 		Connection connection = null;
-		int endWeek = ((deadLine - startWeek) > 24) ? startWeek + 24 : deadLine;
 
 		try {
 			connection = getConnection();
 
 			errmsg = createJustProject(projectName, openStatus, startWeek, deadLine, nextRelease, statusName, connection);
-
-			addUserToUserInProject(projectName, userName, Boolean.TRUE, connection);
-
-			List<Integer> weeks = new ArrayList<Integer>();
-			for (int i = startWeek; i <= endWeek; i++) {
-				weeks.add(i);
-			}
-
-			addUserToBookingByUserName(projectName, userName, weeks, ratio, Boolean.TRUE, connection);
 
 			connection.commit();
 		} catch (SQLException e) {

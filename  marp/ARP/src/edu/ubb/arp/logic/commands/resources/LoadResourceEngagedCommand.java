@@ -66,7 +66,7 @@ public class LoadResourceEngagedCommand extends BaseCommandOperations implements
 
 				Iterator<Integer> it = result.iterator();
 				while (it.hasNext()) {
-					addInt("ratio", it.next(), response);
+					response = addInt("ratio", it.next(), response);
 				}
 			}
 			catch (DalException e) {

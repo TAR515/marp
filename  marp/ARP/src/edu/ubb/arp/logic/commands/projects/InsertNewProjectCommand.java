@@ -76,7 +76,7 @@ public class InsertNewProjectCommand extends BaseCommandOperations implements Co
 		
 		if (!errorCheck(response)) {
 			try {
-				int projectCreated = projectDao.createProject(userName, ratio, projectName, openedStatus, startWeek, deadline, nextRelease, statusName);
+				int projectCreated = projectDao.createProject(userName, projectName, openedStatus, startWeek, deadline, nextRelease, statusName);
 				response = addInt("projectcreated", projectCreated, response);
 			}
 			catch (DalException e) {
