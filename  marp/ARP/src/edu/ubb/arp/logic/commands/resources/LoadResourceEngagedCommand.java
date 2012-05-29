@@ -45,6 +45,8 @@ public class LoadResourceEngagedCommand extends BaseCommandOperations implements
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 		
+		String projectName = null;
+		String action = null;
 		int resourceID = 0;
 		int startWeek = 0;
 		int endWeek = 0;
@@ -53,7 +55,8 @@ public class LoadResourceEngagedCommand extends BaseCommandOperations implements
 			resourceID = getInt(0,"resourceid", request);
 			startWeek = getInt(0,"startweek", request);
 			endWeek = getInt(0,"endweek", request);
-			
+			projectName = getString(0,"projectname", request);
+			action = getString(0, "action", request);
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			System.out.println("illegal state exception");
@@ -62,7 +65,7 @@ public class LoadResourceEngagedCommand extends BaseCommandOperations implements
 		
 		if (!errorCheck(response)) {
 			try {
-				result = resourceDao.loadResourceEngages(resourceID, startWeek, endWeek);
+				result = resourceDao.loadResourceEngages(resourceID, startWeek, endWeek, projectName, action);
 
 				Iterator<Integer> it = result.iterator();
 				while (it.hasNext()) {

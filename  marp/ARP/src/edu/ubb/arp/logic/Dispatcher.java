@@ -22,9 +22,6 @@ import edu.ubb.arp.logic.commands.projects.RemoveResourceFromProjectCommand;
 import edu.ubb.arp.logic.commands.projects.RemoveUserFromProjectCommand;
 import edu.ubb.arp.logic.commands.projects.UpdateResourceRatioCommand;
 import edu.ubb.arp.logic.commands.projects.UpdateUserIsLeaderCommand;
-import edu.ubb.arp.logic.commands.projects.UpdateUserRatioCommand;
-import edu.ubb.arp.logic.commands.requests.CreateNewRequestForResourceCommand;
-import edu.ubb.arp.logic.commands.requests.CreateNewRequestForUserCommand;
 import edu.ubb.arp.logic.commands.requests.RemoveExpiredRequestsCommand;
 import edu.ubb.arp.logic.commands.requests.RemoveRequestFromSomebodyCommand;
 import edu.ubb.arp.logic.commands.requests.UpdateRequestRatioOfResourceCommand;
@@ -62,7 +59,6 @@ public class Dispatcher extends BaseCommandOperations {
 			logger.error(getClass().getName() + methodName + "The request is empty.");
 			response = setError(0);
 		}
-
 	}
 
 	public JSONArray getResult() {
@@ -170,10 +166,6 @@ public class Dispatcher extends BaseCommandOperations {
 					command = new ChangeProjectCurrentStatusCommand(request);
 					response = command.execute();
 					break;
-				case 226: // update user ratio in project
-					command = new UpdateUserRatioCommand(request);
-					response = command.execute();
-					break;
 				case 227: // update resource ratio in project
 					command = new UpdateResourceRatioCommand(request);
 					response = command.execute();
@@ -210,14 +202,6 @@ public class Dispatcher extends BaseCommandOperations {
 					break;
 				//------------------------------------------------------
 				// Resource commands
-				case 401: // create new request for user  
-					command = new CreateNewRequestForUserCommand(request);
-					response = command.execute();
-					break;	
-				case 402: // create new resquest for resource  
-					command = new CreateNewRequestForResourceCommand(request);
-					response = command.execute();
-					break;
 				case 411: // remove request from somebody  
 					command = new RemoveRequestFromSomebodyCommand(request);
 					response = command.execute();

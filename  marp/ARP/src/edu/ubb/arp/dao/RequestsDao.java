@@ -7,11 +7,7 @@ import edu.ubb.arp.exceptions.DalException;
 
 public interface RequestsDao {
 
-	public int createNewRequestForUser(List<Integer> week, List<Integer> ratio, String senderUserName, String targetUserName,
-			String projectName) throws SQLException, DalException;
-	
-	public int createNewRequestForResource(List<Integer> week, List<Integer> ratio, String senderUserName,
-			String targetResourceName, String projectName) throws SQLException, DalException;
+	public int createNewRequest(int senderUserID, int targetResourceID, int projectID, int week, int ratio) throws SQLException, DalException;
 	
 	public int updateRequestRatioOfUser(List<Integer> week, List<Integer> ratio, String senderUserName,
 			String targetUserName, String projectName) throws SQLException, DalException;

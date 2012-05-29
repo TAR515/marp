@@ -320,7 +320,19 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		return result;
 	}
 	
-	public List<Integer> loadResourceEngages(int resourceID, int startWeek, int endWeek) throws DalException, SQLException {
+	
+	/**
+	 * 
+	 * @param resourceID
+	 * @param startWeek
+	 * @param endWeek
+	 * @param projectName
+	 * @param action - "insert" for new resource to a project / "modify" to modify somebody in a project / "newproject" for new project.
+	 * @return
+	 * @throws DalException
+	 * @throws SQLException
+	 */
+	public List<Integer> loadResourceEngages(int resourceID, int startWeek, int endWeek, String projectName, String action) throws DalException, SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		List<Integer> result = new ArrayList<Integer>();
@@ -331,12 +343,14 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		java.sql.CallableStatement stmt = null;
 		try {
 			connection = getConnection();
-			stmt = createProcedure(connection, "load_resource_ratio", 4);
+			stmt = createProcedure(connection, "load_resource_ratio", 6);
 
 			int paramIndex = 1;
 			setInteger(stmt, paramIndex++, resourceID);
 			setInteger(stmt, paramIndex++, startWeek);
 			setInteger(stmt, paramIndex++, endWeek);
+			setString(stmt, paramIndex++, projectName);
+			setString(stmt, paramIndex++, action);
 			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
 
 			rs = stmt.executeQuery();

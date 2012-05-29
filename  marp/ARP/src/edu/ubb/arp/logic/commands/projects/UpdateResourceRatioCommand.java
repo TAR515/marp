@@ -43,21 +43,27 @@ public class UpdateResourceRatioCommand extends BaseCommandOperations implements
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 		
-		String projectName = null;
-		String resourceName = null;
-		ArrayList <Integer> ratio = null;
-		ArrayList <Integer> week = null;
+		int projectID = -1;
+		int targetResourceID = -1;
+		int senderResourceID = -1;
+		int startWeek = -1;
+		int endWeek = -1;
+		ArrayList <Integer> updateRatio = null;
+		ArrayList <Integer> requestRatio = null;
 		
 		try {
-			projectName = getString(0,"projectname", request);
-			resourceName = getString(0,"resourcename",request);
-			ratio = new ArrayList<Integer>();
-			week = new ArrayList<Integer>();
-			for(int j = 0;j<getJSONArray(1, request).size();j++){
-				ratio.add(getInt(j,"ratio", getJSONArray(1, request)));
-				week.add(getInt(j,"week", getJSONArray(2, request)));
-			}
+			projectID = getInt(0,"projectid", request);
+			targetResourceID = getInt(0,"targetresourceid",request);
+			senderResourceID = getInt(0,"senderresourceid", request);
+			startWeek = getInt(0,"startweek", request);
+			endWeek = getInt(0,"endweek", request);
+			updateRatio = new ArrayList<Integer>();
+			requestRatio = new ArrayList<Integer>();
 			
+			for(int j = 0;j<getJSONArray(1, request).size();j++){
+				updateRatio.add(getInt(j,"updateratio", getJSONArray(1, request)));
+				requestRatio.add(getInt(j,"requestratio", getJSONArray(1, request)));
+			}
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			System.out.println("illegal state exception");
@@ -69,7 +75,7 @@ public class UpdateResourceRatioCommand extends BaseCommandOperations implements
 		
 		if (!errorCheck(response)) {
 			try {
-				int resourceRatioUpdated = projectDao.updateResourceRatioInProject(projectName, resourceName, week, ratio);
+				int resourceRatioUpdated = projectDao.updateResourceRatioInProject(projectID, senderResourceID, targetResourceID, startWeek, endWeek, updateRatio, requestRatio);
 				response = addInt("resourceratioupdated", resourceRatioUpdated, response);
 			}
 			catch (DalException e) {

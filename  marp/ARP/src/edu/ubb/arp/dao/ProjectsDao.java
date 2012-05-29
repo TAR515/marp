@@ -44,9 +44,8 @@ public interface ProjectsDao {
 	
 	public int removeResourceFromProject(String projectName, String resourceName, int currentWeek) throws SQLException, DalException;
 	
-	public int updateUserRatioInProject(String projectName,String userName, List<Integer> week, List<Integer> ratio) throws SQLException, DalException;
-	
-	public int updateResourceRatioInProject(String projectName,String resourceName, List<Integer> week, List<Integer> ratio) throws SQLException, DalException;
+	public int updateResourceRatioInProject(int projectID, int senderResourceID, int targetResourceID, int startWeek, int endWeek,
+			List<Integer> updateRatio, List<Integer> requestRatio) throws SQLException, DalException;
 	
 	public int updateUserIsLeader(String projectName, String userName, int currentWeek, boolean isLeader) throws SQLException, DalException;
 	
