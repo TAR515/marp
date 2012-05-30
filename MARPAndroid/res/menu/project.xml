@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/newid" android:title="New"
+        android:icon="@android:drawable/ic_menu_add">
+        <menu>
+            <item android:id="@+id/requestid" android:title="Request"/>
+            <item android:id="@+id/projectid" android:title="Project"/>
+        </menu>
+    </item>
+    <item android:id="@+id/modifyid" android:title="Modify"
+        android:icon ="@android:drawable/ic_menu_edit" ></item>
+    <item android:id="@+id/myaccountid" android:title="My Account"
+        android:icon ="@android:drawable/ic_menu_my_calendar"></item>
+    <item android:id="@+id/logout" android:title="Logout"
+        android:icon ="@android:drawable/ic_lock_power_off"></item>
+    
+
+</menu>

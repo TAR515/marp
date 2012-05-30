@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World!</string>
+    <string name="app_name">MARP</string>
+
+    <string-array name="project_statuses">
+        <item>Under development</item>
+    </string-array>
+
+</resources>

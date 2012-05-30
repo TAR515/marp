@@ -1,0 +1,89 @@
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scrollView1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Project name:" />
+
+            <EditText
+                android:id="@+id/projectName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10" >
+
+                <requestFocus />
+            </EditText>
+
+            <CheckBox
+                android:id="@+id/openedStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Opened status" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Startweek:" />
+
+            <EditText
+                android:id="@+id/startweek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Deadline:" />
+
+            <EditText
+                android:id="@+id/deadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next release:" />
+
+            <EditText
+                android:id="@+id/nextrelease"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status:" />
+
+            <Spinner
+                android:id="@+id/statusSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/project_statuses" />
+
+            <Button
+                android:id="@+id/addProjectButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Next" />
+
+        </LinearLayout>
+
+    </ScrollView>
