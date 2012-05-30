@@ -26,6 +26,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
@@ -38,14 +39,15 @@ public class MyAccountActivity extends Activity {
 	private Intent sentIntent;
 	private long requestid;
 	private ProgressDialog loading;
-	
 	ArrayList<ListRecord> users = new ArrayList<ListRecord>();
     
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		ChangePassword c= new ChangePassword(this);
 		setContentView(R.layout.myaccount);
-        
+        //setContentView(c.returnView());
 		//setArrayList("Vizer Arnold", "Arni00", "0742764458", "vizer_arnold@yahoo.com");
 		
 		sendRequest();
@@ -94,6 +96,8 @@ public class MyAccountActivity extends Activity {
         users.add(user);
         user = new ListRecord("E-mail", email);
         users.add(user);
+        user = new ListRecord("Change Password","");
+        users.add(user);
 	}
 	
 	public void messageBoxShow(String message, String title){
@@ -115,6 +119,57 @@ public class MyAccountActivity extends Activity {
     		    });
     	alertDialog.show();
     }
+	
+	public void editDialog(String title,String editableText, int position){
+		
+		AlertDialog alertDialog;
+		EditText editDialog = new EditText(this);
+      	
+		editDialog.setText(editableText);
+		alertDialog = new AlertDialog.Builder(this).create();
+		alertDialog.setTitle(title);
+		alertDialog.setView(editDialog);
+		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				/*implement the ok button*/
+			}
+		});
+		alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		alertDialog.show();
+	}
+	
+	public void editPasswordDialog(String title){
+		
+		AlertDialog alertDialog;
+		ChangePassword change = new ChangePassword(this);
+		alertDialog = new AlertDialog.Builder(this).create();
+		alertDialog.setTitle(title);
+		alertDialog.setView(change.returnView());
+		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				/*implement the OK button*/
+				
+			}
+		});
+		alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		alertDialog.show();
+	}
 	
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -147,14 +202,21 @@ public class MyAccountActivity extends Activity {
 
 			        ListView listView = (ListView) findViewById(R.id.ListViewId);
 			        listView.setAdapter(new ListItemAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, users));
-			        listView.setOnItemClickListener(new OnItemClickListener() {
-						  public void onItemClick(AdapterView<?> parent, View view,
-								  int position, long id) {
-							  messageBoxShow("asdfaad", "dfsdfsf");
-							  
-						  }
-						  
-					  }); 
+			        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+			                    int pos, long id) {
+			                // TODO Auto-generated method stub
+			            	if(pos<4){
+			            		editDialog("Change" + " " + users.get(pos).getItem() ,users.get(pos).getSubitem(),pos);
+			            	}else{
+			            		if(pos == 4){
+			            			editPasswordDialog("Change Password");
+			            		}
+			            	}
+			            	return true;
+			            }
+			        }); 
 				}
 				}else{
 					loading.dismiss();
