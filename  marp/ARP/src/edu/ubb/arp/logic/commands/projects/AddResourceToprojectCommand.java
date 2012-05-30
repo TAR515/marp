@@ -21,43 +21,52 @@ public class AddResourceToprojectCommand extends BaseCommandOperations implement
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
-	
-	public AddResourceToprojectCommand (JSONArray request) {
+
+	public AddResourceToprojectCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
-		
+
 		try {
 			this.response = new JSONArray();
 			this.instance = JdbcDaoFactory.getInstance();
 			this.projectDao = instance.getProjectsDao();
 			this.request = request;
-			
+
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			response = setError(0);
 		}
-		
+
 	}
-	
+
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
-		
-		String projectName = null;
-		String resourceName = null;
-		ArrayList <Integer> ratio = null;
-		ArrayList <Integer> week = null;
-		
+
+		int projectID = -1;
+		int senderResourceID = -1;
+		int targetResourceID = -1;
+		int startWeek = -1;
+		int endWeek = -1;
+		boolean isLeader = false;
+		ArrayList<Integer> insertRatio = null;
+		ArrayList<Integer> requestRatio = null;
+
 		try {
-			resourceName = getString(0,"resourcename",request);
-			projectName = getString(0,"projectname", request);
-			ratio = new ArrayList<Integer>();
-			week = new ArrayList<Integer>();
-			for(int j = 0;j<getJSONArray(1, request).size();j++){
-				ratio.add(getInt(j,"ratio", getJSONArray(1, request)));
-				week.add(getInt(j,"week", getJSONArray(2, request)));
+			projectID = getInt(0, "projectid", request);
+			senderResourceID = getInt(0, "senderresourceid", request);
+			targetResourceID = getInt(0, "targetresourceid", request);
+			startWeek = getInt(0, "startweek", request);
+			endWeek = getInt(0, "endweek", request);
+			isLeader = getBool(0, "isleader", request);
+			insertRatio = new ArrayList<Integer>();
+			requestRatio = new ArrayList<Integer>();
+
+			for (int j = 0; j < getJSONArray(1, request).size(); j++) {
+				requestRatio.add(getInt(j, "requestratio", getJSONArray(1, request)));
+				insertRatio.add(getInt(j, "updateratio", getJSONArray(1, request)));
 			}
-			
+
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			System.out.println("illegal state exception");
@@ -66,10 +75,11 @@ public class AddResourceToprojectCommand extends BaseCommandOperations implement
 			logger.error(getClass().getName() + methodName + e);
 			response = setError(-1);
 		}
-		
+
 		if (!errorCheck(response)) {
 			try {
-				int resourceAddedToProject = projectDao.addResourceToProject(projectName, resourceName, week, ratio);
+				int resourceAddedToProject = projectDao.addResourceToProject(projectID, senderResourceID, targetResourceID,
+						startWeek, endWeek, isLeader, insertRatio, requestRatio);
 				response = addInt("resourceaddedtoproject", resourceAddedToProject, response);
 			} catch (DalException e) {
 				logger.error(getClass().getName() + methodName + e.getErrorMessage());
@@ -79,7 +89,7 @@ public class AddResourceToprojectCommand extends BaseCommandOperations implement
 				response = setError(0);
 			}
 		}
-		
+
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
 		return response;
 

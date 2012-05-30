@@ -21,48 +21,54 @@ public class InsertNewProjectCommand extends BaseCommandOperations implements Co
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
-	
-	public InsertNewProjectCommand (JSONArray request) {
+
+	public InsertNewProjectCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
-		
+
 		try {
 			this.response = new JSONArray();
 			this.instance = JdbcDaoFactory.getInstance();
 			this.projectDao = instance.getProjectsDao();
 			this.request = request;
-			
+
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			response = setError(0);
 		}
-		
+
 	}
-	
+
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 		
-		String userName = null;
+		int resourceID = -1;
 		String projectName = null;
 		boolean openedStatus = false;
 		int startWeek = 0;
+		int endWeek = 0;
 		int deadline = 0;
 		String nextRelease = null;
 		String statusName = null;
-		ArrayList <Integer> ratio = null;
+		ArrayList<Integer> insertRatio = null;
+		ArrayList<Integer> requestRatio = null;
 		
 		try {
-			userName = getString(0,"username",request);
+			resourceID = getInt(0,"resourceid",request);
 			projectName = getString(0,"projectname", request);
 			openedStatus = getBool(0,"openedstatus", request);
 			startWeek = getInt(0,"startweek", request);
+			endWeek = getInt(0,"endWeek", request);
 			deadline = getInt(0,"deadline", request);
 			nextRelease = getString(0,"nextrelease", request);
 			statusName = getString(0,"statusname", request);
-			ratio = new ArrayList<Integer>();
+			insertRatio = new ArrayList<Integer>();
+			requestRatio = new ArrayList<Integer>();
+			
 			for(int j = 0;j<getJSONArray(1, request).size();j++){
-				ratio.add(getInt(j,"ratio", getJSONArray(1, request)));
+				insertRatio.add(getInt(j,"insertratio", getJSONArray(1, request)));
+				requestRatio.add(getInt(j,"requestratio", getJSONArray(1, request)));
 			}
 			
 		} catch (IllegalStateException e) {
@@ -76,7 +82,8 @@ public class InsertNewProjectCommand extends BaseCommandOperations implements Co
 		
 		if (!errorCheck(response)) {
 			try {
-				int projectCreated = projectDao.createProject(userName, projectName, openedStatus, startWeek, deadline, nextRelease, statusName);
+				int projectCreated = projectDao.createProject(projectName, openedStatus, startWeek, endWeek, deadline, 
+						nextRelease, statusName, resourceID, insertRatio, requestRatio);
 				response = addInt("projectcreated", projectCreated, response);
 			}
 			catch (DalException e) {

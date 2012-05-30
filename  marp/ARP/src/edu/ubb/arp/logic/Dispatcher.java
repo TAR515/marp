@@ -11,7 +11,6 @@ import edu.ubb.arp.logic.commands.LoadProjectTableCommand;
 import edu.ubb.arp.logic.commands.LoadProjectsUserIsWorkingOnCommand;
 import edu.ubb.arp.logic.commands.LoadUserDataCommand;
 import edu.ubb.arp.logic.commands.projects.AddResourceToprojectCommand;
-import edu.ubb.arp.logic.commands.projects.AddUserToProjectCommand;
 import edu.ubb.arp.logic.commands.projects.ChangeProjectCurrentStatusCommand;
 import edu.ubb.arp.logic.commands.projects.ChangeProjectDeadlineCommand;
 import edu.ubb.arp.logic.commands.projects.ChangeProjectNameCommand;
@@ -128,10 +127,6 @@ public class Dispatcher extends BaseCommandOperations {
 				// Project commands
 				case 201: // create new project
 					command = new InsertNewProjectCommand(request);
-					response = command.execute();
-					break;
-				case 202: // add user to project
-					command = new AddUserToProjectCommand(request);
 					response = command.execute();
 					break;
 				case 203: // add resource to project

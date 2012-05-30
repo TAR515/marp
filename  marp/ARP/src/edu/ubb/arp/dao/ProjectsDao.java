@@ -9,14 +9,12 @@ import edu.ubb.arp.exceptions.DalException;
 
 public interface ProjectsDao {
 
-	public int createProject(String userName, String projectName, boolean openStatus, int startWeek,
-			int deadLine, String nextRelease, String statusName) throws SQLException, DalException;
+	public int createProject(String projectName, boolean openedStatus, int startWeek, int endWeek, int deadLine,
+			String nextRelease, String statusName, int resourceID, List<Integer> insertRatio,
+			List<Integer> requestRatio) throws SQLException, DalException;
 
-	public int addUserToProject(String projectName, String userName, List<Integer> week, List<Integer> ratio, boolean isLeader)
-			throws SQLException, DalException;
-
-	public int addResourceToProject(String projectName, String resourceName, List<Integer> week, List<Integer> ratio)
-			throws SQLException, DalException;
+	public int addResourceToProject(int projectID, int senderResourceID, int targetResourceID, int startWeek, int endWeek,
+			boolean isLeader, List<Integer> insertRatio, List<Integer> requestRatio) throws SQLException, DalException;
 
 	public int setOpenStatus(int projectID, boolean openStatus) throws SQLException, DalException;
 
@@ -37,19 +35,21 @@ public interface ProjectsDao {
 	public int setCurrentStatus(int projectID, String newCurrentStatus) throws SQLException, DalException;
 
 	public void setCurrentStatus(String projectName, String newCurrentStatus) throws SQLException, DalException;
-	
+
 	public void removeUserFromProject(int projectID, int userID, int currentWeek) throws SQLException, DalException;
-	
+
 	public int removeUserFromProject(String projectName, String userName, int currentWeek) throws SQLException, DalException;
-	
-	public int removeResourceFromProject(String projectName, String resourceName, int currentWeek) throws SQLException, DalException;
-	
-	public int updateResourceRatioInProject(int projectID, int senderResourceID, int targetResourceID, int startWeek, int endWeek,
-			List<Integer> updateRatio, List<Integer> requestRatio) throws SQLException, DalException;
-	
-	public int updateUserIsLeader(String projectName, String userName, int currentWeek, boolean isLeader) throws SQLException, DalException;
-	
+
+	public int removeResourceFromProject(String projectName, String resourceName, int currentWeek) throws SQLException,
+			DalException;
+
+	public int updateResourceRatioInProject(int projectID, int senderResourceID, int targetResourceID, int startWeek,
+			int endWeek, List<Integer> updateRatio, List<Integer> requestRatio) throws SQLException, DalException;
+
+	public int updateUserIsLeader(String projectName, String userName, int currentWeek, boolean isLeader) throws SQLException,
+			DalException;
+
 	public List<Booking> loadBooking(int projectID) throws SQLException, DalException;
-	
+
 	public List<ResourcesWorkingOnProject> getAllActiveProjects(String userName) throws SQLException, DalException;
 }
