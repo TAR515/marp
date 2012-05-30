@@ -16,7 +16,7 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		super(dataSource);
 	}
 
-	public int createNewRequest(int senderUserID, int targetResourceID, int projectID, int week, int ratio) throws SQLException, DalException {
+	public int createNewRequest(int senderResourceID, int targetResourceID, int projectID, int week, int ratio) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -28,7 +28,7 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 			stmt = createProcedure(connection, "new_request", 6);
 
 			int paramIndex = 1;
-			setInt(stmt, paramIndex++, senderUserID);
+			setInt(stmt, paramIndex++, senderResourceID);
 			setInt(stmt, paramIndex++, targetResourceID);
 			setInt(stmt, paramIndex++, projectID);
 			setInt(stmt, paramIndex++, week);
