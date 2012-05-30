@@ -51,6 +51,41 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		}
 		return errmsg;
 	}
+	
+	public int createNewRequest(int senderResourceID, int targetResourceID, int projectID, int week, int ratio, Connection con) throws SQLException, DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = con;
+			stmt = createProcedure(connection, "new_request", 6);
+
+			int paramIndex = 1;
+			setInt(stmt, paramIndex++, senderResourceID);
+			setInt(stmt, paramIndex++, targetResourceID);
+			setInt(stmt, paramIndex++, projectID);
+			setInt(stmt, paramIndex++, week);
+			setInt(stmt, paramIndex++, ratio);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			stmt.executeUpdate();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg);
+			}
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return errmsg;
+	}
+
 
 	public int updateRequestRatioOfUser(List<Integer> week, List<Integer> ratio, String senderUserName,
 			String targetUserName, String projectName) throws SQLException, DalException {

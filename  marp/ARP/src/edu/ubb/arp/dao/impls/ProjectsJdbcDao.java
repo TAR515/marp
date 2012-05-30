@@ -564,7 +564,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 					}
 					
 					if (currentRequestRatio > 0) {
-						requestDao.createNewRequest(senderResourceID, targetResourceID, projectID, currentWeek, currentRequestRatio);
+						requestDao.createNewRequest(senderResourceID, targetResourceID, projectID, currentWeek, currentRequestRatio, connection);
 					}
 					currentWeek++;
 				}
