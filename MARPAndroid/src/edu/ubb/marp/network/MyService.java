@@ -275,12 +275,12 @@ public class MyService extends Service {
 			json.put("statusname", intent.getStringExtra("statusname"));
 			
 			JSONArray elements=new JSONArray();
-			int[] intRatios=intent.getIntArrayExtra("ratios");
-			boolean[] isRequests = intent.getBooleanArrayExtra("isrequest");
-			for(int i=0;i<intRatios.length;i++){
+			int[] intUpdateRatios=intent.getIntArrayExtra("updateratios");
+			int[] intRequestRatios=intent.getIntArrayExtra("requestratios");
+			for(int i=0;i<intUpdateRatios.length;i++){
 				JSONObject obj=new JSONObject();
-				obj.put("ratio", intRatios[i]);
-				obj.put("isrequest", isRequests[i]);
+				obj.put("updateratio", intUpdateRatios[i]);
+				obj.put("requestratio", intRequestRatios[i]);
 				elements.put(obj);
 			}
 

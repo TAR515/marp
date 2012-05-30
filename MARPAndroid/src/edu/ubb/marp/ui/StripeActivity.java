@@ -246,15 +246,15 @@ public class StripeActivity extends Activity {
 					i--;
 				int currentColumns=i+1;
 				
-				int[] ratios=new int[currentColumns];
-				boolean[] isRequest=new boolean[currentColumns];
+				int[] updateratios=new int[currentColumns];
+				int[] requestratios=new int[currentColumns];
 				for(i=0;i<currentColumns;i++){
 					StringTokenizer st = new StringTokenizer(elements[i].getPercentText());
-					ratios[i]=Integer.parseInt(st.nextToken());
-					isRequest[i] = elements[i].isYellow();
+					updateratios[i]=Integer.parseInt(st.nextToken());
+					//isRequest[i] = elements[i].isYellow();
 				}
-				intent.putExtra("ratios", ratios);
-				intent.putExtra("isrequest", isRequest);
+				intent.putExtra("updateratios", updateratios);
+				intent.putExtra("requestratios", requestratios);
 
 				requestid = new Date().getTime();
 				intent.putExtra("requestid", requestid);
