@@ -133,7 +133,16 @@ public class MyAccountActivity extends Activity {
 			
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				/*implement the ok button*/
+				switch(position){
+				case 0: //Name
+					break;
+				case 1: //Username
+					break;
+				case 2: //Telephone
+					break;
+				case 3: //E-mail
+					break;
+				}
 			}
 		});
 		alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {

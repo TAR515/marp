@@ -108,7 +108,7 @@ public class Login extends Activity {
 
 			Intent intent = new Intent(this, MyService.class);
 			intent.putExtra("ACTION", "LOGIN");
-			intent.putExtra("username", username.getText().toString());
+			intent.putExtra("username", username.getText().toString()/*.toLowerCase()*/); //TODO
 			intent.putExtra("password", password.getText().toString());
 			intent.setData(uri.build());
 			// sentIntent =intent;
@@ -153,7 +153,7 @@ public class Login extends Activity {
 							.getDefaultSharedPreferences(getApplicationContext());
 					Editor editor = pref.edit();
 
-					editor.putString("username", username.getText().toString());
+					editor.putString("username", username.getText().toString()/*.toLowerCase()*/); //TODO
 					editor.putString("password", password.getText().toString());
 					editor.putBoolean("remember", remember.isChecked());
 

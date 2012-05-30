@@ -74,6 +74,10 @@
             android:label="Resource" 
             android:theme="@android:style/Theme.NoTitleBar">
         </activity>
+        <activity
+            android:name=".ui.ModifyResourceReservation"
+            android:label="ModifyResourceReservation" >
+        </activity>
     </application>
 
 </manifest>
