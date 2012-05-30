@@ -45,6 +45,7 @@ public class ProjectActivity extends ListActivity {
 	// private Intent sentIntent;
 	private long requestid;
 	private String[] ids;
+	private String[] projectNames;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -184,14 +185,18 @@ public class ProjectActivity extends ListActivity {
 		Log.i(tag, "query utan");
 
 		ids = new String[c.getCount()];
+		projectNames = new String[c.getCount()];
 		int i = 0;
 		if (c.moveToFirst()) {
 			int index = c.getColumnIndex("_id");
+			int index2 = c.getColumnIndex(TABLE_PROJECTS.PROJECTNAME);
 			Log.i(tag, "while elott");
-			ids[i++] = c.getString(index);
+			ids[i] = c.getString(index);
+			projectNames[i++] = c.getString(index2);
 			Log.i(tag, "lekerdezes " + ids[i - 1]);
 			while (c.moveToNext()) {
-				ids[i++] = c.getString(index);
+				ids[i] = c.getString(index);
+				projectNames[i++] = c.getString(index2);
 				Log.i(tag, "lekerdezes " + ids[i - 1]);
 			}
 			Log.i(tag, "while utan");
@@ -232,7 +237,7 @@ public class ProjectActivity extends ListActivity {
 					myIntent.setData(uri.build());
 
 					//requestid=new Date().getTime();
-					myIntent.putExtra("requestid", 0);
+					myIntent.putExtra("requestid", (long)0);
 					startService(myIntent);
 				} else {
 					loading.dismiss();
@@ -248,6 +253,7 @@ public class ProjectActivity extends ListActivity {
 				ResourcesActivity.class);
 		Bundle bundle = new Bundle();
 		bundle.putString("projectid", ids[position]);
+		bundle.putString("projectname", projectNames[position]);
 		myIntent.putExtras(bundle);
 		startActivity(myIntent);
 	}

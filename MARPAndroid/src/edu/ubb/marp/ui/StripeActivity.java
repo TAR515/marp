@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 import org.json.JSONArray;
 
 import edu.ubb.marp.Constants;
+import edu.ubb.marp.Constants.STRIPEACTIVITYACTIONS;
 import edu.ubb.marp.R;
 import edu.ubb.marp.database.DatabaseContract;
 import edu.ubb.marp.database.DatabaseContract.TABLE_PROJECTS;
@@ -49,16 +50,20 @@ public class StripeActivity extends Activity {
 	private String startweek;
 	private String endweek;
 	private String projectname;
-	private int userid;
+	private int resourceid;
 	private Context context;
+	private STRIPEACTIVITYACTIONS action;
 
 	RowElement[] elements;
 	Button applyToAll;
 	int columns;
 	Display display;
-	/*String loadstr[][] = { { "2001.03.10", "0" }, { "2001.03.10", "10" }, { "2001.03.10", "20" }, { "2001.03.10", "30" },
-			{ "2001.03.10", "40" }, { "2001.03.10", "50" }, { "2001.03.10", "60" }, { "2001.03.10", "70" }, { "2001.03.10", "80" },
-			{ "2001.03.10", "90" } };*/
+	/*
+	 * String loadstr[][] = { { "2001.03.10", "0" }, { "2001.03.10", "10" }, {
+	 * "2001.03.10", "20" }, { "2001.03.10", "30" }, { "2001.03.10", "40" }, {
+	 * "2001.03.10", "50" }, { "2001.03.10", "60" }, { "2001.03.10", "70" }, {
+	 * "2001.03.10", "80" }, { "2001.03.10", "90" } };
+	 */
 	String loadstr[][];
 	boolean klicked = false;
 
@@ -68,36 +73,40 @@ public class StripeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		Log.i(tag, "oncreate");
 
-		context=this;
-		
-		if((savedInstanceState==null)||(savedInstanceState.isEmpty())){
+		context = this;
+
+		if ((savedInstanceState == null) || (savedInstanceState.isEmpty())) {
 			bundle = getIntent().getExtras();
 
 			startweek = bundle.getString("startweek");
 			endweek = bundle.getString("endweek");
 			projectname = bundle.getString("projectname");
 
-			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+			action=STRIPEACTIVITYACTIONS.valueOf(bundle.getString("ACTION"));
+			if (action == STRIPEACTIVITYACTIONS.NEWPROJECT) {
+				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 
-			Uri.Builder uri = new Uri.Builder();
-			uri = new Uri.Builder();
-			uri.authority(DatabaseContract.PROVIDER_NAME);
-			uri.path(DatabaseContract.TABLE_USERS);
-			uri.scheme("content");
+				Uri.Builder uri = new Uri.Builder();
+				uri = new Uri.Builder();
+				uri.authority(DatabaseContract.PROVIDER_NAME);
+				uri.path(DatabaseContract.TABLE_USERS);
+				uri.scheme("content");
 
-			ContentResolver cr = getContentResolver();
+				ContentResolver cr = getContentResolver();
 
-			String projection[] = { TABLE_USERS.USERID };
+				String projection[] = { TABLE_USERS.USERID };
 
-			Cursor c = cr.query(uri.build(), projection, TABLE_USERS.USERNAME + " = '" + pref.getString("username", "") + "'", null, null);
+				Cursor c = cr.query(uri.build(), projection, TABLE_USERS.USERNAME + " = '" + pref.getString("username", "") + "'", null,
+						null);
 
-			c.moveToFirst();
+				c.moveToFirst();
 
-			userid = c.getInt(c.getColumnIndex(TABLE_USERS.USERID));
-			
+				resourceid = c.getInt(c.getColumnIndex(TABLE_USERS.USERID));
+			} else
+				resourceid = bundle.getInt("resourceid");
+
 			sendRequest();
-		}
-		else
+		} else
 			RestoreInstanceState(savedInstanceState);
 
 		/*
@@ -136,10 +145,19 @@ public class StripeActivity extends Activity {
 		Intent intent = new Intent(this, MyService.class);
 		intent.putExtra("ACTION", "QUERYWITHOUTSTORING");
 		intent.setData(uriSending.build());
-		intent.putExtra("resourceid", userid);
+		intent.putExtra("resourceid", resourceid);
 		intent.putExtra("startweek", startweek);
 		intent.putExtra("endweek", endweek);
-		intent.putExtra("action", "newproject");
+		
+		switch (action) {
+		case NEWPROJECT:
+			intent.putExtra("action", "newproject");
+			break;
+
+		case MODRESOURCERESERVATION:
+			break;
+		}
+		
 		intent.putExtra("projectname", projectname);
 		requestid = new Date().getTime();
 		intent.putExtra("requestid", requestid);
@@ -230,7 +248,7 @@ public class StripeActivity extends Activity {
 			}
 			if (isOneRed) {
 				messageBoxShow("There are uncompleted weeks", "Error");
-			}else{
+			} else {
 				Intent intent = new Intent(this, MyService.class);
 				intent.putExtra("ACTION", "NEWPROJECT");
 				intent.putExtra("projectname", bundle.getString("projectname"));
@@ -240,18 +258,23 @@ public class StripeActivity extends Activity {
 				intent.putExtra("deadline", bundle.getString("deadline"));
 				intent.putExtra("nextrelease", bundle.getString("nextrelease"));
 				intent.putExtra("statusname", bundle.getString("statusname"));
-			
-				int i=columns-1;
-				while((i>=0)&&(!elements[i].isGreen)&&(!elements[i].isYellow))
+
+				int i = columns - 1;
+				while ((i >= 0) && (!elements[i].isGreen) && (!elements[i].isYellow))
 					i--;
-				int currentColumns=i+1;
-				
-				int[] updateratios=new int[currentColumns];
-				int[] requestratios=new int[currentColumns];
-				for(i=0;i<currentColumns;i++){
-					StringTokenizer st = new StringTokenizer(elements[i].getPercentText());
-					updateratios[i]=Integer.parseInt(st.nextToken());
-					//isRequest[i] = elements[i].isYellow();
+				int currentColumns = i + 1;
+
+				int[] updateratios = new int[currentColumns];
+				int[] requestratios = new int[currentColumns];
+				for (i = 0; i < currentColumns; i++) {
+					StringTokenizer st = new StringTokenizer(elements[i].getRatioText());
+					requestratios[i] = Integer.parseInt(st.nextToken());
+					if (requestratios[i] > 100)
+						requestratios[i] -= 100;
+					else
+						requestratios[i] = 0;
+					st = new StringTokenizer(elements[i].getPercentText());
+					updateratios[i] = Integer.parseInt(st.nextToken()) - requestratios[i];
 				}
 				intent.putExtra("updateratios", updateratios);
 				intent.putExtra("requestratios", requestratios);
@@ -271,7 +294,7 @@ public class StripeActivity extends Activity {
 	}
 
 	protected void RestoreInstanceState(Bundle savedInstanceState) {
-		//super.onRestoreInstanceState(savedInstanceState);
+		// super.onRestoreInstanceState(savedInstanceState);
 		// Read values from the "savedInstanceState"-object and put them in your
 		// textview
 		Log.i(tag, "restore");
@@ -280,10 +303,11 @@ public class StripeActivity extends Activity {
 		bundle = savedInstanceState.getBundle("bundle");
 		startweek = savedInstanceState.getString("startweeek");
 		endweek = savedInstanceState.getString("endweek");
-		userid = savedInstanceState.getInt("userid");
+		resourceid = savedInstanceState.getInt("resourceid");
 		columns = savedInstanceState.getInt("columns");
 		projectname = savedInstanceState.getString("projectname");
 		elements = new RowElement[columns];
+		action = STRIPEACTIVITYACTIONS.valueOf(savedInstanceState.getString("ACTION"));
 		for (int i = 0; i < columns; i++) {
 			elements[i] = new RowElement(this, display);
 			elements[i].setPercentText(savedInstanceState.getString("percent" + i));
@@ -315,9 +339,10 @@ public class StripeActivity extends Activity {
 		outState.putBundle("bundle", bundle);
 		outState.putString("startweeek", startweek);
 		outState.putString("endweek", endweek);
-		outState.putInt("userid", userid);
+		outState.putInt("resourceid", resourceid);
 		outState.putInt("columns", columns);
 		outState.putString("projectname", projectname);
+		outState.putString("ACTION", action.toString());
 		for (int i = 0; i < columns; i++) {
 			outState.putString("percent" + i, elements[i].getPercentText());
 			outState.putString("ratio" + i, elements[i].getRatioText());
@@ -362,9 +387,9 @@ public class StripeActivity extends Activity {
 						String s;
 						int j = Integer.parseInt(startweek);
 						for (int i = 0; i < results.length; i++) {
-							s=Constants.convertWeekToDate(j++);
+							s = Constants.convertWeekToDate(j++);
 							Log.i(tag, s);
-							loadstr[i][0] = /*Constants.convertWeekToDate(j++)*/s;
+							loadstr[i][0] = /* Constants.convertWeekToDate(j++) */s;
 							loadstr[i][1] = Integer.toString(results[i]);
 						}
 

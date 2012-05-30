@@ -61,15 +61,15 @@ public class MyService extends Service {
 			case NEWPROJECT:
 				newProject(intent);
 				break;
-				
+
 			case CHANGEPROJECT:
 				changeProject(intent);
 				break;
-				
+
 			case RESOURCEMODIFICATIONS:
 				resourceModifications(intent);
 				break;
-				
+
 			case REQUESTS:
 				requests(intent);
 
@@ -191,7 +191,7 @@ public class MyService extends Service {
 				json.put("resourceid", uri.getPathSegments().get(1));
 				break;
 			case Constants.QUERYUSER:
-				if(intent.getBooleanExtra("self", true))
+				if (intent.getBooleanExtra("self", true))
 					json.put("targetusername", pref.getString("username", ""));
 				else
 					json.put("targetusername", intent.getStringExtra("targetusername"));
@@ -273,12 +273,12 @@ public class MyService extends Service {
 			json.put("deadline", intent.getStringExtra("deadline"));
 			json.put("nextrelease", intent.getStringExtra("nextrelease"));
 			json.put("statusname", intent.getStringExtra("statusname"));
-			
-			JSONArray elements=new JSONArray();
-			int[] intUpdateRatios=intent.getIntArrayExtra("updateratios");
-			int[] intRequestRatios=intent.getIntArrayExtra("requestratios");
-			for(int i=0;i<intUpdateRatios.length;i++){
-				JSONObject obj=new JSONObject();
+
+			JSONArray elements = new JSONArray();
+			int[] intUpdateRatios = intent.getIntArrayExtra("updateratios");
+			int[] intRequestRatios = intent.getIntArrayExtra("requestratios");
+			for (int i = 0; i < intUpdateRatios.length; i++) {
+				JSONObject obj = new JSONObject();
 				obj.put("updateratio", intUpdateRatios[i]);
 				obj.put("requestratio", intRequestRatios[i]);
 				elements.put(obj);
@@ -291,8 +291,8 @@ public class MyService extends Service {
 		} catch (JSONException e) {
 		}
 	}
-	
-	private void changeProject(Intent intent){
+
+	private void changeProject(Intent intent) {
 		Log.i(tag, "changeProject");
 		Uri uri = intent.getData();
 		int cmd = Integer.parseInt(uri.getPathSegments().get(0));
@@ -305,7 +305,7 @@ public class MyService extends Service {
 
 			switch (cmd) {
 			case Constants.CHANGEPROJECTOPENEDSTATUS:
-				//json.put("projectid", uri.getPathSegments().get(1));
+				// json.put("projectid", uri.getPathSegments().get(1));
 				json.put("openedstatus", intent.getBooleanExtra("openedstatus", false));
 				break;
 			case Constants.CHANGEPROJECTNAME:
@@ -321,8 +321,8 @@ public class MyService extends Service {
 				json.put("newcurrentstatus", intent.getStringExtra("newcurrentstatus"));
 				break;
 			}
-			//TODO Ezek utan kell varni valaszt?
-			
+			// TODO Ezek utan kell varni valaszt?
+
 			json.put("projectid", intent.getIntExtra("projectid", -1));
 
 			json.put("username", pref.getString("username", ""));
@@ -337,8 +337,8 @@ public class MyService extends Service {
 		} catch (JSONException e) {
 		}
 	}
-	
-	private void resourceModifications(Intent intent){
+
+	private void resourceModifications(Intent intent) {
 		Log.i(tag, "resourceModifications");
 		Uri uri = intent.getData();
 		int cmd = Integer.parseInt(uri.getPathSegments().get(0));
@@ -351,7 +351,7 @@ public class MyService extends Service {
 
 			switch (cmd) {
 			case Constants.INSERTNEWRESOURCE:
-				//json.put("projectid", uri.getPathSegments().get(1));
+				// json.put("projectid", uri.getPathSegments().get(1));
 				json.put("resourcename", intent.getStringExtra("resourcename"));
 				json.put("active", intent.getBooleanExtra("active", false));
 				json.put("resourcetypename", intent.getStringExtra("resourcetypename"));
@@ -381,7 +381,7 @@ public class MyService extends Service {
 				json.put("active", intent.getBooleanExtra("active", false));
 				break;
 			}
-			//TODO Ezek utan kell varni valaszt?
+			// TODO Ezek utan kell varni valaszt?
 
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
@@ -395,8 +395,8 @@ public class MyService extends Service {
 		} catch (JSONException e) {
 		}
 	}
-	
-	private void requests(Intent intent){
+
+	private void requests(Intent intent) {
 		Log.i(tag, "resourceCommands");
 		Uri uri = intent.getData();
 		int cmd = Integer.parseInt(uri.getPathSegments().get(0));
@@ -425,7 +425,7 @@ public class MyService extends Service {
 			case Constants.UPDATEREQUESTRATIOOFRATIO:
 				break;
 			}
-			//TODO Ezek utan kell varni valaszt?
+			// TODO Ezek utan kell varni valaszt?
 
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
@@ -489,6 +489,15 @@ public class MyService extends Service {
 					uri.authority(DatabaseContract.PROVIDER_NAME);
 					uri.path(DatabaseContract.TABLE_PROJECTS);
 					uri.scheme("content");
+
+					for (int i = 0; i < r.length(); i++) {
+						JSONObject obj = r.getJSONObject(i);
+						if (obj.getBoolean("isleader") == true)
+							obj.put("isleader", "Leader");
+						else
+							obj.put("isleader", "User");
+						r.put(i, obj);
+					}
 
 					mainColumns = new String[1];
 					mainColumns[0] = TABLE_PROJECTS.PROJECTID;

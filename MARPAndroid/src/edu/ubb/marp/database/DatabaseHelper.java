@@ -40,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				"nextrelease varchar(10)," +
 				"statusname varchar(45)," +
 				"startweek integer,"+
-				"isleader bool)");
+				"isleader varchar(25))");
 				//"_id integer)");
 		
 		/*db.execSQL("CREATE TABLE Resources(" +

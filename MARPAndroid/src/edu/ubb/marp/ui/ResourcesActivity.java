@@ -1,5 +1,6 @@
 package edu.ubb.marp.ui;
 
+import java.lang.reflect.Modifier;
 import java.util.Date;
 
 import edu.ubb.marp.Constants;
@@ -40,6 +41,7 @@ public class ResourcesActivity extends Activity {
 	// private Intent sentIntent;
 	private long requestid;
 	private String projectid;
+	private String projectName;
 	private int resourceIDs[];
 	private int numberOfBroadcasts;
 
@@ -94,6 +96,7 @@ public class ResourcesActivity extends Activity {
 
 		if ((savedInstanceState == null) || (savedInstanceState.isEmpty())) {
 			projectid = getIntent().getExtras().getString("projectid");
+			projectName = getIntent().getExtras().getString("projectname");
 
 			sendRequest();
 		} else
@@ -148,6 +151,7 @@ public class ResourcesActivity extends Activity {
 		outState.putBooleanArray("isUser", isUser);
 		outState.putLong("requestid", requestid);
 		outState.putString("projectid", projectid);
+		outState.putString("projectname", projectName);
 		outState.putIntArray("resourceIDs", resourceIDs);
 
 		super.onSaveInstanceState(outState);
@@ -165,6 +169,7 @@ public class ResourcesActivity extends Activity {
 		isUser = savedInstanceState.getBooleanArray("isUser");
 		requestid = savedInstanceState.getLong("requestid");
 		projectid = savedInstanceState.getString("projectid");
+		projectName = savedInstanceState.getString("projectname");
 		resourceIDs = savedInstanceState.getIntArray("resourceIDs");
 
 		data = new String[row][];
@@ -252,7 +257,20 @@ public class ResourcesActivity extends Activity {
 							startActivity(myIntent);
 						}
 					}
-
+				});
+				
+				column.setOnLongClickListener(new View.OnLongClickListener() {
+					
+					public boolean onLongClick(View v) {
+						Intent myIntent = new Intent(getApplicationContext(),
+								ModifyResourceReservation.class);
+						Bundle bundle = new Bundle();
+						bundle.putString("projectname", projectName);
+						bundle.putInt("resourceid", resourceIDs[currentRow-1]);
+						myIntent.putExtras(bundle);
+						startActivity(myIntent);
+						return true;
+					}
 				});
 				row.addView(column);
 
