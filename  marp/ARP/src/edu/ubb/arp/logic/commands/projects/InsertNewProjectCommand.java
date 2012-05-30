@@ -59,7 +59,7 @@ public class InsertNewProjectCommand extends BaseCommandOperations implements Co
 			projectName = getString(0,"projectname", request);
 			openedStatus = getBool(0,"openedstatus", request);
 			startWeek = getInt(0,"startweek", request);
-			endWeek = getInt(0,"endWeek", request);
+			endWeek = getInt(0,"endweek", request);
 			deadline = getInt(0,"deadline", request);
 			nextRelease = getString(0,"nextrelease", request);
 			statusName = getString(0,"statusname", request);

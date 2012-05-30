@@ -64,7 +64,7 @@ public class AddResourceToprojectCommand extends BaseCommandOperations implement
 
 			for (int j = 0; j < getJSONArray(1, request).size(); j++) {
 				requestRatio.add(getInt(j, "requestratio", getJSONArray(1, request)));
-				insertRatio.add(getInt(j, "updateratio", getJSONArray(1, request)));
+				insertRatio.add(getInt(j, "insertratio", getJSONArray(1, request)));
 			}
 
 		} catch (IllegalStateException e) {

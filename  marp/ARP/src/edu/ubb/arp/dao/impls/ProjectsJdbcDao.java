@@ -37,7 +37,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 
 			errmsg = createJustProject(projectName, openedStatus, startWeek, deadLine, nextRelease, statusName, connection);
 
-			addResourceToProject(errmsg, resourceID, resourceID, startWeek, endWeek, true, insertRatio, requestRatio);
+			addResourceToProject(errmsg, resourceID, resourceID, startWeek, endWeek, true, insertRatio, requestRatio, connection);
 
 			connection.commit();
 		} catch (SQLException e) {
@@ -83,11 +83,11 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 							insertedYet = true;
 							errmsg = addResourceToUsersInProjects(projectID, targetResourceID, isLeader, connection);
 						}
-						addResourceToBooking(projectID, targetResourceID, currentWeek, currentInsertRatio, isLeader, connection);
+						errmsg = addResourceToBooking(projectID, targetResourceID, currentWeek, currentInsertRatio, isLeader, connection);
 					}
 
 					if (currentRequestRatio > 0) {
-						requestDao.createNewRequest(senderResourceID, targetResourceID, projectID, currentWeek,
+						errmsg = requestDao.createNewRequest(senderResourceID, targetResourceID, projectID, currentWeek,
 								currentRequestRatio, connection);
 					}
 					currentWeek++;
@@ -693,7 +693,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 	 * @param con
 	 * @return errmsg
 	 * @throws SQLException */
-	private void addResourceToBooking(int projectID, int targetResourceID, int week, int ratio, boolean isLeader, Connection con)
+	private int addResourceToBooking(int projectID, int targetResourceID, int week, int ratio, boolean isLeader, Connection con)
 			throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -703,7 +703,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		java.sql.CallableStatement stmt = null;
 		try {
 			connection = con;
-			stmt = createProcedure(connection, "resource_to_booking", 6);
+			stmt = createProcedure(connection, "add_resource_to_booking", 6);
 
 			int paramIndex = 1;
 			setInt(stmt, paramIndex++, projectID);
@@ -725,6 +725,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		} finally {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
+		return errmsg;
 	}
 
 	private int addResourceToUsersInProjects(int projectID, int targetResourceID, boolean isLeader, Connection con)
