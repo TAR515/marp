@@ -23,7 +23,7 @@ import android.util.Log;
 
 public class HttpClient extends AsyncTask<JSONArray, Integer, JSONArray> {
 
-	private static final String URL = "http://188.24.95.191:8080/MARP/AndroidServlet";
+	private static final String URL = "http://188.24.83.17:8080/MARP/AndroidServlet";
 	private static final int TIMEOUT=8000;
 	private static final int SOTIMEOUT=10000;
 	// private static final String URL =
@@ -69,6 +69,7 @@ public class HttpClient extends AsyncTask<JSONArray, Integer, JSONArray> {
 			HttpParams parameters=httpclient.getParams();
 			HttpConnectionParams.setConnectionTimeout(parameters, TIMEOUT);
 			HttpConnectionParams.setSoTimeout(parameters, SOTIMEOUT);
+			
 			httpclient.setParams(parameters);
 			
 			HttpResponse response = httpclient.execute(httpPostRequest);

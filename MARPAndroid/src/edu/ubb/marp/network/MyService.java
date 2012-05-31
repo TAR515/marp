@@ -66,6 +66,10 @@ public class MyService extends Service {
 				changeProject(intent);
 				break;
 
+			case RESOURCERESERVATIONMODIFICATION:
+				resourceReservationModification(intent);
+				break;
+
 			case RESOURCEMODIFICATIONS:
 				resourceModifications(intent);
 				break;
@@ -225,8 +229,8 @@ public class MyService extends Service {
 			switch (cmd) {
 			case Constants.QUERYAVAILABLERESOURCESCODE:
 				json.put("resourceid", intent.getIntExtra("resourceid", 0));
-				json.put("startweek", intent.getStringExtra("startweek"));
-				json.put("deadline", intent.getStringExtra("endweek"));
+				json.put("startweek", intent.getIntExtra("startweek", 0));
+				json.put("endweek", intent.getIntExtra("endweek", 0));
 				json.put("projectname", intent.getStringExtra("projectname"));
 				json.put("action", intent.getStringExtra("action"));
 				break;
@@ -333,6 +337,51 @@ public class MyService extends Service {
 			array.put(json);
 
 			Log.i(tag, "httpclient elott " + json.toString());
+			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
+		} catch (JSONException e) {
+		}
+	}
+
+	private void resourceReservationModification(Intent intent) {
+		Log.i(tag, "resourceReservationModification");
+
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+		try {
+			JSONObject json = new JSONObject();
+			json.put("command", Constants.UPDATERESOURCERESERVATION);
+			json.put("username", pref.getString("username", ""));
+			json.put("password", pref.getString("password", ""));
+
+			/*
+			 * intent.putExtra("projectname", projectName.getText().toString());
+			 * intent.putExtra("openedstatus", openedStatus.isChecked());
+			 * intent.putExtra("startweek", startweek.getText().toString());
+			 * intent.putExtra("deadline", deadline.getText().toString());
+			 * intent.putExtra("nextrelease", nextrelease.getText().toString());
+			 * intent.putExtra("statusname",
+			 * status.getSelectedItem().toString());
+			 */
+
+			json.put("projectid", intent.getIntExtra("projectid", 0));
+			json.put("startweek", intent.getIntExtra("startweek", 0));
+			json.put("endweek", intent.getIntExtra("endweek", 0));
+			json.put("targetresourceid", intent.getIntExtra("targetresourceid", 0));
+			json.put("senderresourceid", intent.getIntExtra("senderresourceid", 0));
+
+			JSONArray elements = new JSONArray();
+			int[] intUpdateRatios = intent.getIntArrayExtra("updateratios");
+			int[] intRequestRatios = intent.getIntArrayExtra("requestratios");
+			for (int i = 0; i < intUpdateRatios.length; i++) {
+				JSONObject obj = new JSONObject();
+				obj.put("updateratio", intUpdateRatios[i]);
+				obj.put("requestratio", intRequestRatios[i]);
+				elements.put(obj);
+			}
+
+			JSONArray array = new JSONArray();
+			array.put(json);
+			array.put(elements);
 			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
 		} catch (JSONException e) {
 		}
@@ -618,11 +667,11 @@ public class MyService extends Service {
 					intent.putExtra("Successful", true);
 
 					try {
-						JSONArray array = r.getJSONArray(0);
+						//JSONArray array = r.getJSONArray(0);
 
-						int results[] = new int[array.length()];
-						for (int i = 0; i < array.length(); i++)
-							results[i] = array.getInt(i);
+						int results[] = new int[r.length()];
+						for (int i = 0; i < r.length(); i++)
+							results[i] = r.getJSONObject(i).getInt("ratio");
 
 						intent.putExtra("results", results);
 
@@ -630,6 +679,32 @@ public class MyService extends Service {
 					} catch (JSONException errorReal) {
 						errorReal.printStackTrace();
 					}
+				}
+				break;
+
+			case Constants.UPDATERESOURCERESERVATION:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("resourceratioupdated") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
 				}
 				break;
 			}

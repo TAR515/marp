@@ -44,6 +44,7 @@ public class ResourcesActivity extends Activity {
 	private String projectName;
 	private int resourceIDs[];
 	private int numberOfBroadcasts;
+	private int minWeek;
 
 	private boolean[] isUser;
 	protected int column;
@@ -175,7 +176,7 @@ public class ResourcesActivity extends Activity {
 		data = new String[row][];
 		for (int i = 0; i < row; i++)
 			data[i] = savedInstanceState.getStringArray(Integer.toString(i));
-		
+
 		refresh();
 	}
 
@@ -258,15 +259,33 @@ public class ResourcesActivity extends Activity {
 						}
 					}
 				});
-				
+
 				column.setOnLongClickListener(new View.OnLongClickListener() {
-					
+
 					public boolean onLongClick(View v) {
-						Intent myIntent = new Intent(getApplicationContext(),
-								ModifyResourceReservation.class);
+						Intent myIntent = new Intent(getApplicationContext(), ModifyResourceReservation.class);
 						Bundle bundle = new Bundle();
 						bundle.putString("projectname", projectName);
-						bundle.putInt("resourceid", resourceIDs[currentRow-1]);
+						bundle.putInt("projectid", Integer.parseInt(projectid));
+						bundle.putInt("resourceid", resourceIDs[currentRow - 1]);
+						// bundle.putStringArray("bookings", data[currentRow]);
+
+						int startPos = 1;
+						int endPos = data[0].length - 1;
+						while (data[currentRow][startPos].isEmpty())
+							startPos++;
+						while (data[currentRow][endPos].isEmpty())
+							endPos--;
+
+						int[] booking = new int[endPos - startPos + 1];
+						int l = 0;
+						for (int k = startPos; k <= endPos; k++)
+							booking[l++] = Integer.parseInt(data[currentRow][k].split("\\.")[0]);
+
+						bundle.putIntArray("booking", booking);
+						bundle.putInt("minweek", minWeek + startPos - 1);
+						bundle.putInt("maxweek", minWeek + endPos - 1);
+
 						myIntent.putExtras(bundle);
 						startActivity(myIntent);
 						return true;
@@ -316,7 +335,7 @@ public class ResourcesActivity extends Activity {
 						String projection[] = { "MIN(" + TABLE_BOOKING.WEEK + ") as min", "MAX(" + TABLE_BOOKING.WEEK + ") as max" };
 						Cursor c = cr.query(uri.build(), projection, TABLE_BOOKING.PROJECTID + "=" + projectid, null, null);
 						c.moveToFirst();
-						int minWeek = c.getInt(c.getColumnIndex("min"));
+						minWeek = c.getInt(c.getColumnIndex("min"));
 						int maxWeek = c.getInt(c.getColumnIndex("max"));
 
 						uri.path(DatabaseContract.TABLE_RESOURCES + ", " + DatabaseContract.TABLE_BOOKING);

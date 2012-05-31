@@ -47,12 +47,14 @@ public class StripeActivity extends Activity {
 	private ProgressDialog loading;
 	private long requestid;
 	private Bundle bundle;
-	private String startweek;
-	private String endweek;
+	private int startweek;
+	private int endweek;
 	private String projectname;
-	private int resourceid;
+	private int projectID;
+	private int targetresourceid, senderresourceid;
 	private Context context;
 	private STRIPEACTIVITYACTIONS action;
+	private int[] booking;
 
 	RowElement[] elements;
 	Button applyToAll;
@@ -78,34 +80,74 @@ public class StripeActivity extends Activity {
 		if ((savedInstanceState == null) || (savedInstanceState.isEmpty())) {
 			bundle = getIntent().getExtras();
 
-			startweek = bundle.getString("startweek");
-			endweek = bundle.getString("endweek");
+			startweek = bundle.getInt("startweek");
+			endweek = bundle.getInt("endweek");
 			projectname = bundle.getString("projectname");
 
-			action=STRIPEACTIVITYACTIONS.valueOf(bundle.getString("ACTION"));
-			if (action == STRIPEACTIVITYACTIONS.NEWPROJECT) {
-				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+			action = STRIPEACTIVITYACTIONS.valueOf(bundle.getString("ACTION"));
+			switch (action) {
+			case newproject:
+				/*bundle.putString("ACTION", "newproject");
+					intent.putExtra("openedstatus", openedStatus.isChecked());
+					bundle.putInt("deadline", deadLine);
+					intent.putExtra("nextrelease", nextrelease.getText().toString());
+					intent.putExtra("statusname", status.getSelectedItem().toString());
+					
+					bundle.putIntArray("results", results);*/
+					senderresourceid = bundle.getInt("resourceid");
+				break;
 
-				Uri.Builder uri = new Uri.Builder();
-				uri = new Uri.Builder();
-				uri.authority(DatabaseContract.PROVIDER_NAME);
-				uri.path(DatabaseContract.TABLE_USERS);
-				uri.scheme("content");
+			case update:
+				projectID = bundle.getInt("projectid");
+				targetresourceid = bundle.getInt("targetresourceid");
+				senderresourceid = bundle.getInt("senderresourceid");
+				booking = bundle.getIntArray("booking");
+				break;
+			}
 
-				ContentResolver cr = getContentResolver();
+			int[] results = bundle.getIntArray("results");
 
-				String projection[] = { TABLE_USERS.USERID };
+			if (results != null) {
+				display = getWindowManager().getDefaultDisplay();
 
-				Cursor c = cr.query(uri.build(), projection, TABLE_USERS.USERNAME + " = '" + pref.getString("username", "") + "'", null,
-						null);
+				loadstr = new String[results.length][2];
 
-				c.moveToFirst();
+				int j = startweek;
+				for (int i = 0; i < results.length; i++) {
+					loadstr[i][0] = Constants.convertWeekToDate(j++);
+					loadstr[i][1] = Integer.toString(results[i]);
+				}
 
-				resourceid = c.getInt(c.getColumnIndex(TABLE_USERS.USERID));
-			} else
-				resourceid = bundle.getInt("resourceid");
+				setColumns(results.length, loadstr);
 
-			sendRequest();
+				// this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				LinearLayout l = new LinearLayout(context);
+				for (int i = 0; i < columns; i++) {
+					l.addView(elements[i].returnView());
+				}
+				for (int i = 0; i < columns; i++) {
+					applyToAll = elements[i].getApplyToAllButton();
+					final int from = i;
+					final int id = elements[i].getGroupCheckedRadioButtonId();
+					final RadioGroup rad = elements[i].getRadioGroup();
+					elements[i].setElements(elements, columns, i);
+					applyToAll.setOnClickListener(new OnClickListener() {
+						public void onClick(View v) {
+							Log.i("melyiket piszkalom : ", "" + from);
+							Log.i("ID : ", "" + id);
+							setElements(from, rad);
+						}
+					});
+				}
+				ScrollView scroll = new ScrollView(context);
+				scroll.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+
+				HorizontalScrollView horizontal = new HorizontalScrollView(context);
+
+				scroll.addView(l);
+				horizontal.addView(scroll);
+				setContentView(horizontal);
+			}
 		} else
 			RestoreInstanceState(savedInstanceState);
 
@@ -134,35 +176,30 @@ public class StripeActivity extends Activity {
 		 */
 	}
 
-	private void sendRequest() {
-		loading = ProgressDialog.show(this, "Loading", "Please wait...");
-
-		Uri.Builder uriSending = new Uri.Builder();
-		uriSending.authority(DatabaseContract.PROVIDER_NAME);
-		uriSending.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
-		uriSending.scheme("content");
-
-		Intent intent = new Intent(this, MyService.class);
-		intent.putExtra("ACTION", "QUERYWITHOUTSTORING");
-		intent.setData(uriSending.build());
-		intent.putExtra("resourceid", resourceid);
-		intent.putExtra("startweek", startweek);
-		intent.putExtra("endweek", endweek);
-		
-		switch (action) {
-		case NEWPROJECT:
-			intent.putExtra("action", "newproject");
-			break;
-
-		case MODRESOURCERESERVATION:
-			break;
-		}
-		
-		intent.putExtra("projectname", projectname);
-		requestid = new Date().getTime();
-		intent.putExtra("requestid", requestid);
-		startService(intent);
-	}
+	/*
+	 * private void sendRequest() { loading = ProgressDialog.show(this,
+	 * "Loading", "Please wait...");
+	 * 
+	 * Uri.Builder uriSending = new Uri.Builder();
+	 * uriSending.authority(DatabaseContract.PROVIDER_NAME);
+	 * uriSending.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
+	 * uriSending.scheme("content");
+	 * 
+	 * Intent intent = new Intent(this, MyService.class);
+	 * intent.putExtra("ACTION", "QUERYWITHOUTSTORING");
+	 * intent.setData(uriSending.build()); intent.putExtra("startweek",
+	 * startweek); intent.putExtra("endweek", endweek);
+	 * intent.putExtra("action", action.toString());
+	 * intent.putExtra("projectname", projectname);
+	 * 
+	 * switch (action) { case newproject: intent.putExtra("action",
+	 * "newproject"); break;
+	 * 
+	 * case update: intent.putExtra("resourceid", targetresourceid); break; }
+	 * 
+	 * requestid = new Date().getTime(); intent.putExtra("requestid",
+	 * requestid); startService(intent); }
+	 */
 
 	@Override
 	protected void onStart() {
@@ -183,6 +220,11 @@ public class StripeActivity extends Activity {
 		for (int i = 0; i < columns; i++) {
 			elements[i] = new RowElement(this, display);
 			elements[i].setText(s[i][0], s[i][1]);
+			if (action == STRIPEACTIVITYACTIONS.update) {
+				String temp = booking[i] + " %";
+				elements[i].setPercentText(temp);
+				elements[i].setNeededText("You want: " + temp);
+			}
 		}
 	}
 
@@ -249,40 +291,88 @@ public class StripeActivity extends Activity {
 			if (isOneRed) {
 				messageBoxShow("There are uncompleted weeks", "Error");
 			} else {
-				Intent intent = new Intent(this, MyService.class);
-				intent.putExtra("ACTION", "NEWPROJECT");
-				intent.putExtra("projectname", bundle.getString("projectname"));
-				intent.putExtra("openedstatus", bundle.getBoolean("openedstatus"));
-				intent.putExtra("startweek", bundle.getString("startweek"));
-				intent.putExtra("endweek", bundle.getString("endweek"));
-				intent.putExtra("deadline", bundle.getString("deadline"));
-				intent.putExtra("nextrelease", bundle.getString("nextrelease"));
-				intent.putExtra("statusname", bundle.getString("statusname"));
+				Intent intent;
+				int i;
+				int[] updateratios;
+				int[] requestratios;
 
-				int i = columns - 1;
-				while ((i >= 0) && (!elements[i].isGreen) && (!elements[i].isYellow))
-					i--;
-				int currentColumns = i + 1;
+				loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
-				int[] updateratios = new int[currentColumns];
-				int[] requestratios = new int[currentColumns];
-				for (i = 0; i < currentColumns; i++) {
-					StringTokenizer st = new StringTokenizer(elements[i].getRatioText());
-					requestratios[i] = Integer.parseInt(st.nextToken());
-					if (requestratios[i] > 100)
-						requestratios[i] -= 100;
-					else
-						requestratios[i] = 0;
-					st = new StringTokenizer(elements[i].getPercentText());
-					updateratios[i] = Integer.parseInt(st.nextToken()) - requestratios[i];
+				switch (action) {
+				case newproject: // TODO
+					intent = new Intent(this, MyService.class);
+					intent.putExtra("ACTION", "RESOURCERESERVATIONMODIFICATION");
+					intent.putExtra("projectname", bundle.getString("projectname"));
+					intent.putExtra("openedstatus", bundle.getBoolean("openedstatus"));
+					intent.putExtra("startweek", bundle.getString("startweek"));
+					intent.putExtra("endweek", bundle.getString("endweek"));
+					intent.putExtra("deadline", bundle.getString("deadline"));
+					intent.putExtra("nextrelease", bundle.getString("nextrelease"));
+					intent.putExtra("statusname", bundle.getString("statusname"));
+
+					i = columns - 1;
+					while ((i >= 0) && (!elements[i].isGreen) && (!elements[i].isYellow))
+						i--;
+
+					int currentColumns = i + 1;
+
+					updateratios = new int[currentColumns];
+					requestratios = new int[currentColumns];
+					for (i = 0; i < currentColumns; i++) {
+						StringTokenizer st = new StringTokenizer(elements[i].getRatioText());
+						requestratios[i] = Integer.parseInt(st.nextToken());
+						if (requestratios[i] > 100)
+							requestratios[i] -= 100;
+						else
+							requestratios[i] = 0;
+						st = new StringTokenizer(elements[i].getPercentText());
+						updateratios[i] = Integer.parseInt(st.nextToken()) - requestratios[i];
+					}
+					intent.putExtra("updateratios", updateratios);
+					intent.putExtra("requestratios", requestratios);
+
+					requestid = new Date().getTime();
+					intent.putExtra("requestid", requestid);
+
+					startService(intent);
+					break;
+				case update:
+					intent = new Intent(this, MyService.class);
+					intent.putExtra("ACTION", "RESOURCERESERVATIONMODIFICATION");
+					intent.putExtra("projectid", projectID);
+					intent.putExtra("startweek", startweek);
+					intent.putExtra("endweek", endweek);
+					intent.putExtra("targetresourceid", targetresourceid);
+					intent.putExtra("senderresourceid", senderresourceid);
+
+					Log.i("getNeededText", elements[1].getNeededText());
+					Log.i("getPercentText", elements[1].getPercentText());
+					Log.i("getratio", elements[1].getratio());
+					Log.i("getRatioText", elements[1].getRatioText());
+
+					updateratios = new int[columns];
+					requestratios = new int[columns];
+					for (i = 0; i < columns; i++) {
+						// StringTokenizer st = new
+						// StringTokenizer(elements[i].getRatioText());
+						// requestratios[i] = Integer.parseInt(st.nextToken());
+						requestratios[i] = Integer.parseInt(elements[i].getratio());
+						if (requestratios[i] > 100)
+							requestratios[i] -= 100;
+						else
+							requestratios[i] = 0;
+						StringTokenizer st = new StringTokenizer(elements[i].getPercentText());
+						updateratios[i] = Integer.parseInt(st.nextToken()) - requestratios[i];
+					}
+					intent.putExtra("updateratios", updateratios);
+					intent.putExtra("requestratios", requestratios);
+
+					requestid = new Date().getTime();
+					intent.putExtra("requestid", requestid);
+
+					startService(intent);
+					break;
 				}
-				intent.putExtra("updateratios", updateratios);
-				intent.putExtra("requestratios", requestratios);
-
-				requestid = new Date().getTime();
-				intent.putExtra("requestid", requestid);
-
-				startService(intent);
 			}
 			return true;
 		case R.id.clear:
@@ -301,13 +391,17 @@ public class StripeActivity extends Activity {
 
 		requestid = savedInstanceState.getLong("requestid");
 		bundle = savedInstanceState.getBundle("bundle");
-		startweek = savedInstanceState.getString("startweeek");
-		endweek = savedInstanceState.getString("endweek");
-		resourceid = savedInstanceState.getInt("resourceid");
+		startweek = savedInstanceState.getInt("startweek");
+		endweek = savedInstanceState.getInt("endweek");
+		targetresourceid = savedInstanceState.getInt("targetresourceid");
+		senderresourceid = savedInstanceState.getInt("senderresourceid");
 		columns = savedInstanceState.getInt("columns");
 		projectname = savedInstanceState.getString("projectname");
-		elements = new RowElement[columns];
+		projectID = savedInstanceState.getInt("projectid");
 		action = STRIPEACTIVITYACTIONS.valueOf(savedInstanceState.getString("ACTION"));
+
+		elements = new RowElement[columns];
+
 		for (int i = 0; i < columns; i++) {
 			elements[i] = new RowElement(this, display);
 			elements[i].setPercentText(savedInstanceState.getString("percent" + i));
@@ -337,12 +431,15 @@ public class StripeActivity extends Activity {
 		Log.i(tag, "onsave");
 		outState.putLong("requestid", requestid);
 		outState.putBundle("bundle", bundle);
-		outState.putString("startweeek", startweek);
-		outState.putString("endweek", endweek);
-		outState.putInt("resourceid", resourceid);
+		outState.putInt("startweeek", startweek);
+		outState.putInt("endweek", endweek);
+		outState.putInt("targetresourceid", targetresourceid);
+		outState.putInt("senderresourceid", senderresourceid);
 		outState.putInt("columns", columns);
 		outState.putString("projectname", projectname);
+		outState.putInt("projectid", projectID);
 		outState.putString("ACTION", action.toString());
+
 		for (int i = 0; i < columns; i++) {
 			outState.putString("percent" + i, elements[i].getPercentText());
 			outState.putString("ratio" + i, elements[i].getRatioText());
@@ -364,6 +461,7 @@ public class StripeActivity extends Activity {
 		alertDialog.setMessage(message);
 		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
+				finish();
 			}
 		});
 		alertDialog.show();
@@ -375,55 +473,15 @@ public class StripeActivity extends Activity {
 			Log.i(tag, "BroadcastReceiver");
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				loading.dismiss();
+
 				if (intent.getBooleanExtra("Successful", false)) {
-					// finish();
-					int[] results = intent.getIntArrayExtra("results");
-
-					if (results != null) {
-						display = getWindowManager().getDefaultDisplay();
-
-						loadstr = new String[results.length][2];
-
-						String s;
-						int j = Integer.parseInt(startweek);
-						for (int i = 0; i < results.length; i++) {
-							s = Constants.convertWeekToDate(j++);
-							Log.i(tag, s);
-							loadstr[i][0] = /* Constants.convertWeekToDate(j++) */s;
-							loadstr[i][1] = Integer.toString(results[i]);
-						}
-
-						setColumns(results.length, loadstr);
-
-						// this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-						LinearLayout l = new LinearLayout(context);
-						for (int i = 0; i < columns; i++) {
-							l.addView(elements[i].returnView());
-						}
-						for (int i = 0; i < columns; i++) {
-							applyToAll = elements[i].getApplyToAllButton();
-							final int from = i;
-							final int id = elements[i].getGroupCheckedRadioButtonId();
-							final RadioGroup rad = elements[i].getRadioGroup();
-							elements[i].setElements(elements, columns, i);
-							applyToAll.setOnClickListener(new OnClickListener() {
-								public void onClick(View v) {
-									Log.i("melyiket piszkalom : ", "" + from);
-									Log.i("ID : ", "" + id);
-									setElements(from, rad);
-								}
-							});
-						}
-						ScrollView scroll = new ScrollView(context);
-						scroll.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,
-								TableRow.LayoutParams.MATCH_PARENT));
-
-						HorizontalScrollView horizontal = new HorizontalScrollView(context);
-
-						scroll.addView(l);
-						horizontal.addView(scroll);
-						setContentView(horizontal);
-					}
+					/*
+					 * Intent myIntent = new Intent(getApplicationContext(),
+					 * Login.class);
+					 * myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					 * startActivity(myIntent);
+					 */
+					finish();
 				} else {
 					messageBoxShow(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
 				}

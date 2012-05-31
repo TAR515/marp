@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.DashPathEffect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -54,10 +55,6 @@ public class Login extends Activity {
 			public void onClick(View v) {
 				// Perform action on click
 				verify();
-				/*
-				 * Intent myIntent = new Intent(getApplicationContext(),
-				 * HelloTabActivity.class); startActivity(myIntent);
-				 */
 			}
 		});
 
@@ -72,6 +69,20 @@ public class Login extends Activity {
 		} else {
 			username.setText("");
 		}
+		
+		/*Log.i("0", Constants.convertWeekToDate(0));
+		Log.i("1", Constants.convertWeekToDate(1));
+		Log.i("2", Constants.convertWeekToDate(2));
+		
+		Date mydate=new Date(2007, 1, 1);
+		
+		Log.i("0", Integer.toString(Constants.weeksBetween(mydate, Constants.convertWeekToDatee(0))));
+		Log.i("1", Integer.toString(Constants.weeksBetween(mydate, Constants.convertWeekToDatee(1))));
+		Log.i("2", Integer.toString(Constants.weeksBetween(mydate, Constants.convertWeekToDatee(2))));
+		
+		Log.i("7", Integer.toString(Constants.weeksBetween(mydate, new Date(2007, 1, 7))));
+		Log.i("8", Integer.toString(Constants.weeksBetween(mydate, new Date(2007, 1, 8))));
+		Log.i("9", Integer.toString(Constants.weeksBetween(mydate, new Date(2007, 1, 9))));*/
 	}
 
 	@Override
@@ -108,7 +119,7 @@ public class Login extends Activity {
 
 			Intent intent = new Intent(this, MyService.class);
 			intent.putExtra("ACTION", "LOGIN");
-			intent.putExtra("username", username.getText().toString()/*.toLowerCase()*/); //TODO
+			intent.putExtra("username", username.getText().toString().toLowerCase());
 			intent.putExtra("password", password.getText().toString());
 			intent.setData(uri.build());
 			// sentIntent =intent;
@@ -153,7 +164,7 @@ public class Login extends Activity {
 							.getDefaultSharedPreferences(getApplicationContext());
 					Editor editor = pref.edit();
 
-					editor.putString("username", username.getText().toString()/*.toLowerCase()*/); //TODO
+					editor.putString("username", username.getText().toString().toLowerCase());
 					editor.putString("password", password.getText().toString());
 					editor.putBoolean("remember", remember.isChecked());
 

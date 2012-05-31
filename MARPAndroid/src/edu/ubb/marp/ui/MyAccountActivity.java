@@ -129,16 +129,27 @@ public class MyAccountActivity extends Activity {
 		alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle(title);
 		alertDialog.setView(editDialog);
+		final int myPosition=position;
+		final String newText = editDialog.getText().toString();
 		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				switch(position){
+				switch(myPosition){
 				case 0: //Name
 					break;
 				case 1: //Username
 					break;
 				case 2: //Telephone
+					/*Intent intent = new Intent(this, MyService.class);
+					intent.putExtra("ACTION", "QUERYWITHOUTSTORING");
+					intent.putExtra("password", newText);
+					intent.setData(uri.build());
+					// sentIntent =intent;
+					requestid = new Date().getTime();
+					intent.putExtra("requestid", requestid);
+
+					startService(intent);*/
 					break;
 				case 3: //E-mail
 					break;

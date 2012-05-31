@@ -4,15 +4,15 @@ import java.util.Date;
 
 public final class Constants {
 	public enum ACTIONS {
-		LOGIN, QUERY, QUERYWITHOUTSTORING, NEWPROJECT, CHANGEPROJECT, RESOURCEMODIFICATIONS, REQUESTS
+		LOGIN, QUERY, QUERYWITHOUTSTORING, NEWPROJECT, CHANGEPROJECT, RESOURCEMODIFICATIONS, REQUESTS, RESOURCERESERVATIONMODIFICATION
 	}
-	
-	public enum STRIPEACTIVITYACTIONS{
-		NEWPROJECT, MODRESOURCERESERVATION
+
+	public enum STRIPEACTIVITYACTIONS {
+		insert, update, newproject
 	}
 
 	public static String BROADCAST_ACTION = "edu.ubb.marp.DATABASEREFRESHED";
-	
+
 	public static final int QUERYUSER = 131;
 
 	public static final int QUERYAVAILABLERESOURCESCODE = 303;
@@ -21,19 +21,23 @@ public final class Constants {
 	public static final int CHANGEPROJECTDEADLINE = 223;
 	public static final int CHANGEPROJECTNEXTRELEASE = 224;
 	public static final int CHANGEPROJECTCURRENTSTATUS = 225;
-	
+
 	public static final int INSERTNEWRESOURCE = 301;
 	public static final int ADDRESOURCETOGROUP = 302;
 	public static final int REMOVERESOURCEFROMGROUP = 312;
 	public static final int UPDATERESOURCE = 321;
 	public static final int BUYSELLRESOURCE = 322;
-	
+
 	public static final int CREATENEWREQUESTFORUSER = 401;
 	public static final int CREATENEWREQUESTFORRESOURCE = 402;
 	public static final int REMOVEREQUESTFROMSOMEBODY = 411;
 	public static final int REMOVEEXPIREDREQUESTS = 412;
 	public static final int UPDATEREQUESTRATIOOFUSER = 421;
 	public static final int UPDATEREQUESTRATIOOFRATIO = 422;
+
+	public static final int UPDATERESOURCERESERVATION = 227;
+
+	private static Date startDate = new Date(2007, 1, 1);
 
 	public static String getErrorMessage(int code) {
 		switch (code) {
@@ -113,9 +117,10 @@ public final class Constants {
 	}
 
 	public static String convertWeekToDate(int week) {
-		Date myDate = new Date(2007, 1, 1);
+		// Date myDate = new Date(2007, 1, 1);
 		long aWeek = 604800000;
-		myDate.setTime(myDate.getTime() + (week * aWeek));
+		// myDate.setTime(myDate.getTime() + (week * aWeek));
+		Date myDate = new Date(startDate.getTime() + (week * aWeek));
 
 		String s = new String();
 		s = s.concat(Integer.toString(myDate.getYear()));
@@ -123,5 +128,13 @@ public final class Constants {
 		s = s.concat("." + myDate.getDate());
 
 		return s;
+	}
+
+	public static int convertDateToWeek(Date date) {
+		return weeksBetween(date, startDate);
+	}
+
+	private static int weeksBetween(Date d1, Date d2) {
+		return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24 * 7));
 	}
 }

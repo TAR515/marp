@@ -132,7 +132,7 @@ public class RowElement extends View {
 		width = display.getWidth() / (2);
 		height = display.getHeight() / 10;
 		
-		needed.setText("You needed: 0 %");
+		needed.setText("You want: 0 %");
 		needed.setWidth(width);
 		needed.setHeight(height);
 		needed.setTextColor(Color.BLACK);
@@ -423,7 +423,7 @@ public class RowElement extends View {
 			Integer allRatio = Integer.parseInt(st.nextToken());
 			allRatio = allRatio + 10;
 			percent.setText(number + " %");
-			needed.setText("You needed: "+ number + " %");
+			needed.setText("You want: "+ number + " %");
 			ratioText.setText("Ratio: " + allRatio + " %");
 			if (allRatio <= 100 && allRatio >= 0) {
 				setGreen();
@@ -443,7 +443,7 @@ public class RowElement extends View {
 			Integer allRatio = Integer.parseInt(st.nextToken());
 			allRatio = allRatio - 10;
 			percent.setText(number + " %");
-			needed.setText("You needed: "+number + " %");
+			needed.setText("You want: "+number + " %");
 			ratioText.setText("Ratio: " + allRatio + " %");
 			if (allRatio == original){
 				setWhite();
@@ -500,13 +500,13 @@ public class RowElement extends View {
 		setGreen();
 		int available = 100 - original;
 		ratioText.setText("Ratio: 100 %");
-		needed.setText("You needed: " + available +" %");
+		needed.setText("You want: " + available +" %");
 		percent.setText(available + " %");
 	}
 	public void setInitialState(){
 		setWhite();
 		ratioText.setText("Ratio: " + original + " %");
-		needed.setText("You needed: 0 %");
+		needed.setText("You want: 0 %");
 		percent.setText("0 %");
 	}
 	public void applyToThisClick(){
@@ -555,7 +555,7 @@ public class RowElement extends View {
 		if(number<=100){
 			percent.setText(number + " %");
 			ratioText.setText("Ratio: " + (number+ratioT + " %") );
-			needed.setText("You needed: " + number +" %");
+			needed.setText("You want: " + number +" %");
 			if((ratioT+number)>100){
 				setRed();
 			}else{
