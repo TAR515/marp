@@ -21,7 +21,8 @@ public class LoadResourceEngagedCommand extends BaseCommandOperations implements
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
-	List<Integer> result = null;
+	List<Integer> resultForAllProjects = null;
+	List<Integer> resultForCurrentProject = null;
 	private ResourcesDao resourceDao = null;
 	
 	public LoadResourceEngagedCommand (JSONArray request) {
@@ -32,7 +33,8 @@ public class LoadResourceEngagedCommand extends BaseCommandOperations implements
 			this.instance = JdbcDaoFactory.getInstance();
 			this.resourceDao = instance.getResourceDao();
 			this.request = request;
-			this.result = new ArrayList<Integer>();
+			this.resultForAllProjects = new ArrayList<Integer>();
+			this.resultForCurrentProject = new ArrayList<Integer>();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			response = setError(0);
@@ -65,11 +67,19 @@ public class LoadResourceEngagedCommand extends BaseCommandOperations implements
 		
 		if (!errorCheck(response)) {
 			try {
-				result = resourceDao.loadResourceEngages(resourceID, startWeek, endWeek, projectName, action);
+				resultForAllProjects = resourceDao.loadResourceTotalEngages(resourceID, startWeek, endWeek, projectName, action);
 
-				Iterator<Integer> it = result.iterator();
+				if (action.equals("update")) {
+					resultForCurrentProject = resourceDao.loadResourceCurrentProjectEngages(resourceID, startWeek, endWeek, projectName);
+				}
+				
+				
+				Iterator<Integer> it = resultForAllProjects.iterator();
 				while (it.hasNext()) {
-					response = addInt("ratio", it.next(), response);
+					response = addInt("ratiototal", it.next(), response);
+					if(action.equals("update")) {
+						response = addInt("ratiocurrentproject", it.next(), response);
+					}
 				}
 			}
 			catch (DalException e) {

@@ -65,9 +65,9 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 	}
 
 	@Override
-	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName,
-			String oldResourceGroupName, String newResourceName, boolean newActive, String newResourceTypeName,
-			String newResourceGroupName) throws SQLException, DalException {
+	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName, String oldResourceGroupName,
+			String newResourceName, boolean newActive, String newResourceTypeName, String newResourceGroupName)
+			throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -298,19 +298,19 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		List<Resources> result = new ArrayList<Resources>();
 		Connection connection = null;
 		logger.debug(getClass().getName() + methodName + "-> START");
-		
+
 		try {
 			connection = getConnection();
-			
+
 			Iterator<Integer> it = resourceID.iterator();
-			
-			while(it.hasNext()) {
-				result.add(loadResource(it.next(),connection));
+
+			while (it.hasNext()) {
+				result.add(loadResource(it.next(), connection));
 			}
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
-		}catch (DalException e) {
+		} catch (DalException e) {
 			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 			throw e;
 		} finally {
@@ -319,20 +319,18 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return result;
 	}
-	
-	
-	/**
-	 * 
-	 * @param resourceID
+
+	/** @param resourceID
 	 * @param startWeek
 	 * @param endWeek
 	 * @param projectName
-	 * @param action - "insert" for new resource to a project / "modify" to modify somebody in a project / "newproject" for new project.
+	 * @param action
+	 *            - "insert" for new resource to a project / "modify" to modify somebody in a project / "newproject" for new project.
 	 * @return
 	 * @throws DalException
-	 * @throws SQLException
-	 */
-	public List<Integer> loadResourceEngages(int resourceID, int startWeek, int endWeek, String projectName, String action) throws DalException, SQLException {
+	 * @throws SQLException */
+	public List<Integer> loadResourceTotalEngages(int resourceID, int startWeek, int endWeek, String projectName, String action)
+			throws DalException, SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		List<Integer> result = new ArrayList<Integer>();
@@ -359,8 +357,8 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
-			
-			while (rs.next()) { 
+
+			while (rs.next()) {
 				result.add(getInt(rs, "ratio"));
 			}
 		} catch (SQLException e) {
@@ -372,7 +370,48 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return result;
 	}
-	
+
+	public List<Integer> loadResourceCurrentProjectEngages(int resourceID, int startWeek, int endWeek, String projectName)
+			throws DalException, SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		List<Integer> result = new ArrayList<Integer>();
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		Connection connection = null;
+		ResultSet rs = null;
+		java.sql.CallableStatement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "load_resource_ratio_in_project", 5);
+
+			int paramIndex = 1;
+			setInteger(stmt, paramIndex++, resourceID);
+			setInteger(stmt, paramIndex++, startWeek);
+			setInteger(stmt, paramIndex++, endWeek);
+			setString(stmt, paramIndex++, projectName);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			rs = stmt.executeQuery();
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg);
+			}
+
+			while (rs.next()) {
+				result.add(getInt(rs, "cpratio"));
+			}
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return result;
+	}
+
 	private Resources loadResource(int resourceID, Connection con) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -395,9 +434,9 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				throw new DalException(errmsg);
 			}
-			
-			while (rs.next()) { 
-				result = (Resources) fillObject(rs); 
+
+			while (rs.next()) {
+				result = (Resources) fillObject(rs);
 			}
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
@@ -408,8 +447,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return result;
 	}
-	
-	
+
 	@Override
 	protected Object fillObject(ResultSet rs) throws SQLException {
 		Resources resource = new Resources();
@@ -417,19 +455,19 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		resource.setResourceID(getLong(rs, "ResourceID").intValue());
 		resource.setResourceName(getString(rs, "ResourceName"));
 		resource.setActive(getBool(rs, "Active"));
-		
+
 		ResourceTypes rt = new ResourceTypes();
 		rt.setResourceTypeName(getString(rs, "ResourceTypeName"));
 		resource.setResourceTypes(rt);
-		
+
 		try {
 			Users users = new Users();
 			users.setUserName(getString(rs, "UserName"));
 			resource.setUsers(users);
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			resource.setUsers(null);
 		}
-		
+
 		return resource;
 	}
 

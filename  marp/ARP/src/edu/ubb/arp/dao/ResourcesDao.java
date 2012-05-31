@@ -23,29 +23,32 @@ public interface ResourcesDao {
 	 *             The exception contains ErrorCode and ErrorMessage of the problem that arises */
 	public int createResource(String resourceName, boolean active, String resourceTypeName, String resourceGroupName)
 			throws SQLException, DalException;
-	
+
 	public int setActive(String resourceName, boolean active) throws SQLException, DalException;
 
 	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName, String oldResourceGroupName,
 			String newResourceName, boolean newActive, String newResourceTypeName, String newResourceGroupName)
-					throws SQLException, DalException;
+			throws SQLException, DalException;
 
 	public int addResourceToGroup(String resourceName, String groupName) throws SQLException, DalException;
-	
+
 	public void addResourceToGroup(Resources resource, Groups group) throws SQLException, DalException;
 
 	public void addResourceToGroups(String resourceName, String[] groupNames) throws SQLException, DalException;
-	
+
 	public void addResourceToGroups(Resources resource, List<Groups> groups) throws SQLException, DalException;
-	
+
 	public int removeResourceFromGroup(String resourceName, String groupName) throws SQLException, DalException;
-	
+
 	public void removeResourceFromGroup(Resources resource, Groups group) throws SQLException, DalException;
 
 	public List<Resources> loadResources(List<Integer> resourceID) throws DalException, SQLException;
-	
-	public List<Integer> loadResourceEngages(int resourceID, int startWeek, int endWeek, String projectName, String action) throws DalException, SQLException;
-	
+
+	public List<Integer> loadResourceTotalEngages(int resourceID, int startWeek, int endWeek, String projectName, String action)
+			throws DalException, SQLException;
+
+	public List<Integer> loadResourceCurrentProjectEngages(int resourceID, int startWeek, int endWeek, String projectName)
+			throws DalException, SQLException;
 	/*
 	 * public Resources LoadResourceByID(int id) throws DalException;
 	 * 
