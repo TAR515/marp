@@ -256,25 +256,25 @@ public class MyService extends Service {
 
 		try {
 			JSONObject json = new JSONObject();
-			json.put("command", 201);
+			json.put("command", Constants.NEWPROJECT);
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
 
-			/*
-			 * intent.putExtra("projectname", projectName.getText().toString());
-			 * intent.putExtra("openedstatus", openedStatus.isChecked());
-			 * intent.putExtra("startweek", startweek.getText().toString());
-			 * intent.putExtra("deadline", deadline.getText().toString());
-			 * intent.putExtra("nextrelease", nextrelease.getText().toString());
-			 * intent.putExtra("statusname",
-			 * status.getSelectedItem().toString());
-			 */
-
+			/*intent.putExtra("resourceid", bundle.getInt("resourceid"));
+					intent.putExtra("projectname", bundle.getString("projectname"));
+					intent.putExtra("openedstatus", bundle.getBoolean("openedstatus"));
+					intent.putExtra("startweek", bundle.getInt("startweek"));
+					intent.putExtra("endweek", bundle.getInt("endweek"));
+					intent.putExtra("deadline", bundle.getInt("deadline"));
+					intent.putExtra("nextrelease", bundle.getString("nextrelease"));
+					intent.putExtra("statusname", bundle.getString("statusname"));*/
+			
+			json.put("resourceid", intent.getIntExtra("resourceid", 0));
 			json.put("projectname", intent.getStringExtra("projectname"));
 			json.put("openedstatus", intent.getBooleanExtra("openedstatus", false));
-			json.put("startweek", intent.getStringExtra("startweek"));
-			json.put("endweek", intent.getStringExtra("endweek"));
-			json.put("deadline", intent.getStringExtra("deadline"));
+			json.put("startweek", intent.getIntExtra("startweek", 0));
+			json.put("endweek", intent.getIntExtra("endweek", 0));
+			json.put("deadline", intent.getIntExtra("deadline", 0));
 			json.put("nextrelease", intent.getStringExtra("nextrelease"));
 			json.put("statusname", intent.getStringExtra("statusname"));
 
@@ -352,16 +352,6 @@ public class MyService extends Service {
 			json.put("command", Constants.UPDATERESOURCERESERVATION);
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
-
-			/*
-			 * intent.putExtra("projectname", projectName.getText().toString());
-			 * intent.putExtra("openedstatus", openedStatus.isChecked());
-			 * intent.putExtra("startweek", startweek.getText().toString());
-			 * intent.putExtra("deadline", deadline.getText().toString());
-			 * intent.putExtra("nextrelease", nextrelease.getText().toString());
-			 * intent.putExtra("statusname",
-			 * status.getSelectedItem().toString());
-			 */
 
 			json.put("projectid", intent.getIntExtra("projectid", 0));
 			json.put("startweek", intent.getIntExtra("startweek", 0));
@@ -598,7 +588,7 @@ public class MyService extends Service {
 				}
 				break;
 
-			case 201: // New project
+			/*case 201: // New project
 				try {
 					result = r.getJSONObject(0);
 					if (result.getInt("error") <= 0) {
@@ -614,7 +604,7 @@ public class MyService extends Service {
 					intent.putExtra("Successful", true);
 					afterRefresh(intent);
 				}
-				break;
+				break;*/
 
 			/*
 			 * case 3:// Query - resourceisUser + users uri = new Uri.Builder();
@@ -679,6 +669,32 @@ public class MyService extends Service {
 					} catch (JSONException errorReal) {
 						errorReal.printStackTrace();
 					}
+				}
+				break;
+				
+			case Constants.NEWPROJECT:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("projectcreated") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
 				}
 				break;
 

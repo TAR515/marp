@@ -87,14 +87,8 @@ public class StripeActivity extends Activity {
 			action = STRIPEACTIVITYACTIONS.valueOf(bundle.getString("ACTION"));
 			switch (action) {
 			case newproject:
-				/*bundle.putString("ACTION", "newproject");
-					intent.putExtra("openedstatus", openedStatus.isChecked());
-					bundle.putInt("deadline", deadLine);
-					intent.putExtra("nextrelease", nextrelease.getText().toString());
-					intent.putExtra("statusname", status.getSelectedItem().toString());
-					
-					bundle.putIntArray("results", results);*/
-					senderresourceid = bundle.getInt("resourceid");
+				senderresourceid = bundle.getInt("resourceid");
+				targetresourceid = senderresourceid;
 				break;
 
 			case update:
@@ -302,11 +296,12 @@ public class StripeActivity extends Activity {
 				case newproject: // TODO
 					intent = new Intent(this, MyService.class);
 					intent.putExtra("ACTION", "RESOURCERESERVATIONMODIFICATION");
+					intent.putExtra("resourceid", bundle.getInt("resourceid"));
 					intent.putExtra("projectname", bundle.getString("projectname"));
 					intent.putExtra("openedstatus", bundle.getBoolean("openedstatus"));
-					intent.putExtra("startweek", bundle.getString("startweek"));
-					intent.putExtra("endweek", bundle.getString("endweek"));
-					intent.putExtra("deadline", bundle.getString("deadline"));
+					intent.putExtra("startweek", bundle.getInt("startweek"));
+					intent.putExtra("endweek", bundle.getInt("endweek"));
+					intent.putExtra("deadline", bundle.getInt("deadline"));
 					intent.putExtra("nextrelease", bundle.getString("nextrelease"));
 					intent.putExtra("statusname", bundle.getString("statusname"));
 
@@ -319,13 +314,12 @@ public class StripeActivity extends Activity {
 					updateratios = new int[currentColumns];
 					requestratios = new int[currentColumns];
 					for (i = 0; i < currentColumns; i++) {
-						StringTokenizer st = new StringTokenizer(elements[i].getRatioText());
-						requestratios[i] = Integer.parseInt(st.nextToken());
+						requestratios[i] = Integer.parseInt(elements[i].getratio());
 						if (requestratios[i] > 100)
 							requestratios[i] -= 100;
 						else
 							requestratios[i] = 0;
-						st = new StringTokenizer(elements[i].getPercentText());
+						StringTokenizer st = new StringTokenizer(elements[i].getPercentText());
 						updateratios[i] = Integer.parseInt(st.nextToken()) - requestratios[i];
 					}
 					intent.putExtra("updateratios", updateratios);
@@ -353,9 +347,6 @@ public class StripeActivity extends Activity {
 					updateratios = new int[columns];
 					requestratios = new int[columns];
 					for (i = 0; i < columns; i++) {
-						// StringTokenizer st = new
-						// StringTokenizer(elements[i].getRatioText());
-						// requestratios[i] = Integer.parseInt(st.nextToken());
 						requestratios[i] = Integer.parseInt(elements[i].getratio());
 						if (requestratios[i] > 100)
 							requestratios[i] -= 100;

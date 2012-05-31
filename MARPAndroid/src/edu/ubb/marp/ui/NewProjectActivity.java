@@ -72,21 +72,19 @@ public class NewProjectActivity extends Activity {
 		addButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				//sendRequest();
-				EditText projectName = (EditText) findViewById(R.id.projectName);
-				CheckBox openedStatus = (CheckBox) findViewById(R.id.openedStatus);
-				EditText startweek = (EditText) findViewById(R.id.startweek);
-				EditText deadline = (EditText) findViewById(R.id.deadline);
-				EditText nextrelease = (EditText) findViewById(R.id.nextrelease);
-				Spinner status = (Spinner) findViewById(R.id.statusSpinner);
+				EditText projectNameText = (EditText) findViewById(R.id.projectName);
+				EditText startweekText = (EditText) findViewById(R.id.startweek);
+				EditText deadlineText = (EditText) findViewById(R.id.deadline);
+				EditText nextreleaseText = (EditText) findViewById(R.id.nextrelease);
 				
-				if ((projectName.getText().toString().isEmpty())
-						|| (startweek.getText().toString().isEmpty())
-						|| (deadline.getText().toString().isEmpty())
-						|| (nextrelease.getText().toString().isEmpty()))
+				if ((projectNameText.getText().toString().isEmpty())
+						|| (startweekText.getText().toString().isEmpty())
+						|| (deadlineText.getText().toString().isEmpty())
+						|| (nextreleaseText.getText().toString().isEmpty()))
 					messageBoxShow("Please fill in all fields", "Error!");
 				else {
 				
-				Intent myIntent = new Intent(getApplicationContext(), StripeActivity.class);
+				/*Intent myIntent = new Intent(getApplicationContext(), StripeActivity.class);
 				Bundle bundle = new Bundle();
 				
 				int startWeek=Integer.parseInt(startweek.getText().toString());
@@ -107,7 +105,9 @@ public class NewProjectActivity extends Activity {
 				bundle.putString("statusname", status.getSelectedItem().toString());
 
 				myIntent.putExtras(bundle);
-				startActivity(myIntent);
+				startActivity(myIntent);*/
+					
+					sendRequest();
 				}
 			}
 		});
@@ -137,9 +137,11 @@ public class NewProjectActivity extends Activity {
 
 		EditText startWeekText = (EditText) findViewById(R.id.startweek);
 		EditText deadLineText = (EditText) findViewById(R.id.deadline);
+		EditText projectNameText = (EditText) findViewById(R.id.projectName);
 
 		startWeek = Integer.parseInt(startWeekText.getText().toString());
 		deadLine = Integer.parseInt(deadLineText.getText().toString());
+		projectName = projectNameText.getText().toString();
 
 		if (deadLine - startWeek > 24)
 			endWeek = startWeek + 24;
@@ -151,7 +153,7 @@ public class NewProjectActivity extends Activity {
 		intent.setData(uriSending.build());
 		intent.putExtra("startweek", startWeek);
 		intent.putExtra("endweek", endWeek);
-		intent.putExtra("action", "insert");
+		intent.putExtra("action", projectName);
 		intent.putExtra("projectname", projectName);
 		intent.putExtra("resourceid", resourceID);
 
@@ -255,15 +257,15 @@ public class NewProjectActivity extends Activity {
 					Intent myIntent = new Intent(getApplicationContext(), StripeActivity.class);
 					Bundle bundle = new Bundle();
 
-					bundle.putString("ACTION", "newproject");
+					bundle.putString("ACTION", "newproject"); 
 					bundle.putString("projectname", projectName);
 					bundle.putInt("resourceid", resourceID);
-					intent.putExtra("openedstatus", openedStatus.isChecked());
+					bundle.putBoolean("openedstatus", openedStatus.isChecked());
 					bundle.putInt("startweek", startWeek);
 					bundle.putInt("endweek", endWeek);
 					bundle.putInt("deadline", deadLine);
-					intent.putExtra("nextrelease", nextrelease.getText().toString());
-					intent.putExtra("statusname", status.getSelectedItem().toString());
+					bundle.putString("nextrelease", nextrelease.getText().toString());
+					bundle.putString("statusname", status.getSelectedItem().toString());
 					
 					bundle.putIntArray("results", results);
 

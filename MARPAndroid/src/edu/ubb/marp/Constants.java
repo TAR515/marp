@@ -36,6 +36,8 @@ public final class Constants {
 	public static final int UPDATEREQUESTRATIOOFRATIO = 422;
 
 	public static final int UPDATERESOURCERESERVATION = 227;
+	
+	public static final int NEWPROJECT = 201;
 
 	private static Date startDate = new Date(2007, 1, 1);
 
