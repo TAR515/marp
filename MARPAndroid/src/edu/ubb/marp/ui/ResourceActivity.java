@@ -73,6 +73,16 @@ public class ResourceActivity extends Activity {
 		intent.putExtra("requestid", requestid);
 		startService(intent);
 	}
+	
+	private void call(String number) {
+	    try {
+	        Intent callIntent = new Intent(Intent.ACTION_CALL);
+	        callIntent.setData(Uri.parse("tel:"+number));
+	        startActivity(callIntent);
+	    } catch (ActivityNotFoundException e) {
+	        Log.e("helloandroid dialing example", "Call failed", e);
+	    }
+	}
 	  
 	  @Override
 	  protected void onStart(){
@@ -108,7 +118,7 @@ public class ResourceActivity extends Activity {
     	alertDialog.setButton("Retry",
     		    new DialogInterface.OnClickListener() {
     		        public void onClick(DialogInterface dialog, int which) {
-    					sendRequest();
+    				
     		        }
     		    });
     	alertDialog.setButton2("Cancel",
@@ -149,12 +159,32 @@ public class ResourceActivity extends Activity {
 
 			        ListView listView = (ListView) findViewById(R.id.ListViewId);
 			        listView.setAdapter(new ListItemAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, users));
-			        listView.setOnItemClickListener(new OnItemClickListener() {
-						  public void onItemClick(AdapterView<?> parent, View view,
-								  int position, long id) {
-							  messageBoxShow("asdfaad", "dfsdfsf");
-						  }
-					  }); 
+			        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+			                    int pos, long id) {
+			                // TODO Auto-generated method stub
+			            	if (pos == 2){
+			            		ListRecord valami = users.get(2);
+			            		call(valami.subitem);
+			            	}else{
+			            		if(pos == 3){
+			            			Intent i = new Intent(Intent.ACTION_SEND);
+			            			
+			            			i.setType("text/plain");
+			            			i.putExtra(Intent.EXTRA_EMAIL  , new String[]{users.get(3).subitem});
+			            			i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
+			            			i.putExtra(Intent.EXTRA_TEXT   , "body of email");
+			            			try {
+			            			    startActivity(Intent.createChooser(i, "Send mail..."));
+			            			} catch (android.content.ActivityNotFoundException ex) {
+			            			    Toast.makeText(ResourceActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+			            			}
+			            		}
+			            	}
+			                return true;
+			            }
+			        }); 
 				}
 				}else{
 					loading.dismiss();
