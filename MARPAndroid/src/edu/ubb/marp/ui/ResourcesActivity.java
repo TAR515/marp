@@ -234,7 +234,13 @@ public class ResourcesActivity extends Activity {
 				int width = display.getWidth() / 4; // deprecated
 
 				column.setWidth(width);
+				if(data[i][j] == "0.0" | data[i][j] == "0"){
+					column.setTextColor(Color.RED);
+				}else{
+					column.setTextColor(Color.BLACK);
+				}
 				column.setText(data[i][j]);
+				
 				// column.setTextSize(15);
 				if ((i == 0)) {
 					column.setBackgroundColor(color.DKGRAY);
