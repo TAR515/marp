@@ -75,10 +75,19 @@ public class LoadResourceEngagedCommand extends BaseCommandOperations implements
 				
 				
 				Iterator<Integer> it = resultForAllProjects.iterator();
+				Iterator<Integer> it2 = resultForCurrentProject.iterator();
+				String keys[] = new String[2];
+				int elements[] = new int[2];
+				
 				while (it.hasNext()) {
-					response = addInt("ratiototal", it.next(), response);
 					if(action.equals("update")) {
-						response = addInt("ratiocurrentproject", it.next(), response);
+						keys[0] = "ratiototal";
+						keys[1] = "ratioincurrentproject";
+						elements[0] = it.next();
+						elements[1] = it2.next();
+						response = addMoreInt(keys, elements, response);
+					} else {
+						response = addInt("ratiototal", it.next(), response);
 					}
 				}
 			}

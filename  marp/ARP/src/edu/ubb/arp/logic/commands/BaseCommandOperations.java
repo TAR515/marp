@@ -100,6 +100,36 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		return result;
 	}
 	
+	/**
+	 * Adds more key-value pairs into an JSONObject and appends "response" with it!
+	 * @param key
+	 * @param element
+	 * @param response
+	 * @return
+	 */
+	public JSONArray addMoreInt(String keys[], int elements[], JSONArray response) {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONArray result = JSONArray.fromObject(response);
+		
+		if (keys == null) {
+			logger.error(getClass().getName() + methodName + "parameter: key is null");
+			return setError(-1);
+		}
+		
+		if (result == null) {
+			result = new JSONArray();
+		}
+		
+		JSONObject obj = new JSONObject();
+		for(int i = 0; i < keys.length; i++) {
+			obj.put(keys[i], new Integer(elements[i]));
+		}
+		result.add(obj);
+
+		return result;
+	}
+	
+	
 	// Getter methods
 	
 	/**
@@ -265,6 +295,7 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		}
 		return result;
 	}
+	
 	
 	
 }
