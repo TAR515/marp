@@ -232,8 +232,9 @@ public class ResourcesActivity extends Activity {
 				column.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 				Display display = getWindowManager().getDefaultDisplay();
 				int width = display.getWidth() / 4; // deprecated
-
+				int height = display.getHeight()/10;
 				column.setWidth(width);
+				column.setHeight(height);
 				if(data[i][j] == "0.0" | data[i][j] == "0"){
 					column.setTextColor(Color.RED);
 				}else{
