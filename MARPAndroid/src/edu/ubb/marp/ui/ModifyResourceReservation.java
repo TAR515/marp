@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -80,17 +81,50 @@ public class ModifyResourceReservation extends Activity {
 		minWeek = getIntent().getExtras().getInt("minweek");
 		maxWeek = getIntent().getExtras().getInt("maxweek");
 
-		EditText startweek = (EditText) findViewById(R.id.startweekMod);
-		EditText endweek = (EditText) findViewById(R.id.endweekMod);
+		//EditText startweek = (EditText) findViewById(R.id.startweekMod);
+		//EditText endweek = (EditText) findViewById(R.id.endweekMod);
+		
+		DatePicker startDatePicker = (DatePicker) findViewById(R.id.startweekdate);
+		DatePicker endDatePicker = (DatePicker) findViewById(R.id.endweekdate);
+		
+	//	Date startDate = Constants.convertWeekToRealDate2(minWeek);
+	//	Date endDate = Constants.convertWeekToRealDate2(maxWeek);
+		
+		Log.i("Start Date min", ""+ minWeek);
+		Log.i("End Date max", ""+ maxWeek);
+		
+		//Log.i("Start Date", ""+ startDate);		
+		//Log.i("End Date", ""+ endDate);
+		
+		String startWeekString = Constants.convertWeekToDate(minWeek);
+		String endWeekString = Constants.convertWeekToDate(maxWeek);
+		
+		Log.i("Start Date", ""+ startWeekString);		
+		Log.i("End Date", ""+ endWeekString);
+		
+		String startWeekElements[] = startWeekString.split("\\.");
+		String endWeekElements[] = endWeekString.split("\\.");
+		
+		Log.i("Start Date", ""+ Constants.convertWeekToDate(minWeek));
+		Log.i("End Date", ""+ Constants.convertWeekToDate(maxWeek));
+		Log.i("Start Date Year", ""+ Integer.parseInt(startWeekElements[0]));	
+		Log.i("Start Date Month", ""+ Integer.parseInt(startWeekElements[1]));	
+		Log.i("Start Date Day", ""+ Integer.parseInt(startWeekElements[2]));	
+		//startDatePicker.init(startDate.getYear(), startDate.getMonth(), startDate.getDay(), null);
+		startDatePicker.init(Integer.parseInt(startWeekElements[0]), Integer.parseInt(startWeekElements[1]), Integer.parseInt(startWeekElements[2]), null);
+		
+		
 
-		startweek.setText(Integer.toString(minWeek));
-		endweek.setText(Integer.toString(maxWeek));
+		endDatePicker.init(Integer.parseInt(endWeekElements[0]), Integer.parseInt(endWeekElements[1]),Integer.parseInt(endWeekElements[2]),null);
+
+		//startweek.setText(Integer.toString(minWeek));
+		//endweek.setText(Integer.toString(maxWeek));
 
 		Button addButton = (Button) findViewById(R.id.next);
 		addButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				// sendRequest();
-				EditText startweek = (EditText) findViewById(R.id.startweekMod);
+				/*EditText startweek = (EditText) findViewById(R.id.startweekMod);
 				EditText endweek = (EditText) findViewById(R.id.endweekMod);
 
 				if ((startweek.getText().toString().isEmpty()) || (endweek.getText().toString().isEmpty()))
@@ -117,7 +151,7 @@ public class ModifyResourceReservation extends Activity {
 					 * myIntent.putExtras(bundle); startActivity(myIntent);
 					 */
 					sendRequest();
-				}
+				//}
 			}
 		});
 	}
@@ -143,12 +177,25 @@ public class ModifyResourceReservation extends Activity {
 		uriSending.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
 		uriSending.scheme("content");
 
-		EditText startWeekText = (EditText) findViewById(R.id.startweekMod);
-		EditText endWeekText = (EditText) findViewById(R.id.endweekMod);
+	//	EditText startWeekText = (EditText) findViewById(R.id.startweekMod);
+	//	EditText endWeekText = (EditText) findViewById(R.id.endweekMod);
 
-		startWeek = Integer.parseInt(startWeekText.getText().toString());
-		endWeek = Integer.parseInt(endWeekText.getText().toString());
+		DatePicker startDatePicker = (DatePicker) findViewById(R.id.startweekdate);
+		DatePicker endDatePicker = (DatePicker) findViewById(R.id.endweekdate);
+	
+		Date startDate = new Date(startDatePicker.getYear(),startDatePicker.getMonth(),startDatePicker.getDayOfMonth());
+		Date endDate = new Date(endDatePicker.getYear(),endDatePicker.getMonth(),endDatePicker.getDayOfMonth());
+		
 
+		Log.i("Start Date", ""+ startDate);
+		Log.i("End Date", ""+ endDate);
+		
+		startWeek = Constants.convertDateToWeek(startDate);
+		endWeek = Constants.convertDateToWeek(endDate);
+		
+		Log.i("StartWeek", ""+startWeek);
+		Log.i("EndWeek", ""+ endWeek);
+		
 		if (endWeek - startWeek > 24)
 			endWeek = startWeek + 24;
 
