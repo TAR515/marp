@@ -21,11 +21,10 @@
             android:layout_height="wrap_content"
             android:text="Startweek:" />
 
-        <EditText
-            android:id="@+id/startweekMod"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10" />
+        <DatePicker
+            android:id="@+id/startweekdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/textView3"
@@ -33,11 +32,10 @@
             android:layout_height="wrap_content"
             android:text="Endweek:" />
 
-        <EditText
-            android:id="@+id/endweekMod"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10" />
+        <DatePicker
+            android:id="@+id/endweekdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/next"
