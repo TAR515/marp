@@ -36,6 +36,7 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 public class ModifyResourceReservation extends Activity {
 	private static final String tag = "ModifyResourceReservation";
@@ -71,6 +72,9 @@ public class ModifyResourceReservation extends Activity {
 		Cursor c = cr.query(uri.build(), projection, TABLE_RESOURCES.USERNAME + " = '" + pref.getString("username", "") + "'", null, null);
 
 		c.moveToFirst();
+		
+		TextView toModify = (TextView)findViewById(R.id.tomodify);
+		toModify.setText("Modify: "+getIntent().getExtras().getString("resourcename"));
 
 		myresourceid = c.getInt(c.getColumnIndex(TABLE_RESOURCES.RESOURCEID));
 

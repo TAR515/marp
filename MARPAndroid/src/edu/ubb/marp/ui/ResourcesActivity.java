@@ -4,6 +4,7 @@ import java.lang.reflect.Modifier;
 import java.util.Date;
 
 import edu.ubb.marp.Constants;
+import edu.ubb.marp.R;
 import edu.ubb.marp.database.DatabaseContract;
 import edu.ubb.marp.database.DatabaseContract.*;
 import edu.ubb.marp.network.MyService;
@@ -16,13 +17,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.HorizontalScrollView;
@@ -139,6 +146,31 @@ public class ResourcesActivity extends Activity {
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.resources, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		Intent myIntent;
+		switch (item.getItemId()) {
+		case R.id.newid:
+			myIntent = new Intent(getApplicationContext(), AddNewResourceToProjectActivity.class);
+			Bundle bundle = new Bundle();
+			bundle.putInt("projectid", Integer.parseInt(projectid));
+
+			myIntent.putExtras(bundle);
+			startActivity(myIntent);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	@Override
@@ -275,6 +307,7 @@ public class ResourcesActivity extends Activity {
 						bundle.putString("projectname", projectName);
 						bundle.putInt("projectid", Integer.parseInt(projectid));
 						bundle.putInt("resourceid", resourceIDs[currentRow - 1]);
+						bundle.putString("resourcename", data[currentRow][0]);
 						// bundle.putStringArray("bookings", data[currentRow]);
 
 						int startPos = 1;
