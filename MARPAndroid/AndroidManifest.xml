@@ -56,16 +56,18 @@
         <activity
             android:name=".ui.NewProjectActivity"
             android:label="New project"
+            android:noHistory="true"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-
-        <provider
-            android:name=".database.CProvider"
-            android:authorities="edu.ubb.marp.database.provider" />
-
-        <service android:name=".network.MyService" >
-        </service>
-
+        <activity
+            android:name=".ui.AddNewResourceToProjectActivity"
+            android:noHistory="true" >
+        </activity>
+        <activity
+            android:name=".ui.ModifyResourceReservation"
+            android:label="ModifyResourceReservation"
+            android:noHistory="true" >
+        </activity>
         <activity
             android:name=".ui.StripeActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
@@ -75,11 +77,13 @@
             android:label="Resource"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-        <activity
-            android:name=".ui.ModifyResourceReservation"
-            android:label="ModifyResourceReservation"
-            android:noHistory="true" >
-        </activity>
+
+        <provider
+            android:name=".database.CProvider"
+            android:authorities="edu.ubb.marp.database.provider" />
+
+        <service android:name=".network.MyService" >
+        </service>
     </application>
 
 </manifest>

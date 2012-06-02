@@ -65,6 +65,10 @@ public class MyService extends Service {
 			case CHANGEPROJECT:
 				changeProject(intent);
 				break;
+				
+			case ADDRESOURCETOPROJECT:
+				addResourceToProject(intent);
+				break;
 
 			case RESOURCERESERVATIONMODIFICATION:
 				resourceReservationModification(intent);
@@ -76,6 +80,26 @@ public class MyService extends Service {
 
 			case REQUESTS:
 				requests(intent);
+				
+			case CHANGEUSERNAME:
+				changeUserName(intent);
+				break;
+				
+			case CHANGEUSERRESOURCENAME:
+				changeUserResourceName(intent);
+				break;
+				
+			case CHANGEUSERPHONENUMBER:
+				changeUserPhoneNumber(intent);
+				break;
+				
+			case CHANGEUSEREMAIL:
+				changeUserEmail(intent);
+				break;
+				
+			case CHANGEUSERPASSWORD:
+				changeUserPassword(intent);
+				break;
 
 			default:
 				break;
@@ -283,7 +307,7 @@ public class MyService extends Service {
 			int[] intRequestRatios = intent.getIntArrayExtra("requestratios");
 			for (int i = 0; i < intUpdateRatios.length; i++) {
 				JSONObject obj = new JSONObject();
-				obj.put("updateratio", intUpdateRatios[i]);
+				obj.put("insertratio", intUpdateRatios[i]);
 				obj.put("requestratio", intRequestRatios[i]);
 				elements.put(obj);
 			}
@@ -337,6 +361,42 @@ public class MyService extends Service {
 			array.put(json);
 
 			Log.i(tag, "httpclient elott " + json.toString());
+			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
+		} catch (JSONException e) {
+		}
+	}
+	
+	private void addResourceToProject(Intent intent){
+		Log.i(tag, "addResourceToProject");
+
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+		try {
+			JSONObject json = new JSONObject();
+			json.put("command", Constants.ADDRESOURCETOPROJECT);
+			json.put("username", pref.getString("username", ""));
+			json.put("password", pref.getString("password", ""));
+
+			json.put("projectid", intent.getIntExtra("projectid", 0));
+			json.put("startweek", intent.getIntExtra("startweek", 0));
+			json.put("endweek", intent.getIntExtra("endweek", 0));
+			json.put("targetresourceid", intent.getIntExtra("targetresourceid", 0));
+			json.put("senderresourceid", intent.getIntExtra("senderresourceid", 0));
+			//TODO isLeader
+
+			JSONArray elements = new JSONArray();
+			int[] intUpdateRatios = intent.getIntArrayExtra("updateratios");
+			int[] intRequestRatios = intent.getIntArrayExtra("requestratios");
+			for (int i = 0; i < intUpdateRatios.length; i++) {
+				JSONObject obj = new JSONObject();
+				obj.put("insertratio", intUpdateRatios[i]);
+				obj.put("requestratio", intRequestRatios[i]);
+				elements.put(obj);
+			}
+
+			JSONArray array = new JSONArray();
+			array.put(json);
+			array.put(elements);
 			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
 		} catch (JSONException e) {
 		}
@@ -430,6 +490,106 @@ public class MyService extends Service {
 			array.put(json);
 
 			Log.i(tag, "httpclient elott " + json.toString());
+			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
+		} catch (JSONException e) {
+		}
+	}
+	
+	private void changeUserName(Intent intent){
+		Log.i(tag, "changeUserName");
+
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+		try {
+			JSONObject json = new JSONObject();
+			json.put("command", Constants.CHANGEUSERPHONENUMBERCMD);
+			json.put("username", pref.getString("username", ""));
+			json.put("password", pref.getString("password", ""));
+
+			json.put("newusername", intent.getStringExtra("newusername"));
+
+			JSONArray array = new JSONArray();
+			array.put(json);
+			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
+		} catch (JSONException e) {
+		}
+	}
+	
+	private void changeUserResourceName(Intent intent){
+		Log.i(tag, "changeUserResourceName");
+
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+		try {
+			JSONObject json = new JSONObject();
+			json.put("command", Constants.CHANGEUSERPHONENUMBERCMD);
+			json.put("username", pref.getString("username", ""));
+			json.put("password", pref.getString("password", ""));
+
+			json.put("newresourcename", intent.getStringExtra("newresourcename"));
+
+			JSONArray array = new JSONArray();
+			array.put(json);
+			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
+		} catch (JSONException e) {
+		}
+	}
+	
+	private void changeUserPhoneNumber(Intent intent){
+		Log.i(tag, "changeUserPhoneNumber");
+
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+		try {
+			JSONObject json = new JSONObject();
+			json.put("command", Constants.CHANGEUSERPHONENUMBERCMD);
+			json.put("username", pref.getString("username", ""));
+			json.put("password", pref.getString("password", ""));
+
+			json.put("newphonenumber", intent.getStringExtra("newphonenumber"));
+
+			JSONArray array = new JSONArray();
+			array.put(json);
+			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
+		} catch (JSONException e) {
+		}
+	}
+	
+	private void changeUserEmail(Intent intent){
+		Log.i(tag, "changeUserEmail");
+
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+		try {
+			JSONObject json = new JSONObject();
+			json.put("command", Constants.CHANGEUSEREMAILCMD);
+			json.put("username", pref.getString("username", ""));
+			json.put("password", pref.getString("password", ""));
+
+			json.put("newemail", intent.getStringExtra("newemail"));
+
+			JSONArray array = new JSONArray();
+			array.put(json);
+			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
+		} catch (JSONException e) {
+		}
+	}
+	
+	private void changeUserPassword(Intent intent){
+		Log.i(tag, "changeUserPassword");
+
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+		try {
+			JSONObject json = new JSONObject();
+			json.put("command", Constants.CHANGEUSEREMAILCMD);
+			json.put("username", pref.getString("username", ""));
+			json.put("password", pref.getString("password", ""));
+
+			json.put("newpassword", intent.getStringExtra("newpassword"));
+
+			JSONArray array = new JSONArray();
+			array.put(json);
 			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
 		} catch (JSONException e) {
 		}
@@ -697,6 +857,32 @@ public class MyService extends Service {
 					afterRefresh(intent);
 				}
 				break;
+				
+			case Constants.ADDRESOURCETOPROJECT:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("resourceaddedtoproject") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
 
 			case Constants.UPDATERESOURCERESERVATION:
 				result = null;
@@ -706,6 +892,142 @@ public class MyService extends Service {
 						Intent intent = new Intent(Constants.BROADCAST_ACTION);
 						intent.putExtra("originalReqeustid", requestid);
 						intent.putExtra("Successful", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+				
+			case Constants.CHANGEUSERNAMECMD:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("usernamechanged") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+				
+			case Constants.CHANGEUSERRESOURCENAMECMD:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("userresourcenamechanged") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+				
+			case Constants.CHANGEUSEREMAILCMD:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("useremailchanged") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+				
+			case Constants.CHANGEUSERPHONENUMBERCMD:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("userphonenumberchanged") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+				
+			case Constants.CHANGEUSERPASSWORDCMD:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("userpasswordchanged") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("changePassword", true);
+						intent.putExtra("change", true);
 						afterRefresh(intent);
 					}
 				} catch (JSONException errorRead) {

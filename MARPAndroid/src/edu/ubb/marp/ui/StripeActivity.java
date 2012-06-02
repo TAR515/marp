@@ -82,17 +82,22 @@ public class StripeActivity extends Activity {
 
 			startweek = bundle.getInt("startweek");
 			endweek = bundle.getInt("endweek");
-			projectname = bundle.getString("projectname");
 
 			action = STRIPEACTIVITYACTIONS.valueOf(bundle.getString("ACTION"));
 			switch (action) {
 			case newproject:
 				senderresourceid = bundle.getInt("resourceid");
 				targetresourceid = senderresourceid;
+				projectname = bundle.getString("projectname");
+				break;
+				
+			case insert:
+				projectID = bundle.getInt("projectid");
 				break;
 
 			case update:
 				projectID = bundle.getInt("projectid");
+				projectname = bundle.getString("projectname");
 				targetresourceid = bundle.getInt("targetresourceid");
 				senderresourceid = bundle.getInt("senderresourceid");
 				booking = bundle.getIntArray("booking");
@@ -293,9 +298,9 @@ public class StripeActivity extends Activity {
 				loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
 				switch (action) {
-				case newproject: // TODO
+				case newproject:
 					intent = new Intent(this, MyService.class);
-					intent.putExtra("ACTION", "RESOURCERESERVATIONMODIFICATION");
+					intent.putExtra("ACTION", "NEWPROJECT");
 					intent.putExtra("resourceid", bundle.getInt("resourceid"));
 					intent.putExtra("projectname", bundle.getString("projectname"));
 					intent.putExtra("openedstatus", bundle.getBoolean("openedstatus"));
@@ -330,6 +335,37 @@ public class StripeActivity extends Activity {
 
 					startService(intent);
 					break;
+					
+				case insert:
+					intent = new Intent(this, MyService.class);
+					intent.putExtra("ACTION", "ADDRESOURCETOPROJECT");
+					intent.putExtra("projectid", projectID);
+					intent.putExtra("startweek", startweek);
+					intent.putExtra("endweek", endweek);
+					intent.putExtra("targetresourceid", targetresourceid);
+					intent.putExtra("senderresourceid", senderresourceid);
+					//TODO isLeader
+
+					updateratios = new int[columns];
+					requestratios = new int[columns];
+					for (i = 0; i < columns; i++) {
+						requestratios[i] = Integer.parseInt(elements[i].getratio());
+						if (requestratios[i] > 100)
+							requestratios[i] -= 100;
+						else
+							requestratios[i] = 0;
+						StringTokenizer st = new StringTokenizer(elements[i].getPercentText());
+						updateratios[i] = Integer.parseInt(st.nextToken()) - requestratios[i];
+					}
+					intent.putExtra("updateratios", updateratios);
+					intent.putExtra("requestratios", requestratios);
+
+					requestid = new Date().getTime();
+					intent.putExtra("requestid", requestid);
+
+					startService(intent);
+					break;
+					
 				case update:
 					intent = new Intent(this, MyService.class);
 					intent.putExtra("ACTION", "RESOURCERESERVATIONMODIFICATION");
@@ -338,11 +374,6 @@ public class StripeActivity extends Activity {
 					intent.putExtra("endweek", endweek);
 					intent.putExtra("targetresourceid", targetresourceid);
 					intent.putExtra("senderresourceid", senderresourceid);
-
-					Log.i("getNeededText", elements[1].getNeededText());
-					Log.i("getPercentText", elements[1].getPercentText());
-					Log.i("getratio", elements[1].getratio());
-					Log.i("getRatioText", elements[1].getRatioText());
 
 					updateratios = new int[columns];
 					requestratios = new int[columns];

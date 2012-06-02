@@ -9,20 +9,13 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/tomodify"
-            android:layout_width="wrap_content"
-            android:layout_height="58dp"
-            android:text=""
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Startweek:" />
 
         <EditText
-            android:id="@+id/startweekMod"
+            android:id="@+id/startweek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10" />
@@ -34,10 +27,21 @@
             android:text="Endweek:" />
 
         <EditText
-            android:id="@+id/endweekMod"
+            android:id="@+id/endweek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resource:" />
+
+        <Spinner
+            android:id="@+id/statusSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/next"
