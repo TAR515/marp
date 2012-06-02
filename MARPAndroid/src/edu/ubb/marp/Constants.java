@@ -1,6 +1,10 @@
 package edu.ubb.marp;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
+import android.graphics.YuvImage;
 
 public final class Constants {
 	public enum ACTIONS {
@@ -138,8 +142,21 @@ public final class Constants {
 		return s;
 	}
 
+	public static Date convertWeekToRealDate(int week){
+		Calendar calendar = new GregorianCalendar(2007, 1, 1, 0, 0, 0);
+		calendar.add(Calendar.WEEK_OF_YEAR, week);
+		Date myDate = calendar.getTime();
+		return myDate;
+	}
+	
+	public static Date convertWeekToRealDate2(int week){
+		long aWeek = 604800000;
+		// myDate.setTime(myDate.getTime() + (week * aWeek));
+		Date myDate = new Date(startDate.getTime() + (week * aWeek));
+		return myDate;
+	}
 	public static int convertDateToWeek(Date date) {
-		return weeksBetween(date, startDate);
+		return weeksBetween(startDate,date)+1;
 	}
 
 	private static int weeksBetween(Date d1, Date d2) {
