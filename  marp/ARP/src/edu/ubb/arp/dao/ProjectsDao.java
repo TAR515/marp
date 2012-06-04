@@ -45,10 +45,13 @@ public interface ProjectsDao {
 
 	public int updateResourceRatioInProject(int projectID, int senderResourceID, int targetResourceID, int startWeek,
 			int endWeek, List<Integer> updateRatio, List<Integer> requestRatio) throws SQLException, DalException;
-
+	
+	public int updateResourceRatioWithRequest(int projectID,int targetResourceID,
+			int currentWeek,int requestID,int updateRatio) throws SQLException, DalException;
+	
 	public int updateUserIsLeader(String projectName, String userName, int currentWeek, boolean isLeader) throws SQLException,
 			DalException;
-
+	
 	public List<Booking> loadBooking(int projectID) throws SQLException, DalException;
 
 	public List<ResourcesWorkingOnProject> getAllActiveProjects(String userName) throws SQLException, DalException;

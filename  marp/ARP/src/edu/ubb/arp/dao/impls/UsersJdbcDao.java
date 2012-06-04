@@ -3,6 +3,7 @@ package edu.ubb.arp.dao.impls;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -12,6 +13,7 @@ import edu.ubb.arp.dao.model.Groups;
 import edu.ubb.arp.dao.model.ResourceTypes;
 import edu.ubb.arp.dao.model.Resources;
 import edu.ubb.arp.dao.model.Users;
+import edu.ubb.arp.datastructures.Booking;
 import edu.ubb.arp.exceptions.DalException;
 
 public class UsersJdbcDao extends BaseDao implements UsersDao {
@@ -671,6 +673,61 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 		retValue.setPassword(null);
 		retValue.setResource(resourceValue);
 
+		return retValue;
+	}
+
+	@Override
+	public List<Booking> LoadAssignments(String userName, int currentWeek)
+			throws SQLException, DalException {
+		
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+
+		List<Booking> booking = new ArrayList<Booking>();
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "load_assignments", 3);
+
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, userName);
+			setInt(stmt, paramIndex++, currentWeek);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			rs = stmt.executeQuery();
+			
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg);
+			}
+			while (rs.next()) {
+				//System.out.println(getInt(rs, "ProjectID"));
+				booking.add(fillBooking(rs));
+			}
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(0));
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+
+		return booking;
+	}
+	
+	protected Booking fillBooking(ResultSet rs) throws SQLException {
+		Booking retValue = new Booking();
+		
+		retValue.setProjectID(getInt(rs, "ProjectID"));
+		retValue.setResourceID(getInt(rs, "ResourceID"));
+		retValue.setWeek(getInt(rs, "Week"));
+		retValue.setRatio(getInt(rs, "Ratio"));
+		retValue.setLeader(getBool(rs, "IsLeader"));
 		return retValue;
 	}
 }

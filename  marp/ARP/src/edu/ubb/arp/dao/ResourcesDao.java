@@ -54,4 +54,6 @@ public interface ResourcesDao {
 	 * 
 	 * public List<Resources> loadResourcesByGroup(Integer groupId) throws DalException;
 	 */
+
+	public List<Resources> LoadResources()throws SQLException;
 }

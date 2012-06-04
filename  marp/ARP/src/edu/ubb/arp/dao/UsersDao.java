@@ -5,6 +5,7 @@ import java.util.List;
 
 import edu.ubb.arp.dao.model.Groups;
 import edu.ubb.arp.dao.model.Users;
+import edu.ubb.arp.datastructures.Booking;
 import edu.ubb.arp.exceptions.DalException;
 
 public interface UsersDao {
@@ -47,5 +48,7 @@ public interface UsersDao {
 	public Users loadUser(String userName) throws SQLException, DalException;
 	
 	public int checkUserNameAndPassword(String userName, byte[] password) throws SQLException;
+
+	public List<Booking> LoadAssignments(String userName, int currentWeek) throws SQLException, DalException;
 
 }

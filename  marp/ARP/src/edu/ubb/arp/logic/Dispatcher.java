@@ -7,8 +7,11 @@ import org.apache.log4j.Logger;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.CheckUserCommand;
 import edu.ubb.arp.logic.commands.Command;
+import edu.ubb.arp.logic.commands.LoadAllProjectsCommand;
+import edu.ubb.arp.logic.commands.LoadAssignmentsCommand;
 import edu.ubb.arp.logic.commands.LoadProjectTableCommand;
 import edu.ubb.arp.logic.commands.LoadProjectsUserIsWorkingOnCommand;
+import edu.ubb.arp.logic.commands.LoadResourceCommand;
 import edu.ubb.arp.logic.commands.LoadUserDataCommand;
 import edu.ubb.arp.logic.commands.projects.AddResourceToprojectCommand;
 import edu.ubb.arp.logic.commands.projects.ChangeProjectCurrentStatusCommand;
@@ -20,6 +23,7 @@ import edu.ubb.arp.logic.commands.projects.InsertNewProjectCommand;
 import edu.ubb.arp.logic.commands.projects.RemoveResourceFromProjectCommand;
 import edu.ubb.arp.logic.commands.projects.RemoveUserFromProjectCommand;
 import edu.ubb.arp.logic.commands.projects.UpdateResourceRatioCommand;
+import edu.ubb.arp.logic.commands.projects.UpdateResourceRatioWithRequestCommand;
 import edu.ubb.arp.logic.commands.projects.UpdateUserIsLeaderCommand;
 import edu.ubb.arp.logic.commands.requests.RemoveExpiredRequestsCommand;
 import edu.ubb.arp.logic.commands.requests.RemoveRequestFromSomebodyCommand;
@@ -81,6 +85,18 @@ public class Dispatcher extends BaseCommandOperations {
 					command = new LoadProjectTableCommand(request);
 					response = command.execute();
 					break;	
+				case 3: 
+					command = new LoadResourceCommand(request);
+					response = command.execute();
+					break;	
+				case 4: 
+					command = new LoadAssignmentsCommand(request);
+					response = command.execute();
+					break;	
+				case 5:
+					command = new LoadAllProjectsCommand(request);
+					response = command.execute();
+					break;
 					
 				// Users
 				case 101: // insert user
@@ -167,6 +183,10 @@ public class Dispatcher extends BaseCommandOperations {
 					break;
 				case 228: // update user isleader in project
 					command = new UpdateUserIsLeaderCommand(request);
+					response = command.execute();
+					break;
+				case 229: // update resource ratio in project
+					command = new UpdateResourceRatioWithRequestCommand(request);
 					response = command.execute();
 					break;
 				//------------------------------------------------------

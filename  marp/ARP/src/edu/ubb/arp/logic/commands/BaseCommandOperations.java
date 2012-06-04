@@ -129,6 +129,72 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		return result;
 	}
 	
+	public JSONArray addMoreStrings(String keys[], String elements[], JSONArray response) {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONArray result = JSONArray.fromObject(response);
+		
+		if (keys == null) {
+			logger.error(getClass().getName() + methodName + "parameter: key is null");
+			return setError(-1);
+		}
+		
+		if (result == null) {
+			result = new JSONArray();
+		}
+		
+		JSONObject obj = new JSONObject();
+		for(int i = 0; i < keys.length; i++) {
+			obj.put(keys[i], new String(elements[i]));
+		}
+		result.add(obj);
+
+		return result;
+	}
+	
+	public JSONArray addMoreIntAndBool(String keys[], int elements[],Boolean element, JSONArray response) {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONArray result = JSONArray.fromObject(response);
+		
+		if (keys == null) {
+			logger.error(getClass().getName() + methodName + "parameter: key is null");
+			return setError(-1);
+		}
+		
+		if (result == null) {
+			result = new JSONArray();
+		}
+		
+		JSONObject obj = new JSONObject();
+		for(int i = 0; i < keys.length-1; i++) {
+			obj.put(keys[i], new Integer(elements[i]));
+		}
+		obj.put(keys[keys.length-1],new Boolean(element));
+		result.add(obj);
+
+		return result;
+	}
+	
+	
+	public JSONArray addIntAndString(String keys[], int intElement,String stringElement, JSONArray response) {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONArray result = JSONArray.fromObject(response);
+		
+		if (keys == null) {
+			logger.error(getClass().getName() + methodName + "parameter: key is null");
+			return setError(-1);
+		}
+		
+		if (result == null) {
+			result = new JSONArray();
+		}
+		
+		JSONObject obj = new JSONObject();
+		obj.put(keys[0], new Integer(intElement));
+		obj.put(keys[keys.length-1],new String(stringElement));
+		result.add(obj);
+
+		return result;
+	}
 	
 	// Getter methods
 	
