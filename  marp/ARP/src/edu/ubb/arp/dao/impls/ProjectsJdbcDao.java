@@ -1038,7 +1038,6 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 	
 	public List<ResourcesWorkingOnProject> getAllProjectsForManeger() throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
-		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
 		List<ResourcesWorkingOnProject> resoult = null;
 
@@ -1051,11 +1050,6 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt = createProcedure(connection, "load_projects", 0);
 
 			rs = stmt.executeQuery();
-			errmsg = stmt.getInt("Oerrmsg");
-			if (errmsg < 0) {
-				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
-				throw new DalException(errmsg);
-			}
 
 			while (rs.next()) {
 				resoult.add(fillProjectsWithIsLeader(rs));
