@@ -1036,7 +1036,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		return resoult;
 	}
 	
-	public List<ResourcesWorkingOnProject> getAllProjectsForManeger(String userName) throws SQLException, DalException {
+	public List<ResourcesWorkingOnProject> getAllProjectsForManeger() throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");

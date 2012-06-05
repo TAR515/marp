@@ -348,7 +348,7 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		ResultSet rs = null;
 		try {
 			connection = getConnection();
-			stmt = createProcedure(connection, "load_request_visible_to_leader", 2);
+			stmt = createProcedure(connection, "load_requests_visible_to_leader", 2);
 			resoult = new ArrayList<Requests>();
 			
 			

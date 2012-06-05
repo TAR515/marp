@@ -55,4 +55,6 @@ public interface ProjectsDao {
 	public List<Booking> loadBooking(int projectID) throws SQLException, DalException;
 
 	public List<ResourcesWorkingOnProject> getAllActiveProjects(String userName) throws SQLException, DalException;
+	
+	public List<ResourcesWorkingOnProject> getAllProjectsForManeger() throws SQLException, DalException;
 }

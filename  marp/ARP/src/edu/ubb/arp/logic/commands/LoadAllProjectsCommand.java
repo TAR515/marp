@@ -17,7 +17,6 @@ import edu.ubb.arp.exceptions.DalException;
 
 public class LoadAllProjectsCommand extends BaseCommandOperations implements Command{
 	private static final Logger logger = Logger.getLogger(LoadProjectsUserIsWorkingOnCommand.class);
-	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private ProjectsDao projectsDao = null;
@@ -30,8 +29,6 @@ public class LoadAllProjectsCommand extends BaseCommandOperations implements Com
 			this.response = new JSONArray();
 			this.instance = JdbcDaoFactory.getInstance();
 			this.projectsDao = instance.getProjectsDao();
-			this.request = request;
-			
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			response = setError(0);
@@ -44,20 +41,11 @@ public class LoadAllProjectsCommand extends BaseCommandOperations implements Com
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
-		String userName = null;
 		List<ResourcesWorkingOnProject> activeProjects = null;
-		
-		try {
-			userName = getString(0,"username",request);
-			
-		} catch (IllegalStateException e) {
-			logger.error(getClass().getName() + methodName + e);
-			response = setError(-1);
-		}
 		
 		if (!errorCheck(response)) {
 			try {
-				activeProjects = projectsDao.getAllActiveProjects(userName);
+				activeProjects = projectsDao.getAllProjectsForManeger();
 	
 				Iterator<ResourcesWorkingOnProject> itr = activeProjects.iterator();
 				ResourcesWorkingOnProject current = null;
