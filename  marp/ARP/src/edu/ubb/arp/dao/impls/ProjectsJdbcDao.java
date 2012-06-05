@@ -1050,11 +1050,8 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt = createProcedure(connection, "load_projects", 0);
 
 			rs = stmt.executeQuery();
-			ResourcesWorkingOnProject current = new ResourcesWorkingOnProject();
 			while (rs.next()) {
-				current = fillProjectsWithIsLeader(rs);
-				current.setLeader(false);
-				resoult.add(current);
+				resoult.add(fillProjects(rs));
 			}
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
@@ -1123,7 +1120,8 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		retValue.setDeadLine(getInt(rs, "Deadline"));
 		retValue.setNextRelease(getString(rs, "NextRelease"));
 		retValue.setStatusName(getString(rs, "StatusName"));
-
+		retValue.setLeader(false);
+		
 		return retValue;
 	}
 
