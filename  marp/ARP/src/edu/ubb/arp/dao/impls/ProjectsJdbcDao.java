@@ -1050,9 +1050,11 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			stmt = createProcedure(connection, "load_projects", 0);
 
 			rs = stmt.executeQuery();
-
+			ResourcesWorkingOnProject current = new ResourcesWorkingOnProject();
 			while (rs.next()) {
-				resoult.add(fillProjectsWithIsLeader(rs));
+				current = fillProjectsWithIsLeader(rs);
+				current.setLeader(false);
+				resoult.add(current);
 			}
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);

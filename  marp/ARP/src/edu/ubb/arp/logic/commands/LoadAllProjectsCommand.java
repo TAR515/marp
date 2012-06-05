@@ -61,7 +61,7 @@ public class LoadAllProjectsCommand extends BaseCommandOperations implements Com
 					project.put("deadline", current.getDeadLine());
 					project.put("nextrelease", current.getNextRelease());
 					project.put("statusname", current.getStatusName());
-					
+					project.put("isleader", current.isLeader());
 					response.add(project);
 				}
 					
