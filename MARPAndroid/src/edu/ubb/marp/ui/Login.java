@@ -58,8 +58,7 @@ public class Login extends Activity {
 			}
 		});
 
-		SharedPreferences pref = PreferenceManager
-				.getDefaultSharedPreferences(this);
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 		if (pref.getBoolean("remember", false)) {
 			CheckBox remember = (CheckBox) findViewById(R.id.rememberme);
 			username.setText(pref.getString("username", ""));
@@ -70,27 +69,79 @@ public class Login extends Activity {
 			username.setText("");
 		}
 		
-		/*Log.i("0", Constants.convertWeekToDate(0));
-		Log.i("1", Constants.convertWeekToDate(1));
-		Log.i("2", Constants.convertWeekToDate(2));
-		
-		Date mydate=new Date(2007, 1, 1);
-		
-		Log.i("0", Integer.toString(Constants.weeksBetween(mydate, Constants.convertWeekToDatee(0))));
-		Log.i("1", Integer.toString(Constants.weeksBetween(mydate, Constants.convertWeekToDatee(1))));
-		Log.i("2", Integer.toString(Constants.weeksBetween(mydate, Constants.convertWeekToDatee(2))));
-		
-		Log.i("7", Integer.toString(Constants.weeksBetween(mydate, new Date(2007, 1, 7))));
-		Log.i("8", Integer.toString(Constants.weeksBetween(mydate, new Date(2007, 1, 8))));
-		Log.i("9", Integer.toString(Constants.weeksBetween(mydate, new Date(2007, 1, 9))));*/
+		/*Log.i("10", Constants.convertWeekToDate(10));
+		Log.i("11", Constants.convertWeekToDate(11));
+		Log.i("12", Constants.convertWeekToDate(12));
+		Log.i("13", Constants.convertWeekToDate(13));
+		Log.i("14", Constants.convertWeekToDate(14));
+		Log.i("15", Constants.convertWeekToDate(15));
+		Log.i("16", Constants.convertWeekToDate(16));
+		Log.i("17", Constants.convertWeekToDate(17));
+		Log.i("18", Constants.convertWeekToDate(18));
+		Log.i("19", Constants.convertWeekToDate(19));
+		Log.i("20", Constants.convertWeekToDate(20));
+		Log.i("21", Constants.convertWeekToDate(21));
+		Log.i("22", Constants.convertWeekToDate(22));
+		Log.i("23", Constants.convertWeekToDate(23));
+		Log.i("24", Constants.convertWeekToDate(24));
+		Log.i("25", Constants.convertWeekToDate(25));
+		Log.i("26", Constants.convertWeekToDate(26));
+		Log.i("27", Constants.convertWeekToDate(27));
+		Log.i("28", Constants.convertWeekToDate(28));
+		Log.i("29", Constants.convertWeekToDate(29));*/
+
+		/*
+		 * Log.i("0", Constants.convertWeekToDate(0)); Log.i("1",
+		 * Constants.convertWeekToDate(1)); Log.i("2",
+		 * Constants.convertWeekToDate(2));
+		 * 
+		 * Date mydate=new Date(2007, 1, 1);
+		 * 
+		 * Log.i("0", Integer.toString(Constants.weeksBetween(mydate,
+		 * Constants.convertWeekToDatee(0)))); Log.i("1",
+		 * Integer.toString(Constants.weeksBetween(mydate,
+		 * Constants.convertWeekToDatee(1)))); Log.i("2",
+		 * Integer.toString(Constants.weeksBetween(mydate,
+		 * Constants.convertWeekToDatee(2))));
+		 * 
+		 * Log.i("7", Integer.toString(Constants.weeksBetween(mydate, new
+		 * Date(2007, 1, 7)))); Log.i("8",
+		 * Integer.toString(Constants.weeksBetween(mydate, new Date(2007, 1,
+		 * 8)))); Log.i("9", Integer.toString(Constants.weeksBetween(mydate, new
+		 * Date(2007, 1, 9))));
+		 */
+
+		/*
+		 * Log.i("0", Constants.convertWeekToDate(0)); Log.i("1",
+		 * Constants.convertWeekToDate(1)); Log.i("2",
+		 * Constants.convertWeekToDate(2)); Log.i("3",
+		 * Constants.convertWeekToDate(3)); Log.i("4",
+		 * Constants.convertWeekToDate(4)); Log.i("5",
+		 * Constants.convertWeekToDate(5)); Log.i("6",
+		 * Constants.convertWeekToDate(6)); Log.i("7",
+		 * Constants.convertWeekToDate(7)); Log.i("8",
+		 * Constants.convertWeekToDate(8)); Log.i("9",
+		 * Constants.convertWeekToDate(9)); Log.i("10",
+		 * Constants.convertWeekToDate(10)); Log.i("11",
+		 * Constants.convertWeekToDate(11)); Log.i("12",
+		 * Constants.convertWeekToDate(12)); Log.i("13",
+		 * Constants.convertWeekToDate(13)); Log.i("14",
+		 * Constants.convertWeekToDate(14)); Log.i("15",
+		 * Constants.convertWeekToDate(15));
+		 * 
+		 * Log.i("38", Integer.toString(Constants.convertDateToWeek(new
+		 * Date(2007, 3, 8)))); Log.i("39",
+		 * Integer.toString(Constants.convertDateToWeek(new Date(2007, 3, 9))));
+		 * Log.i("310", Integer.toString(Constants.convertDateToWeek(new
+		 * Date(2007, 3, 10))));
+		 */
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 
-		registerReceiver(broadcastReceiver, new IntentFilter(
-				Constants.BROADCAST_ACTION));
+		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
 
 	@Override
@@ -101,8 +152,7 @@ public class Login extends Activity {
 
 	/** verifies if the password or the username is entered */
 	public void verify() {
-		if (username.getText().toString().equals("")
-				|| password.getText().toString().equals("")) {
+		if (username.getText().toString().equals("") || password.getText().toString().equals("")) {
 			messageBoxShow("No username or password", "Warning!");
 		} else {
 			/*
@@ -112,8 +162,7 @@ public class Login extends Activity {
 			 * this.startActivity(myIntent); }else{
 			 * messageBoxShow("Wrong username or password", "Warning!"); }
 			 */
-			loading = ProgressDialog
-					.show(this, "Login", "Please wait...", true);
+			loading = ProgressDialog.show(this, "Login", "Please wait...", true);
 
 			Uri.Builder uri = new Uri.Builder();
 
@@ -160,8 +209,7 @@ public class Login extends Activity {
 				if (intent.getBooleanExtra("Successful", false)) {
 					CheckBox remember = (CheckBox) findViewById(R.id.rememberme);
 
-					SharedPreferences pref = PreferenceManager
-							.getDefaultSharedPreferences(getApplicationContext());
+					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 					Editor editor = pref.edit();
 
 					editor.putString("username", username.getText().toString().toLowerCase());
@@ -171,23 +219,21 @@ public class Login extends Activity {
 					editor.apply();
 
 					loading.dismiss();
-					Intent myIntent = new Intent(getApplicationContext(),
-							HelloTabActivity.class);
+					Intent myIntent = new Intent(getApplicationContext(), HelloTabActivity.class);
 					startActivity(myIntent);
 				} else {
 					loading.dismiss();
-					SharedPreferences pref = PreferenceManager
-							.getDefaultSharedPreferences(getApplicationContext());
-					if ((username.getText().toString().equals(pref.getString(
-							"username", "")))
-							&& (password.getText().toString().equals(pref
-									.getString("password", "")))) {
-						Intent myIntent = new Intent(getApplicationContext(),
-								HelloTabActivity.class);
-						startActivity(myIntent);
+					if (intent.getIntExtra("error", 10000) == 0) {
+						SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+						if ((username.getText().toString().equals(pref.getString("username", "")))
+								&& (password.getText().toString().equals(pref.getString("password", "")))) {
+							Intent myIntent = new Intent(getApplicationContext(), HelloTabActivity.class);
+							startActivity(myIntent);
+						}else{
+							messageBoxShow(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
+						}
 					} else {
-						messageBoxShow(Constants.getErrorMessage(intent
-								.getIntExtra("error", 0)), "Error");
+						messageBoxShow(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
 					}
 				}
 			}

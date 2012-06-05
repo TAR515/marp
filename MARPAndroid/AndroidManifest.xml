@@ -77,6 +77,10 @@
             android:label="Resource"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
+        <activity
+            android:name=".ui.ModifyProjectActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
 
         <provider
             android:name=".database.CProvider"

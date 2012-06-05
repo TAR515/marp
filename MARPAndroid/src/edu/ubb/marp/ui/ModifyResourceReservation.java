@@ -100,26 +100,27 @@ public class ModifyResourceReservation extends Activity {
 		//Log.i("Start Date", ""+ startDate);		
 		//Log.i("End Date", ""+ endDate);
 		
-		String startWeekString = Constants.convertWeekToDate(minWeek);
-		String endWeekString = Constants.convertWeekToDate(maxWeek);
+		Date startWeekDate = Constants.convertWeekToRealDate(minWeek);
+		Date endWeekDate = Constants.convertWeekToRealDate(maxWeek);
 		
-		Log.i("Start Date", ""+ startWeekString);		
-		Log.i("End Date", ""+ endWeekString);
+		//Log.i("Start Date", ""+ startWeekString);		
+		//Log.i("End Date", ""+ endWeekString);
 		
-		String startWeekElements[] = startWeekString.split("\\.");
-		String endWeekElements[] = endWeekString.split("\\.");
+		//String startWeekElements[] = startWeekString.split("\\.");
+		//String endWeekElements[] = endWeekString.split("\\.");
 		
-		Log.i("Start Date", ""+ Constants.convertWeekToDate(minWeek));
-		Log.i("End Date", ""+ Constants.convertWeekToDate(maxWeek));
-		Log.i("Start Date Year", ""+ Integer.parseInt(startWeekElements[0]));	
-		Log.i("Start Date Month", ""+ Integer.parseInt(startWeekElements[1]));	
-		Log.i("Start Date Day", ""+ Integer.parseInt(startWeekElements[2]));	
+		//Log.i("Start Date", ""+ Constants.convertWeekToDate(minWeek));
+		//Log.i("End Date", ""+ Constants.convertWeekToDate(maxWeek));
+		//Log.i("Start Date Year", ""+ Integer.parseInt(startWeekElements[0]));	
+		//Log.i("Start Date Month", ""+ Integer.parseInt(startWeekElements[1]));	
+		//Log.i("Start Date Day", ""+ Integer.parseInt(startWeekElements[2]));	
 		//startDatePicker.init(startDate.getYear(), startDate.getMonth(), startDate.getDay(), null);
-		startDatePicker.init(Integer.parseInt(startWeekElements[0]), Integer.parseInt(startWeekElements[1]), Integer.parseInt(startWeekElements[2]), null);
-		
-		
 
-		endDatePicker.init(Integer.parseInt(endWeekElements[0]), Integer.parseInt(endWeekElements[1]),Integer.parseInt(endWeekElements[2]),null);
+		//startDatePicker.init(Integer.parseInt(startWeekElements[0]), Integer.parseInt(startWeekElements[1]), Integer.parseInt(startWeekElements[2]), null);
+		startDatePicker.init(startWeekDate.getYear()+1900, startWeekDate.getMonth(), startWeekDate.getDate(), null);
+
+		//endDatePicker.init(Integer.parseInt(endWeekElements[0]), Integer.parseInt(endWeekElements[1]),Integer.parseInt(endWeekElements[2]),null);
+		endDatePicker.init(endWeekDate.getYear()+1900, endWeekDate.getMonth(), endWeekDate.getDate(), null);
 
 		//startweek.setText(Integer.toString(minWeek));
 		//endweek.setText(Integer.toString(maxWeek));

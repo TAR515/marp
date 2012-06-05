@@ -18,6 +18,8 @@ public final class Constants {
 	public static String BROADCAST_ACTION = "edu.ubb.marp.DATABASEREFRESHED";
 
 	public static final int QUERYUSER = 131;
+	
+	public static final int LOADASSIGNMENTSCMD = 4;
 
 	public static final int QUERYAVAILABLERESOURCESCODE = 303;
 	public static final int CHANGEPROJECTOPENEDSTATUS = 221;
@@ -41,7 +43,8 @@ public final class Constants {
 
 	public static final int UPDATERESOURCERESERVATION = 227;
 	public static final int NEWPROJECT = 201;
-	public static final int ADDRESOURCETOPROJECT = 203;
+	public static final int ADDRESOURCETOPROJECTCMD = 203;
+	public static final int LOADRESOURCES = 3;
 
 	public static final int CHANGEUSERNAMECMD = 121;
 	public static final int CHANGEUSERRESOURCENAMECMD = 125;
@@ -49,7 +52,7 @@ public final class Constants {
 	public static final int CHANGEUSEREMAILCMD = 123;
 	public static final int CHANGEUSERPHONENUMBERCMD = 124;
 
-	private static Date startDate = new Date(2007, 1, 1);
+	private static Date startDate = new Date(2007, 0, 1);
 
 	public static String getErrorMessage(int code) {
 		switch (code) {
@@ -128,31 +131,44 @@ public final class Constants {
 		}
 	}
 
-	public static String convertWeekToDate(int week) {
+	public static String convertWeekToDate2(int week) {
 		// Date myDate = new Date(2007, 1, 1);
 		long aWeek = 604800000;
 		// myDate.setTime(myDate.getTime() + (week * aWeek));
-		Date myDate = new Date(startDate.getTime() + (week * aWeek));
+		Date myDate = new Date(startDate.getTime() + ((week-1) * aWeek));
+		
 
 		String s = new String();
 		s = s.concat(Integer.toString(myDate.getYear()));
-		s = s.concat("." + myDate.getMonth());
+		s = s.concat("." + (myDate.getMonth()+1));
 		s = s.concat("." + myDate.getDate());
 
 		return s;
 	}
 
 	public static Date convertWeekToRealDate(int week){
-		Calendar calendar = new GregorianCalendar(2007, 1, 1, 0, 0, 0);
-		calendar.add(Calendar.WEEK_OF_YEAR, week);
+		Calendar calendar = new GregorianCalendar(2007, 0, 1, 0, 0, 0);
+		calendar.add(Calendar.WEEK_OF_YEAR, week-1);
 		Date myDate = calendar.getTime();
 		return myDate;
+	}
+	
+	public static String convertWeekToDate(int week){
+		Calendar calendar = new GregorianCalendar(2007, 0, 1);
+		calendar.add(Calendar.WEEK_OF_YEAR, week-1);
+		Date myDate = calendar.getTime();
+		
+		String s = new String();
+		s = s.concat(Integer.toString(myDate.getYear()+1900));
+		s = s.concat("." + (myDate.getMonth()+1));
+		s = s.concat("." + myDate.getDate());
+		return s;
 	}
 	
 	public static Date convertWeekToRealDate2(int week){
 		long aWeek = 604800000;
 		// myDate.setTime(myDate.getTime() + (week * aWeek));
-		Date myDate = new Date(startDate.getTime() + (week * aWeek));
+		Date myDate = new Date(startDate.getTime() + ((week-1) * aWeek));
 		return myDate;
 	}
 	public static int convertDateToWeek(Date date) {

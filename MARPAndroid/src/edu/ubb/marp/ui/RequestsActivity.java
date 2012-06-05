@@ -1,14 +1,13 @@
 package edu.ubb.marp.ui;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import edu.ubb.marp.Constants;
 import edu.ubb.marp.R;
 import edu.ubb.marp.database.DatabaseContract;
-import edu.ubb.marp.database.DatabaseContract.*;
+import edu.ubb.marp.database.DatabaseContract.TABLE_PROJECTS;
 import edu.ubb.marp.network.MyService;
-
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -29,16 +28,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
-public class ProjectActivity extends ListActivity {
-	private static final String tag = "ProjectActivity";
+public class RequestsActivity extends ListActivity{
+	private static final String tag = "RequestsActivity";
 
 	private ProgressDialog loading;
 
@@ -52,30 +46,13 @@ public class ProjectActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i(tag, "onCreate");
-		/*
-		 * ListAdapter adapter= new ArrayAdapter<String>(this,
-		 * R.layout.list_item, list); setListAdapter(adapter);
-		 * 
-		 * ListView lv = getListView(); lv.setTextFilterEnabled(true);
-		 * 
-		 * setList(a); final ListView lvv = lv;
-		 */
-		/*
-		 * ListView lv=(ListView)findViewById(android.R.id.list);
-		 * lv.setOnItemClickListener(new OnItemClickListener() { public void
-		 * onItemClick(AdapterView<?> parent, View view, int position, long id)
-		 * { Intent myIntent = new Intent(getApplicationContext(),
-		 * ResourcesActivity.class); Bundle bundle=new Bundle();
-		 * bundle.putString("projectid", ids[position]);
-		 * myIntent.putExtras(bundle); startActivity(myIntent); } });
-		 */
 
 		setContentView(R.layout.projects);
 		Log.i(tag, "setcontent utan");
 		sendRequest();
 	}
 
-	private void sendRequest() {
+	private void sendRequest() {//TODO
 		loading = ProgressDialog.show(this, "Loading",
 				"Please wait...");
 
@@ -108,30 +85,11 @@ public class ProjectActivity extends ListActivity {
 		unregisterReceiver(broadcastReceiver);
 	}
 
-	@Override
+	/*@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.project, menu);
 		return true;
-	}
-
-	/** this method is called when a messagebox needs to be appered */
-	public void messageBoxShow(String message, String title) {
-		AlertDialog alertDialog;
-
-		alertDialog = new AlertDialog.Builder(this).create();
-		alertDialog.setTitle(title);
-		alertDialog.setMessage(message);
-		alertDialog.setButton("Retry", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				sendRequest();
-			}
-		});
-		alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-			}
-		});
-		alertDialog.show();
 	}
 
 	@Override
@@ -166,6 +124,25 @@ public class ProjectActivity extends ListActivity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}*/
+
+	/** this method is called when a messagebox needs to be appered */
+	public void messageBoxShow(String message, String title) {
+		AlertDialog alertDialog;
+
+		alertDialog = new AlertDialog.Builder(this).create();
+		alertDialog.setTitle(title);
+		alertDialog.setMessage(message);
+		alertDialog.setButton("Retry", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				sendRequest();
+			}
+		});
+		alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		alertDialog.show();
 	}
 	
 	private void queryData(){
@@ -230,21 +207,6 @@ public class ProjectActivity extends ListActivity {
 				if (intent.getBooleanExtra("Successful", false)) {
 					loading.dismiss();
 					queryData();
-					
-					Uri.Builder uri = new Uri.Builder();
-					uri.authority(DatabaseContract.PROVIDER_NAME);
-					uri.path("131");
-					//uri.appendPath("Projects");
-					uri.scheme("content");
-
-					Intent myIntent = new Intent(getApplicationContext(),
-							MyService.class);
-					myIntent.putExtra("ACTION", "QUERY");
-					myIntent.setData(uri.build());
-
-					//requestid=new Date().getTime();
-					myIntent.putExtra("requestid", (long)0);
-					startService(myIntent);
 				} else {
 					loading.dismiss();
 					if(intent.getIntExtra("error", 10000)==0){

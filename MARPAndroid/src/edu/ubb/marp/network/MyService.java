@@ -224,6 +224,9 @@ public class MyService extends Service {
 				else
 					json.put("targetusername", intent.getStringExtra("targetusername"));
 				break;
+			case Constants.LOADASSIGNMENTSCMD:
+				json.put("currentweek", intent.getIntExtra("currentweek", 0));
+				break;
 			}
 
 			json.put("username", pref.getString("username", ""));
@@ -373,7 +376,7 @@ public class MyService extends Service {
 
 		try {
 			JSONObject json = new JSONObject();
-			json.put("command", Constants.ADDRESOURCETOPROJECT);
+			json.put("command", Constants.ADDRESOURCETOPROJECTCMD);
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
 
@@ -382,7 +385,7 @@ public class MyService extends Service {
 			json.put("endweek", intent.getIntExtra("endweek", 0));
 			json.put("targetresourceid", intent.getIntExtra("targetresourceid", 0));
 			json.put("senderresourceid", intent.getIntExtra("senderresourceid", 0));
-			//TODO isLeader
+			json.put("isleader", intent.getBooleanExtra("isleader", false));
 
 			JSONArray elements = new JSONArray();
 			int[] intUpdateRatios = intent.getIntArrayExtra("updateratios");
@@ -502,7 +505,7 @@ public class MyService extends Service {
 
 		try {
 			JSONObject json = new JSONObject();
-			json.put("command", Constants.CHANGEUSERPHONENUMBERCMD);
+			json.put("command", Constants.CHANGEUSERNAMECMD);
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
 
@@ -522,7 +525,7 @@ public class MyService extends Service {
 
 		try {
 			JSONObject json = new JSONObject();
-			json.put("command", Constants.CHANGEUSERPHONENUMBERCMD);
+			json.put("command", Constants.CHANGEUSERRESOURCENAMECMD);
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
 
@@ -582,7 +585,7 @@ public class MyService extends Service {
 
 		try {
 			JSONObject json = new JSONObject();
-			json.put("command", Constants.CHANGEUSEREMAILCMD);
+			json.put("command", Constants.CHANGEUSERPASSWORDCMD);
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
 
@@ -747,6 +750,31 @@ public class MyService extends Service {
 							.execute(r.getJSONArray(1));
 				}
 				break;
+				
+			case Constants.LOADASSIGNMENTSCMD:
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("error") <= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", false);
+						intent.putExtra("error", result.getInt("error"));
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					incRequests();
+					uri = new Uri.Builder();
+					uri.authority(DatabaseContract.PROVIDER_NAME);
+					uri.path(DatabaseContract.TABLE_BOOKING);
+					uri.scheme("content");
+					mainColumns = new String[3];
+					mainColumns[0] = TABLE_BOOKING.PROJECTID;
+					mainColumns[1] = TABLE_BOOKING.RESOURCEID;
+					mainColumns[2] = TABLE_BOOKING.WEEK;
+					new RefreshData(uri.build(), getContentResolver(), mainColumns, requestid, this, true, false)
+							.execute(r.getJSONArray(0));
+				}
+				break;
 
 			/*case 201: // New project
 				try {
@@ -821,7 +849,7 @@ public class MyService extends Service {
 
 						int results[] = new int[r.length()];
 						for (int i = 0; i < r.length(); i++)
-							results[i] = r.getJSONObject(i).getInt("ratio");
+							results[i] = r.getJSONObject(i).getInt("ratiototal");
 
 						intent.putExtra("results", results);
 
@@ -858,7 +886,7 @@ public class MyService extends Service {
 				}
 				break;
 				
-			case Constants.ADDRESOURCETOPROJECT:
+			case Constants.ADDRESOURCETOPROJECTCMD:
 				result = null;
 				try {
 					result = r.getJSONObject(0);
@@ -919,6 +947,7 @@ public class MyService extends Service {
 						intent.putExtra("originalReqeustid", requestid);
 						intent.putExtra("Successful", true);
 						intent.putExtra("change", true);
+						intent.putExtra("changeUsername", true);
 						afterRefresh(intent);
 					}
 				} catch (JSONException errorRead) {
@@ -1043,6 +1072,44 @@ public class MyService extends Service {
 						}
 					intent.putExtra("error", errorCode);
 					afterRefresh(intent);
+				}
+				break;
+				
+			case Constants.LOADRESOURCES:
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("error") <= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", false);
+						intent.putExtra("Resources", true);
+						intent.putExtra("error", result.getInt("error"));
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", true);
+					intent.putExtra("Resources", true);
+
+					try {
+						//JSONArray array = r.getJSONArray(0);
+
+						int resourceids[] = new int[r.length()];
+						String resourcenames[] = new String[r.length()];
+						for (int i = 0; i < r.length(); i++){
+							JSONObject obj=r.getJSONObject(i);
+							resourceids[i] = obj.getInt("resourceid");
+							resourcenames[i] = obj.getString("resourcename");
+						}
+
+						intent.putExtra("resourceid", resourceids);
+						intent.putExtra("resourcename", resourcenames);
+
+						afterRefresh(intent);
+					} catch (JSONException errorReal) {
+						errorReal.printStackTrace();
+					}
 				}
 				break;
 			}

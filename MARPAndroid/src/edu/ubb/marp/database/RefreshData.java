@@ -173,8 +173,11 @@ public class RefreshData extends AsyncTask<JSONArray, Integer, Integer> {
 						 * (c.getString(notPrimaryColumns.get(j)).equals(obj
 						 * .getString(columns[notPrimaryColumns.get(j)])))) {
 						 */
+						//j++;
 						while ((j < notPrimaryColumns.size())
 								&& (s1.equals(s2))) {
+							j++;
+							try{
 							s1 = c.getString(notPrimaryColumns.get(j));
 							s2 = obj.getString(columns[notPrimaryColumns.get(j)]);
 							if (s2.equals("true")) {
@@ -182,9 +185,10 @@ public class RefreshData extends AsyncTask<JSONArray, Integer, Integer> {
 							} else if (s2.equals("false")) {
 								s2 = "0";
 							}
+							}catch(Exception se){}
 							// Log.i(tag, "s1 = "+s1);
 							// Log.i(tag, "s2 = "+s2);
-							j++;
+							//j++;
 						}
 
 						// if (j < numberOfColumns) {

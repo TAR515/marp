@@ -42,7 +42,7 @@ public class MyAccountActivity extends Activity {
 	private long requestid;
 	private ProgressDialog loading;
 	private Context context;
-	private String passWord;
+	private String passWord, userName;
 	ArrayList<ListRecord> users = new ArrayList<ListRecord>();
 
 	/** Called when the activity is first created. */
@@ -57,7 +57,10 @@ public class MyAccountActivity extends Activity {
 
 		context = this;
 
-		sendRequest(true);
+		if ((savedInstanceState == null) || (savedInstanceState.isEmpty()))
+			sendRequest(true);
+		else
+			RestoreInstanceState(savedInstanceState);
 	}
 
 	private void sendRequest(boolean load) {
@@ -92,18 +95,64 @@ public class MyAccountActivity extends Activity {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// Save the values you need from your textview into "outState"-object
+		Log.i(tag, "onsave");
+		outState.putLong("requestid", requestid);
+	
+		outState.putString("name", users.get(0).subitem);
+		outState.putString("username", users.get(1).subitem);
+		outState.putString("tel", users.get(2).subitem);
+		outState.putString("email", users.get(3).subitem);
+
+		super.onSaveInstanceState(outState);
+
+	}
+
+	protected void RestoreInstanceState(Bundle savedInstanceState) {
+		// super.onRestoreInstanceState(savedInstanceState);
+		// Read values from the "savedInstanceState"-object and put them in your
+		// textview
+		Log.i(tag, "restore");
+		requestid = savedInstanceState.getLong("requestid");
+
+		setArrayList(savedInstanceState.getString("name"), savedInstanceState.getString("username"), savedInstanceState.getString("tel"), savedInstanceState.getString("email"));
+
+		refresh();
+	}
 
 	public void setArrayList(String name, String username, String telephone, String email) {
+		users = new ArrayList<ListRecord>();
 		ListRecord user = new ListRecord("Name", name);
-		users.add(user);
+		users.add(0, user);
 		user = new ListRecord("Username", username);
-		users.add(user);
+		users.add(1, user);
 		user = new ListRecord("Telephone", telephone);
-		users.add(user);
+		users.add(2, user);
 		user = new ListRecord("E-mail", email);
-		users.add(user);
+		users.add(3, user);
 		user = new ListRecord("Change Password", "");
-		users.add(user);
+		users.add(4, user);
+	}
+	
+	public void refresh(){
+		ListView listView = (ListView) findViewById(R.id.ListViewId);
+		listView.setAdapter(new ListItemAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, users));
+		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+				if (pos < 4) {
+					editDialog("Change" + " " + users.get(pos).getItem(), users.get(pos).getSubitem(), pos);
+				} else {
+					if (pos == 4) {
+						editPasswordDialog("Change Password");
+					}
+				}
+				return true;
+			}
+		});
 	}
 
 	public void messageBoxShow(String message, String title) {
@@ -167,8 +216,9 @@ public class MyAccountActivity extends Activity {
 					break;
 				case 1: // Username
 					intent = new Intent(getApplicationContext(), MyService.class);
-					intent.putExtra("ACTION", "CHANGEUSERRESOURCENAME");
+					intent.putExtra("ACTION", "CHANGEUSERNAME");
 					intent.putExtra("newusername", editDialog.getText().toString());
+					userName = editDialog.getText().toString();
 
 					requestid = new Date().getTime();
 					intent.putExtra("requestid", requestid);
@@ -216,11 +266,11 @@ public class MyAccountActivity extends Activity {
 		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				loading = ProgressDialog.show(context, "Loading", "Please wait...");
-
 				if ((change.getNewPass1().equals(change.getNewPass2()))
 						&& (change.getOldPass().equals(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(
-								"username", "")))) {
+								"password", "")))) {
+					loading = ProgressDialog.show(context, "Loading", "Please wait...");
+					
 					Intent intent = new Intent(getApplicationContext(), MyService.class);
 					intent.putExtra("ACTION", "CHANGEUSERPASSWORD");
 					intent.putExtra("newpassword", change.getNewPass1());
@@ -278,21 +328,7 @@ public class MyAccountActivity extends Activity {
 
 							setArrayList(name, username, tel, email);
 
-							ListView listView = (ListView) findViewById(R.id.ListViewId);
-							listView.setAdapter(new ListItemAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, users));
-							listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-								public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-									if (pos < 4) {
-										editDialog("Change" + " " + users.get(pos).getItem(), users.get(pos).getSubitem(), pos);
-									} else {
-										if (pos == 4) {
-											editPasswordDialog("Change Password");
-										}
-									}
-									return true;
-								}
-							});
+							refresh();
 						}
 					} else {
 						if (intent.getBooleanExtra("changePassword", false)) {
@@ -301,6 +337,15 @@ public class MyAccountActivity extends Activity {
 							Editor editor = pref.edit();
 
 							editor.putString("password", passWord);
+
+							editor.apply();
+						}
+						if (intent.getBooleanExtra("changeUsername", false)) {
+							SharedPreferences pref = PreferenceManager
+									.getDefaultSharedPreferences(getApplicationContext());
+							Editor editor = pref.edit();
+
+							editor.putString("username", userName);
 
 							editor.apply();
 						}

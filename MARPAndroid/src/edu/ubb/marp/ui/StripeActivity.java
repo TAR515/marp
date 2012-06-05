@@ -26,6 +26,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputFilter.LengthFilter;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
@@ -55,6 +56,7 @@ public class StripeActivity extends Activity {
 	private Context context;
 	private STRIPEACTIVITYACTIONS action;
 	private int[] booking;
+	private boolean isleader;
 
 	RowElement[] elements;
 	Button applyToAll;
@@ -93,6 +95,9 @@ public class StripeActivity extends Activity {
 				
 			case insert:
 				projectID = bundle.getInt("projectid");
+				senderresourceid=bundle.getInt("senderresourceid");
+				targetresourceid=bundle.getInt("targetresourceid");
+				isleader =bundle.getBoolean("isleader");
 				break;
 
 			case update:
@@ -105,19 +110,22 @@ public class StripeActivity extends Activity {
 			}
 
 			int[] results = bundle.getIntArray("results");
+			int length=endweek-startweek+1;
 
-			if (results != null) {
 				display = getWindowManager().getDefaultDisplay();
 
-				loadstr = new String[results.length][2];
+				loadstr = new String[length][2];
 
 				int j = startweek;
-				for (int i = 0; i < results.length; i++) {
+				for (int i = 0; i < length; i++) {
 					loadstr[i][0] = Constants.convertWeekToDate(j++);
-					loadstr[i][1] = Integer.toString(results[i]);
+					if (results.length != 0)
+						loadstr[i][1] = Integer.toString(results[i]);
+					else
+						loadstr[i][1] = Integer.toString(0);
 				}
 
-				setColumns(results.length, loadstr);
+				setColumns(length, loadstr);
 
 				// this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 				LinearLayout l = new LinearLayout(context);
@@ -146,7 +154,6 @@ public class StripeActivity extends Activity {
 				scroll.addView(l);
 				horizontal.addView(scroll);
 				setContentView(horizontal);
-			}
 		} else
 			RestoreInstanceState(savedInstanceState);
 
@@ -344,7 +351,7 @@ public class StripeActivity extends Activity {
 					intent.putExtra("endweek", endweek);
 					intent.putExtra("targetresourceid", targetresourceid);
 					intent.putExtra("senderresourceid", senderresourceid);
-					//TODO isLeader
+					intent.putExtra("isleader", isleader);
 
 					updateratios = new int[columns];
 					requestratios = new int[columns];

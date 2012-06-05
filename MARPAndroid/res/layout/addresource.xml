@@ -39,12 +39,18 @@
             android:text="Resource:" />
 
         <Spinner
-            android:id="@+id/statusSpinner"
+            android:id="@+id/resourcesSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <CheckBox
+            android:id="@+id/leaderCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Leader" />
+
         <Button
-            android:id="@+id/next"
+            android:id="@+id/nextAddButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Next" />
