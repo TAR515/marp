@@ -10,25 +10,26 @@ import net.sf.json.JSONArray;
 import org.apache.log4j.Logger;
 
 import edu.ubb.arp.dao.DaoFactory;
-import edu.ubb.arp.dao.UsersDao;
+import edu.ubb.arp.dao.RequestsDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
-import edu.ubb.arp.datastructures.Booking;
+import edu.ubb.arp.dao.model.Requests;
 import edu.ubb.arp.exceptions.DalException;
 
-public class LoadAssignmentsCommand extends BaseCommandOperations implements Command {
+public class LoadRequestsCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(LoadAssignmentsCommand.class);
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
-	private UsersDao userDao = null;
+	private RequestsDao requestsDao = null;
+	private List<Requests> result = null;
 	
-	public LoadAssignmentsCommand (JSONArray request) {
+	public LoadRequestsCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
 		try {
 			this.response = new JSONArray();
 			this.instance = JdbcDaoFactory.getInstance();
-			this.userDao = instance.getUsersDao();
+			this.requestsDao = instance.getRequestsDao();
 			this.request = request;
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
@@ -41,18 +42,18 @@ public class LoadAssignmentsCommand extends BaseCommandOperations implements Com
 	public JSONArray execute()  {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
-		List<Booking> result = new ArrayList<Booking>();
-		String keys[] = new String[5];
-		int elements[] = new int[4];
-		Boolean element = new Boolean(false);
-		Booking booking = new Booking();
 		
 		String userName = null;
-		int currentWeek = -1;
+		Requests currentRequest = null;
+		int elements[] = null;
+		String keys[] = null;
 		
 		try {
 			userName = getString(0,"username", request);
-			currentWeek = getInt(0,"currentweek", request);
+			currentRequest = new Requests();
+			result = new ArrayList<Requests>();
+			elements = new int[6];
+			keys = new String[6];
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			System.out.println("illegal state exception");
@@ -60,23 +61,27 @@ public class LoadAssignmentsCommand extends BaseCommandOperations implements Com
 		}
 		if (!errorCheck(response)) {
 			try {
-					result = userDao.LoadAssignments(userName,currentWeek);
-					Iterator<Booking> it = result.iterator();
-					while (it.hasNext()) {
-						booking = it.next();
-						keys[0] = "resourceid";
-						keys[1] = "projectid";
-						keys[2] = "week";
-						keys[3] = "ratio";
-						keys[4] = "isleader";
-						elements[0] = booking.getResourceID();
-						elements[1] = booking.getProjectID();
-						elements[2] = booking.getWeek();
-						elements[3] = (int) booking.getRatio();
-						element = booking.isLeader();
-	
-						response = addMoreIntAndBool(keys, elements, element, response);
-					}
+				result = requestsDao.loadRequests(userName);
+				Iterator<Requests> it = result.iterator();
+					
+				keys[0] = "requestid";
+				keys[1] = "week";
+				keys[2] = "ratio";
+				keys[3] = "senderid";
+				keys[4] = "resourceid";
+				keys[5] = "projectid";
+				
+				while(it.hasNext()) {
+					currentRequest = it.next();
+					elements[0] = currentRequest.getRequestID();
+					elements[1] = currentRequest.getWeek();
+					elements[2] = currentRequest.getRatio();
+					elements[3] = currentRequest.getSender().getResourceID();
+					elements[4] = currentRequest.getResource().getResourceID();
+					elements[5] = currentRequest.getProject().getProjectID();
+					
+					response = addMoreInt(keys, elements, response);
+				}
 			}
 			catch (DalException e) {
 				logger.error(getClass().getName() + methodName + e.getErrorMessage());

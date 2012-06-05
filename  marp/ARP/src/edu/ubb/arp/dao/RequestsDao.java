@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import edu.ubb.arp.dao.model.Requests;
 import edu.ubb.arp.exceptions.DalException;
 
 public interface RequestsDao {
@@ -23,5 +24,7 @@ public interface RequestsDao {
 	public int removeRequestFromSomebody(int resourceID, int requestID, int projectID) throws SQLException, DalException;
 
 	public int removeExpiredRequests(int currentWeek) throws SQLException, DalException;
+	
+	public List<Requests> loadRequests(String userName) throws SQLException, DalException;
 
 }

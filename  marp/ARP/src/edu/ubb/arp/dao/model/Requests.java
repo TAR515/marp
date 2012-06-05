@@ -7,8 +7,8 @@ public class Requests implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private int requestID;
-	private int date;
-	private double ratio;
+	private int week;
+	private int ratio;
 	private Projects project;
 	private Resources sender;
 	private Resources resource;
@@ -16,7 +16,7 @@ public class Requests implements Serializable {
 
 	public Requests() {
 		this.requestID = -1;
-		this.date = -1;
+		this.week = -1;
 		this.ratio = -1;
 		this.project = null;
 		this.sender = null;
@@ -24,11 +24,11 @@ public class Requests implements Serializable {
 		this.resources = null;
 	}
 
-	public Requests(int requestID, int date, double ratio,
+	public Requests(int requestID, int week, int ratio,
 			Projects project, Resources sender, Resources resource,
 			HashMap<Resources, Integer> resources) {
 		this.requestID = requestID;
-		this.date = date;
+		this.week = week;
 		this.ratio = ratio;
 		this.project = project;
 		this.sender = sender;
@@ -44,19 +44,19 @@ public class Requests implements Serializable {
 		this.requestID = requestID;
 	}
 
-	public int getDate() {
-		return date;
+	public int getWeek() {
+		return week;
 	}
 
-	public void setDate(int date) {
-		this.date = date;
+	public void setWeek(int week) {
+		this.week = week;
 	}
 
-	public double getRatio() {
+	public int getRatio() {
 		return ratio;
 	}
 
-	public void setRatio(double ratio) {
+	public void setRatio(int ratio) {
 		this.ratio = ratio;
 	}
 
@@ -100,15 +100,13 @@ public class Requests implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + date;
 		result = prime * result + ((project == null) ? 0 : project.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(ratio);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ratio;
 		result = prime * result + requestID;
 		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
 		result = prime * result + ((resources == null) ? 0 : resources.hashCode());
 		result = prime * result + ((sender == null) ? 0 : sender.hashCode());
+		result = prime * result + week;
 		return result;
 	}
 
@@ -121,14 +119,12 @@ public class Requests implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Requests other = (Requests) obj;
-		if (date != other.date)
-			return false;
 		if (project == null) {
 			if (other.project != null)
 				return false;
 		} else if (!project.equals(other.project))
 			return false;
-		if (Double.doubleToLongBits(ratio) != Double.doubleToLongBits(other.ratio))
+		if (ratio != other.ratio)
 			return false;
 		if (requestID != other.requestID)
 			return false;
@@ -147,13 +143,14 @@ public class Requests implements Serializable {
 				return false;
 		} else if (!sender.equals(other.sender))
 			return false;
+		if (week != other.week)
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Requests [requestID=" + requestID + ", date=" + date + ", ratio=" + ratio + ", project=" + project + ", sender="
+		return "Requests [requestID=" + requestID + ", week=" + week + ", ratio=" + ratio + ", project=" + project + ", sender="
 				+ sender + ", resource=" + resource + ", resources=" + resources + "]";
 	}
-
 }

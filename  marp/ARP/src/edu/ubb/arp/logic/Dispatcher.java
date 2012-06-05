@@ -11,6 +11,7 @@ import edu.ubb.arp.logic.commands.LoadAllProjectsCommand;
 import edu.ubb.arp.logic.commands.LoadAssignmentsCommand;
 import edu.ubb.arp.logic.commands.LoadProjectTableCommand;
 import edu.ubb.arp.logic.commands.LoadProjectsUserIsWorkingOnCommand;
+import edu.ubb.arp.logic.commands.LoadRequestsCommand;
 import edu.ubb.arp.logic.commands.LoadResourceCommand;
 import edu.ubb.arp.logic.commands.LoadUserDataCommand;
 import edu.ubb.arp.logic.commands.projects.AddResourceToprojectCommand;
@@ -97,7 +98,10 @@ public class Dispatcher extends BaseCommandOperations {
 					command = new LoadAllProjectsCommand(request);
 					response = command.execute();
 					break;
-					
+				case 6:
+					command = new LoadRequestsCommand(request);
+					response = command.execute();
+					break;
 				// Users
 				case 101: // insert user
 					command = new InsertNewUserCommand(request);
@@ -216,7 +220,7 @@ public class Dispatcher extends BaseCommandOperations {
 					response = command.execute();
 					break;
 				//------------------------------------------------------
-				// Resource commands
+				// Requests commands
 				case 411: // remove request from somebody  
 					command = new RemoveRequestFromSomebodyCommand(request);
 					response = command.execute();

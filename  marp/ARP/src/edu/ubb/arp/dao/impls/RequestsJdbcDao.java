@@ -3,12 +3,16 @@ package edu.ubb.arp.dao.impls;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import edu.ubb.arp.dao.RequestsDao;
+import edu.ubb.arp.dao.model.Projects;
+import edu.ubb.arp.dao.model.Requests;
+import edu.ubb.arp.dao.model.Resources;
 import edu.ubb.arp.exceptions.DalException;
 
 public class RequestsJdbcDao extends BaseDao implements RequestsDao {
@@ -333,10 +337,65 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		return errmsg;
 	}
 	
-	
+	public List<Requests> loadRequests(String userName) throws SQLException, DalException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		int errmsg = 0;
+		logger.debug(getClass().getName() + methodName + "-> START");
+		List<Requests> resoult = null;
+
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "load_request_visible_to_leader", 2);
+			resoult = new ArrayList<Requests>();
+			
+			
+			int paramIndex = 1;
+			setString(stmt, paramIndex++, userName);
+			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
+
+			rs = stmt.executeQuery();
+			
+			errmsg = stmt.getInt("Oerrmsg");
+			if (errmsg < 0) {
+				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
+				throw new DalException(errmsg);
+			}
+
+			while (rs.next()) {
+				resoult.add(fillObject(rs));
+			}
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(connection, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return resoult;
+	}
 	@Override
-	protected Object fillObject(ResultSet rs) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	protected Requests fillObject(ResultSet rs) throws SQLException {
+		Requests retValue = new Requests();
+		
+		Resources sender = new Resources();
+		sender.setResourceID(getInt(rs, "SenderID"));
+		
+		Resources target = new Resources();
+		target.setResourceID(getInt(rs, "ResourceID"));
+		
+		Projects project = new Projects();
+		project.setProjectID(getInt(rs, "ProjectID"));
+		
+		retValue.setRequestID(getInt(rs, "RequestID"));
+		retValue.setWeek(getInt(rs, "Week"));
+		retValue.setRatio(getInt(rs, "Ratio"));
+		retValue.setSender(sender);
+		retValue.setResource(target);
+		retValue.setProject(project);
+		
+		return retValue;
 	}
 }
