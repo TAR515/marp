@@ -1,6 +1,9 @@
 package edu.ubb.marp.ui;
 
+import java.net.PasswordAuthentication;
+
 import android.content.Context;
+import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -24,6 +27,7 @@ public class ChangePassword extends View{
 		// TODO Auto-generated constructor stub
 		/* creates the layout, textViews, and EditTexts, and sets the TextViews*/
 		linear = new LinearLayout(context);
+		
 		oldPassText = new TextView(context);
 		oldPassText.setText("Old password");
 		newPassText = new TextView(context);
@@ -35,6 +39,10 @@ public class ChangePassword extends View{
 		newPass1 = new EditText(context);
 		newPass2 = new EditText(context);
 	
+		oldPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		newPass1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		newPass2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		
 		linear.setOrientation(LinearLayout.VERTICAL);
 		linear.addView(oldPassText);
 		linear.addView(oldPass);

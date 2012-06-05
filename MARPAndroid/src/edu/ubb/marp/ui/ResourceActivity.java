@@ -129,6 +129,25 @@ public class ResourceActivity extends Activity {
     	alertDialog.show();
     }
 	
+	private void callmessageBox(String message, String title,String number){
+AlertDialog alertDialog;
+    	final String n = number;
+      	alertDialog = new AlertDialog.Builder(this).create();
+    	alertDialog.setTitle(title);
+    	alertDialog.setMessage(message);
+    	alertDialog.setButton("Call",
+    		    new DialogInterface.OnClickListener() {
+    		        public void onClick(DialogInterface dialog, int which) {
+    		        	call(n);
+    		        }
+    		    });
+    	alertDialog.setButton2("Cancel",
+    		    new DialogInterface.OnClickListener() {
+    		        public void onClick(DialogInterface dialog, int which) {
+    		        }
+    		    });
+    	alertDialog.show();
+	}
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -166,7 +185,8 @@ public class ResourceActivity extends Activity {
 			                // TODO Auto-generated method stub
 			            	if (pos == 2){
 			            		ListRecord valami = users.get(2);
-			            		call(valami.subitem);
+			            		callmessageBox("Are you sure to call this User?", "Call", valami.subitem);
+			            		//call(valami.subitem);
 			            	}else{
 			            		if(pos == 3){
 			            			Intent i = new Intent(Intent.ACTION_SEND);
