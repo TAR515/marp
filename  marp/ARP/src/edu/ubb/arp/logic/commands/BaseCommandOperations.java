@@ -208,13 +208,16 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		if (result == null) {
 			result = new JSONArray();
 		}
+		int elementsLength = intElements.length;
+		int stringsLength = stringElement.length;
 		
 		JSONObject obj = new JSONObject();
-		for(int i = 0; i < intElements.length; i++) {
+		for(int i = 0; i < elementsLength; i++) {
 			obj.put(keys[i], new Integer(intElements[i]));
 		}
-		for(int i = intElements.length; i < stringElement.length; i++) {
-			obj.put(keys[i], stringElement[i]);
+		int j = 0;
+		for(int i = elementsLength; i < stringsLength + elementsLength; i++) {
+			obj.put(keys[i], stringElement[j++]);
 		}
 		result.add(obj);
 
