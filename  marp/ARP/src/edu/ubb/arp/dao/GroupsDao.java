@@ -7,7 +7,7 @@ import edu.ubb.arp.dao.model.Groups;
 import edu.ubb.arp.exceptions.DalException;
 /**
  *  
- * @author VargaAdorjan
+ * @author VargaAdorjan , TurdeanArnoldRobert
  *interface contains methods which work with the Groups 
  */
 public interface GroupsDao {

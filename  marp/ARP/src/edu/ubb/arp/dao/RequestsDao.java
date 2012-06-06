@@ -8,7 +8,7 @@ import edu.ubb.arp.dao.model.Requests;
 import edu.ubb.arp.exceptions.DalException;
 /**
  * 
- * @author VargaAdorjan
+ * @author VargaAdorjan , TurdeanArnoldRobert
  *interface contains methods which work with the Requests
  */
 public interface RequestsDao {

@@ -9,7 +9,7 @@ import edu.ubb.arp.datastructures.Booking;
 import edu.ubb.arp.exceptions.DalException;
 /**
  * 
- * @author VargaAdorjan
+ * @author VargaAdorjan , TurdeanArnoldRobert
  *interface contains methods which work with the Users
  */
 public interface UsersDao {

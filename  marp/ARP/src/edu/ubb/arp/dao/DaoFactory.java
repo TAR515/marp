@@ -4,9 +4,9 @@ import java.sql.SQLException;
 
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 /**
- * Abstract class which contains abstract methods returning a Dao
- * @author VargaAdorjan
- *
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *Abstract class which contains abstract methods returning a Dao
  */
 public abstract class DaoFactory {
 
