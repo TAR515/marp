@@ -34,6 +34,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -163,6 +164,9 @@ public class ProjectActivity extends ListActivity {
 			myIntent = new Intent(getApplicationContext(), RequestsActivity.class);
 			startActivity(myIntent);
 			return true;
+		case R.id.about:
+			aboutMessage();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -267,5 +271,25 @@ public class ProjectActivity extends ListActivity {
 		bundle.putBoolean("isleader", isLeader[position]);
 		myIntent.putExtras(bundle);
 		startActivity(myIntent);
+	}
+	public void aboutMessage() {
+
+		AboutMessage about = new AboutMessage(this);
+		
+		AlertDialog alertDialog;
+		alertDialog = new AlertDialog.Builder(this).create();
+		alertDialog.setTitle("About");
+		alertDialog.setView(about.returnView());
+
+		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+			
+		
+					
+			}
+		});
+		
+		alertDialog.show();
 	}
 }
