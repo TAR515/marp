@@ -16,7 +16,7 @@ import edu.ubb.arp.dao.model.Resources;
 import edu.ubb.arp.exceptions.DalException;
 /**
  * 
- * @author VargaAdorjan
+ * @author VargaAdorjan , TurdeanArnoldRobert
  *contains methods which work with the Requests
  */
 public class RequestsJdbcDao extends BaseDao implements RequestsDao {

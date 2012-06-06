@@ -12,7 +12,7 @@ import edu.ubb.arp.dao.model.Groups;
 import edu.ubb.arp.exceptions.DalException;
 /**
  * 
- * @author VargaAdorjan
+ * @author VargaAdorjan , TurdeanArnoldRobert
  *contains methods which work with the Groups 
  */
 public class GroupsJdbcDao extends BaseDao implements GroupsDao {

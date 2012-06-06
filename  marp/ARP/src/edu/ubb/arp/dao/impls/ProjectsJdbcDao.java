@@ -18,7 +18,7 @@ import edu.ubb.arp.datastructures.Booking;
 import edu.ubb.arp.exceptions.DalException;
 /**
  * 
- * @author VargaAdorjan
+ * @author VargaAdorjan , TurdeanArnoldRobert
  *contains methods which work with the Projects
  */
 public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
