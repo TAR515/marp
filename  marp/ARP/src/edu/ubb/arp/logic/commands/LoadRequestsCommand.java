@@ -72,8 +72,8 @@ public class LoadRequestsCommand extends BaseCommandOperations implements Comman
 				keys[3] = "senderid";
 				keys[4] = "resourceid";
 				keys[5] = "projectid";
-				keys[6] = "sendername";
-				keys[7] = "resourcename";
+				keys[6] = "senderusername";
+				keys[7] = "resourceresourcename";
 				
 				while(it.hasNext()) {
 					currentRequest = it.next();
@@ -84,7 +84,7 @@ public class LoadRequestsCommand extends BaseCommandOperations implements Comman
 					elements[4] = currentRequest.getResource().getResourceID();
 					elements[5] = currentRequest.getProject().getProjectID();
 					names[0] = currentRequest.getSender().getUsers().getUserName();
-					names[1] = currentRequest.getResource().getUsers().getUserName();
+					names[1] = currentRequest.getResource().getResourceName();
 					response = addMoreIntAndString(keys, elements, names, response);
 				}
 			}
@@ -100,6 +100,5 @@ public class LoadRequestsCommand extends BaseCommandOperations implements Comman
 		
 		logger.debug(getClass().getName() + methodName + "-> EXIT");
 		return response;
-
 	}
 }

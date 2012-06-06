@@ -481,10 +481,8 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		sender.setUsers(senderUser);
 		
 		Resources target = new Resources();
-		Users targetrUser = new Users();
-		targetrUser.setUserName(getString(rs, "TargetUserName"));
 		target.setResourceID(getInt(rs, "ResourceID"));
-		target.setUsers(targetrUser);
+		target.setResourceName(getString(rs, "TargetResourceName"));
 		
 		Projects project = new Projects();
 		project.setProjectID(getInt(rs, "ProjectID"));
