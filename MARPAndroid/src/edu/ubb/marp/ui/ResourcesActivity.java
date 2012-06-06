@@ -397,7 +397,6 @@ public class ResourcesActivity extends Activity {
 
 		for (int i = 1; i < column; i++) {
 			data[0][i] = Constants.convertWeekToDate(minWeek + i - 1);
-			Log.i(tag, Integer.toString(minWeek+i-1)+" "+Constants.convertWeekToDate(minWeek + i - 1));
 		}
 
 		resourceIDs = new int[row - 1];
@@ -468,7 +467,7 @@ public class ResourcesActivity extends Activity {
 					}
 				} else {
 					loading.dismiss();
-					if ((numberOfBroadcasts == 1) && (intent.getIntExtra("error", 10000) == 0)) {
+					if ((numberOfBroadcasts == 0) && (intent.getIntExtra("error", 10000) == 0)) {
 						queryData();
 					} else
 						messageBoxShow(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");

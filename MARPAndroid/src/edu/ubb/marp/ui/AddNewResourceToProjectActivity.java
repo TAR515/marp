@@ -27,6 +27,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -90,6 +92,23 @@ public class AddNewResourceToProjectActivity extends Activity {
 					}
 				}
 			});
+			
+			final CheckBox ch = (CheckBox)findViewById(R.id.leaderCheckBox);
+			
+			Spinner sp = (Spinner)findViewById(R.id.resourcesSpinner);
+			sp.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+				public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+					String selectedResourceName = resourcenames[arg2];
+					if((selectedResourceName.contains("Laptop"))||(selectedResourceName.contains("Room"))||(selectedResourceName.contains("Server")))
+						ch.setEnabled(false);
+					else
+						ch.setEnabled(true);
+				}
+
+				public void onNothingSelected(AdapterView<?> arg0) {
+				}
+			});
 	}
 
 	/** this method is called when a messagebox needs to be appered */
@@ -145,7 +164,6 @@ public class AddNewResourceToProjectActivity extends Activity {
 
 	private void sendRequestForResources() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
-		//TODO kuldjon el egy kerest, hogy milyen resourceok vannak, es majd toltse fel a spinner-t
 
 		Uri.Builder uriSending = new Uri.Builder();
 		uriSending.authority(DatabaseContract.PROVIDER_NAME);

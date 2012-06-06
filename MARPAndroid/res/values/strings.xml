@@ -7,5 +7,12 @@
     <string-array name="project_statuses">
         <item>Under development</item>
     </string-array>
+    
+    <string-array name="resourcetypes">
+        <item>Human</item>
+        <item>Laptop</item>
+        <item>Room</item>
+        <item>Server</item>
+    </string-array>
 
 </resources>

@@ -6,6 +6,7 @@ import edu.ubb.marp.Constants;
 import edu.ubb.marp.R;
 import edu.ubb.marp.database.DatabaseContract;
 import edu.ubb.marp.database.DatabaseContract.TABLE_PROJECTS;
+import edu.ubb.marp.database.DatabaseContract.TABLE_REQUESTS;
 import edu.ubb.marp.network.MyService;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -52,14 +53,12 @@ public class RequestsActivity extends ListActivity{
 		sendRequest();
 	}
 
-	private void sendRequest() {//TODO
-		loading = ProgressDialog.show(this, "Loading",
-				"Please wait...");
+	private void sendRequest() {
+		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
 		Uri.Builder uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
-		uri.path("1");
-		// uri.appendPath("Projects");
+		uri.path(Integer.toString(Constants.LOADREQUESTSCMD));
 		uri.scheme("content");
 
 		Intent intent = new Intent(this, MyService.class);
@@ -146,18 +145,16 @@ public class RequestsActivity extends ListActivity{
 	}
 	
 	private void queryData(){
-		Uri.Builder uri = new Uri.Builder();
+		/*Uri.Builder uri = new Uri.Builder();
 		uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
-		uri.path("Projects");
+		uri.path(DatabaseContract.TABLE_REQUESTS);
 		uri.scheme("content");
 
 		ContentResolver cr = getContentResolver();
 		Log.i(tag, "query elott");
 
-		String projection[] = { TABLE_PROJECTS.PROJECTNAME,
-				TABLE_PROJECTS.ISLEADER,
-				TABLE_PROJECTS.PROJECTID + " as _id" };
+		String projection[] = { TABLE_REQUESTS.REQUESTID + " as _id", TABLE_REQUESTS.WEEK, TABLE_REQUESTS };
 
 		Cursor c = cr.query(uri.build(), projection, null, null,
 				TABLE_PROJECTS.PROJECTID);
@@ -195,7 +192,7 @@ public class RequestsActivity extends ListActivity{
 		SimpleCursorAdapter projects = new SimpleCursorAdapter(
 				getApplicationContext(), R.layout.projects_row, c,
 				from, to);
-		setListAdapter(projects);
+		setListAdapter(projects);*/
 	}
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {

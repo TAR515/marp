@@ -32,8 +32,8 @@ public class RefreshData extends AsyncTask<JSONArray, Integer, Integer> {
 	private Boolean complex;
 	private boolean leaveOld;
 
-	public RefreshData(Uri uri, ContentResolver cr, String[] mainColumns,
-			Long requestid, MyService service, Boolean complex, boolean leaveOld) {
+	public RefreshData(Uri uri, ContentResolver cr, String[] mainColumns, Long requestid, MyService service, Boolean complex,
+			boolean leaveOld) {
 		this.uri = uri;
 		this.cr = cr;
 		this.mainColumns = mainColumns;
@@ -58,13 +58,7 @@ public class RefreshData extends AsyncTask<JSONArray, Integer, Integer> {
 		Cursor c = null;
 		try {
 			if (complex) {
-				c = cr.query(
-						uri,
-						null,
-						mainColumns[0]
-								+ "="
-								+ Integer.toString(results.getJSONObject(0)
-										.getInt(mainColumns[0])), null,
+				c = cr.query(uri, null, mainColumns[0] + "=" + Integer.toString(results.getJSONObject(0).getInt(mainColumns[0])), null,
 						sortOrder);
 			} else {
 				c = cr.query(uri, null, null, null, sortOrder);
@@ -120,35 +114,38 @@ public class RefreshData extends AsyncTask<JSONArray, Integer, Integer> {
 				for (i = 0; i < length; i++) {
 					obj = results.getJSONObject(i);
 
-					for (int k = 0; k < mainColumns.length; k++) {
-						while ((temp)
-								&& (c.getInt(c.getColumnIndex(mainColumns[k])) < obj
-										.getInt(mainColumns[k]))) {
+					int[] prevValues = new int[mainColumns.length];
+					// for (int k = 0; k < mainColumns.length; k++) {
+					int k = 0;
+					boolean end = false;
+					while ((k < mainColumns.length) && (!end)) {
+						while ((temp) && (c.getInt(c.getColumnIndex(mainColumns[k])) < obj.getInt(mainColumns[k]))) {
 							if (!leaveOld) {
 								Integer[] forDelete = new Integer[mainColumns.length];
 								for (int l = 0; l < mainColumns.length; l++)
-									forDelete[l] = c.getInt(c
-											.getColumnIndex(mainColumns[l]));
+									forDelete[l] = c.getInt(c.getColumnIndex(mainColumns[l]));
 								delete.add(forDelete);
 							}
-							temp = c.moveToNext();
+							for (int l = 0; l < k; l++)
+								if (c.getInt(c.getColumnIndex(mainColumns[l])) != prevValues[l])
+									end = true;
+							if (!end)
+								temp = c.moveToNext();
 						}
+						prevValues[k] = obj.getInt(mainColumns[k]);
+						k++;
 					}
 
-					int k = 0;
-					while ((!c.isAfterLast())
-							&& (k < mainColumns.length)
-							&& (c.getInt(c.getColumnIndex(mainColumns[k])) <= obj
-									.getInt(mainColumns[k])))
+					k = 0;
+					while ((!c.isAfterLast()) && (k < mainColumns.length)
+							&& (c.getInt(c.getColumnIndex(mainColumns[k])) <= obj.getInt(mainColumns[k])))
 						k++;
 
 					if ((c.isAfterLast()) || (k < mainColumns.length)) {
-						currentOperation = ContentProviderOperation
-								.newInsert(newUri);
+						currentOperation = ContentProviderOperation.newInsert(newUri);
 
 						for (j = 0; j < numberOfColumns; j++)
-							currentOperation = currentOperation.withValue(
-									columns[j], obj.get(columns[j]));
+							currentOperation = currentOperation.withValue(columns[j], obj.get(columns[j]));
 
 						operations.add(currentOperation.build());
 					} else {
@@ -159,8 +156,7 @@ public class RefreshData extends AsyncTask<JSONArray, Integer, Integer> {
 						 * .getString(columns[notPrimaryColumns.get(j)])))) {
 						 */
 						String s1 = c.getString(notPrimaryColumns.get(j));
-						String s2 = obj.getString(columns[notPrimaryColumns
-								.get(j)]);
+						String s2 = obj.getString(columns[notPrimaryColumns.get(j)]);
 						if (s2.equals("true")) {
 							s2 = "1";
 						} else if (s2.equals("false")) {
@@ -173,51 +169,40 @@ public class RefreshData extends AsyncTask<JSONArray, Integer, Integer> {
 						 * (c.getString(notPrimaryColumns.get(j)).equals(obj
 						 * .getString(columns[notPrimaryColumns.get(j)])))) {
 						 */
-						//j++;
-						while ((j < notPrimaryColumns.size())
-								&& (s1.equals(s2))) {
+						// j++;
+						while ((j < notPrimaryColumns.size()) && (s1.equals(s2))) {
 							j++;
-							try{
-							s1 = c.getString(notPrimaryColumns.get(j));
-							s2 = obj.getString(columns[notPrimaryColumns.get(j)]);
-							if (s2.equals("true")) {
-								s2 = "1";
-							} else if (s2.equals("false")) {
-								s2 = "0";
+							try {
+								s1 = c.getString(notPrimaryColumns.get(j));
+								s2 = obj.getString(columns[notPrimaryColumns.get(j)]);
+								if (s2.equals("true")) {
+									s2 = "1";
+								} else if (s2.equals("false")) {
+									s2 = "0";
+								}
+							} catch (Exception se) {
 							}
-							}catch(Exception se){}
 							// Log.i(tag, "s1 = "+s1);
 							// Log.i(tag, "s2 = "+s2);
-							//j++;
+							// j++;
 						}
 
 						// if (j < numberOfColumns) {
 						if (j < notPrimaryColumns.size()) {
-							currentOperation = ContentProviderOperation
-									.newUpdate(newUri);
+							currentOperation = ContentProviderOperation.newUpdate(newUri);
 							String selection = new String();
-							selection = selection.concat(mainColumns[0]
-									+ "="
-									+ c.getString(c
-											.getColumnIndex(mainColumns[0])));
+							selection = selection.concat(mainColumns[0] + "=" + c.getString(c.getColumnIndex(mainColumns[0])));
 							for (int l = 1; l < mainColumns.length; l++)
 								selection = selection
-										.concat(" AND "
-												+ mainColumns[l]
-												+ "="
-												+ c.getString(c
-														.getColumnIndex(mainColumns[l])));
+										.concat(" AND " + mainColumns[l] + "=" + c.getString(c.getColumnIndex(mainColumns[l])));
 							// currentOperation =
 							// currentOperation.withSelection(mainColumn + "=" +
 							// c.getString(0), null);
-							currentOperation = currentOperation.withSelection(
-									selection, null);
+							currentOperation = currentOperation.withSelection(selection, null);
 
 							for (j = 0; j < notPrimaryColumns.size(); j++)
-								currentOperation = currentOperation.withValue(
-										columns[notPrimaryColumns.get(j)], obj
-												.get(columns[notPrimaryColumns
-														.get(j)]));
+								currentOperation = currentOperation.withValue(columns[notPrimaryColumns.get(j)],
+										obj.get(columns[notPrimaryColumns.get(j)]));
 
 							// Log.i("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
 							// currentOperation.build().toString());
@@ -231,15 +216,13 @@ public class RefreshData extends AsyncTask<JSONArray, Integer, Integer> {
 				if (!c.isAfterLast() && (!leaveOld)) {
 					Integer[] forDelete = new Integer[mainColumns.length];
 					for (int l = 0; l < mainColumns.length; l++)
-						forDelete[l] = c.getInt(c
-								.getColumnIndex(mainColumns[l]));
+						forDelete[l] = c.getInt(c.getColumnIndex(mainColumns[l]));
 					// delete.add(c.getInt(0));
 					delete.add(forDelete);
 					while (c.moveToNext()) {
 						forDelete = new Integer[mainColumns.length];
 						for (int l = 0; l < mainColumns.length; l++)
-							forDelete[l] = c.getInt(c
-									.getColumnIndex(mainColumns[l]));
+							forDelete[l] = c.getInt(c.getColumnIndex(mainColumns[l]));
 						delete.add(forDelete);
 					}
 				}
@@ -257,15 +240,10 @@ public class RefreshData extends AsyncTask<JSONArray, Integer, Integer> {
 						// builder.appendPath(delete.get(i).toString()) .build()
 						// ).build());
 						String selection = new String();
-						selection = selection.concat(mainColumns[0] + "="
-								+ Integer.toString(delete.get(i)[0]));
+						selection = selection.concat(mainColumns[0] + "=" + Integer.toString(delete.get(i)[0]));
 						for (j = 1; j < mainColumns.length; j++)
-							selection = selection.concat(" AND "
-									+ mainColumns[j] + "="
-									+ Integer.toString(delete.get(i)[j]));
-						operations.add(ContentProviderOperation
-								.newDelete(builder.build())
-								.withSelection(selection, null).build());
+							selection = selection.concat(" AND " + mainColumns[j] + "=" + Integer.toString(delete.get(i)[j]));
+						operations.add(ContentProviderOperation.newDelete(builder.build()).withSelection(selection, null).build());
 					}
 				}
 
@@ -277,12 +255,10 @@ public class RefreshData extends AsyncTask<JSONArray, Integer, Integer> {
 					obj = results.getJSONObject(i);
 					Log.i(tag, obj.toString());
 
-					currentOperation = ContentProviderOperation
-							.newInsert(newUri);
+					currentOperation = ContentProviderOperation.newInsert(newUri);
 
 					for (j = 0; j < numberOfColumns; j++)
-						currentOperation = currentOperation.withValue(
-								columns[j], obj.get(columns[j]));
+						currentOperation = currentOperation.withValue(columns[j], obj.get(columns[j]));
 
 					operations.add(currentOperation.build());
 				}

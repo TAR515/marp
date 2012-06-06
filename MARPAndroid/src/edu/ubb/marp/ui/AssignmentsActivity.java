@@ -5,6 +5,7 @@ import java.util.Date;
 import edu.ubb.marp.Constants;
 import edu.ubb.marp.database.DatabaseContract;
 import edu.ubb.marp.database.DatabaseContract.TABLE_BOOKING;
+import edu.ubb.marp.database.DatabaseContract.TABLE_PROJECTS;
 import edu.ubb.marp.database.DatabaseContract.TABLE_RESOURCES;
 import edu.ubb.marp.database.DatabaseContract.TABLE_USERS;
 import edu.ubb.marp.network.MyService;
@@ -48,6 +49,8 @@ public class AssignmentsActivity extends Activity {
 	
 	private int currentWeek;
 	private int myResourceID;
+	private boolean[] isLeader;
+	private int[] projectIDs;
 	
 	protected String[][] data;
 	
@@ -67,8 +70,9 @@ public class AssignmentsActivity extends Activity {
 		uri.authority(DatabaseContract.PROVIDER_NAME);
 		uri.path(Integer.toString(Constants.LOADASSIGNMENTSCMD));
 		uri.scheme("content");
-		
-		currentWeek = Constants.convertDateToWeek(new Date());
+
+		//currentWeek = Constants.convertDateToWeek(new Date());
+		currentWeek = 60;
 
 		Intent intent = new Intent(this, MyService.class);
 		intent.putExtra("ACTION", "QUERY");
@@ -148,11 +152,13 @@ public class AssignmentsActivity extends Activity {
 				int height = display.getHeight() / 10;
 				column.setWidth(width);
 				column.setHeight(height);
-				if (data[i][j] == "0.0" | data[i][j] == "0") {
-					column.setTextColor(Color.RED);
+				
+				if((i==1)&&(j==0)&&(isLeader[i-1])){
+					column.setTextColor(Color.BLUE);
 				} else {
 					column.setTextColor(Color.BLACK);
 				}
+				
 				column.setText(data[i][j]);
 
 				// column.setTextSize(15);
@@ -231,7 +237,7 @@ public class AssignmentsActivity extends Activity {
 	}
 
 	private void queryData() {
-		/*SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 
 		Uri.Builder uri = new Uri.Builder();
 		uri = new Uri.Builder();
@@ -253,45 +259,36 @@ public class AssignmentsActivity extends Activity {
 		uri = new Uri.Builder();
 		uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
-		uri.path(DatabaseContract.TABLE_BOOKING);
+		uri.path(DatabaseContract.TABLE_BOOKINGASSIGNMENTS);
 		uri.scheme("content");
 
 		Cursor cBooking = cr.query(uri.build(), null, TABLE_BOOKING.RESOURCEID + " = " + Integer.toString(myResourceID) +" AND "+TABLE_BOOKING.WEEK+" >= "+Integer.toString(currentWeek)+" AND "+TABLE_BOOKING.WEEK+" < " + Integer.toString(currentWeek+3), null, TABLE_BOOKING.PROJECTID);
 
 		uri.path(DatabaseContract.TABLE_PROJECTS);
-		String projection2[] = {
-				"DISTINCT(" + DatabaseContract.TABLE_RESOURCES + "." + TABLE_RESOURCES.RESOURCEID + ") as " + TABLE_RESOURCES.RESOURCEID,
-				TABLE_RESOURCES.RESOURCENAME, TABLE_RESOURCES.USERNAME };
-		Cursor cResources = cr.query(uri.build(), projection2, DatabaseContract.TABLE_RESOURCES + "." + TABLE_RESOURCES.RESOURCEID + "="
-				+ DatabaseContract.TABLE_BOOKING + "." + TABLE_BOOKING.RESOURCEID + " AND " + DatabaseContract.TABLE_BOOKING + "."
-				+ TABLE_BOOKING.PROJECTID + "=" + projectid, null, TABLE_RESOURCES.RESOURCEID);
+		String projection2[] = {TABLE_PROJECTS.PROJECTID, TABLE_PROJECTS.PROJECTNAME, TABLE_PROJECTS.ISLEADER };
+		Cursor cProjects = cr.query(uri.build(), projection2, null, null, TABLE_PROJECTS.PROJECTID);
 
-		row = cResources.getCount() + 1;
-		column = maxWeek - minWeek + 2;
+		row = cProjects.getCount() + 1;
+		column = 4;
 
 		data = new String[row][column];
 
-		data[0][0] = "Resource";
+		data[0][0] = "Projects";
 
 		for (int i = 1; i < column; i++) {
-			data[0][i] = Constants.convertWeekToDate(minWeek + i - 1);
-			Log.i(tag, Integer.toString(minWeek+i-1)+" "+Constants.convertWeekToDate(minWeek + i - 1));
+			data[0][i] = Constants.convertWeekToDate(currentWeek + i - 1);
 		}
 
-		resourceIDs = new int[row - 1];
-
-		cResources.moveToFirst();
-		isUser = new boolean[row];
+		cProjects.moveToFirst();
+		isLeader = new boolean[row];
+		projectIDs = new int[row];
 		for (int i = 1; i < row; i++) {
-			resourceIDs[i - 1] = cResources.getInt(cResources.getColumnIndex(TABLE_RESOURCES.RESOURCEID));
+			projectIDs[i - 1] = cProjects.getInt(cProjects.getColumnIndex(TABLE_PROJECTS.PROJECTID));
+			isLeader[i - 1] = cProjects.getString(cProjects.getColumnIndex(TABLE_PROJECTS.ISLEADER)).equals("Leader");;
 
-			data[i][0] = cResources.getString(cResources.getColumnIndex(TABLE_RESOURCES.USERNAME));
-			if (data[i][0].isEmpty()) {
-				data[i][0] = cResources.getString(cResources.getColumnIndex(TABLE_RESOURCES.RESOURCENAME));
-				isUser[i] = false;
-			} else
-				isUser[i] = true;
-			cResources.moveToNext();
+			data[i][0] = cProjects.getString(cProjects.getColumnIndex(TABLE_PROJECTS.PROJECTNAME));
+			
+			cProjects.moveToNext();
 		}
 
 		for (int i = 1; i < row; i++)
@@ -301,57 +298,52 @@ public class AssignmentsActivity extends Activity {
 		if (cBooking.moveToFirst()) {
 			int week;
 			float ratio;
-			int resourceID;
+			int projectID;
 			int i = 0;
 
 			week = cBooking.getInt(cBooking.getColumnIndex(TABLE_BOOKING.WEEK));
 			ratio = cBooking.getFloat(cBooking.getColumnIndex(TABLE_BOOKING.RATIO));
-			resourceID = cBooking.getInt(cBooking.getColumnIndex(TABLE_BOOKING.RESOURCEID));
+			projectID = cBooking.getInt(cBooking.getColumnIndex(TABLE_BOOKING.PROJECTID));
 
-			while (resourceIDs[i] != resourceID)
+			while (projectIDs[i] != projectID)
 				i++;
-			data[i + 1][week - minWeek + 1] = Float.toString(ratio);
+			data[i + 1][week - currentWeek + 1] = Float.toString(ratio);
 
 			while (cBooking.moveToNext()) {
 				week = cBooking.getInt(cBooking.getColumnIndex(TABLE_BOOKING.WEEK));
 				ratio = cBooking.getFloat(cBooking.getColumnIndex(TABLE_BOOKING.RATIO));
-				resourceID = cBooking.getInt(cBooking.getColumnIndex(TABLE_BOOKING.RESOURCEID));
+				projectID = cBooking.getInt(cBooking.getColumnIndex(TABLE_BOOKING.PROJECTID));
 
-				while ((i < resourceIDs.length) && (resourceIDs[i] != resourceID))
+				while ((i < projectIDs.length) && (projectIDs[i] != projectID))
 					i++;
-				if (i < resourceIDs.length)
-					data[i + 1][week - minWeek + 1] = Float.toString(ratio);
+				if (i < projectIDs.length)
+					data[i + 1][week - currentWeek + 1] = Float.toString(ratio);
 			}
 		}
 
-		refresh();*/
+		refresh();
 	}
 	
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// if(sentIntent.equals(intent)){
-			/*Log.i(tag, "Broadcast received");
+			Log.i(tag, "Broadcast received");
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				if (intent.getBooleanExtra("Successful", false)) {
 
-					if (numberOfBroadcasts == 0) {
-						numberOfBroadcasts = 1;
-					} else {
-						numberOfBroadcasts = 0;
 						Log.i(tag, "ifben");
 						loading.dismiss();
 
 						queryData();
-					}
 				} else {
 					loading.dismiss();
-					if ((numberOfBroadcasts == 1) && (intent.getIntExtra("error", 10000) == 0)) {
+					if (intent.getIntExtra("error", 10000) == 0) {
 						queryData();
 					} else
 						messageBoxShow(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
 				}
-			}*/
+			}
 		}
 	};
 	

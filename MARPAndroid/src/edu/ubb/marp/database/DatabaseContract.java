@@ -59,7 +59,8 @@ public final class DatabaseContract {
 		public static final String RESOURCEID = "ResourceID";
 		public static final String PROJECTID = "UserID";
 	}
-
+	
+	public static final String TABLE_BOOKINGASSIGNMENTS = "BookingAssignments";
 	public static final String TABLE_BOOKING = "Booking";
 
 	public static final class TABLE_BOOKING {
@@ -72,7 +73,7 @@ public final class DatabaseContract {
 
 	public static final String TABLE_REQUESTS = "Requests";
 
-	public static final class TABLE_REQUESTS {
+	/*public static final class TABLE_REQUESTS {
 		public static final String REQUESTID = "RequestID";
 		public static final String WEEK = "Week";
 		public static final String RATIO = "Ratio";
@@ -81,6 +82,14 @@ public final class DatabaseContract {
 		public static final String PROJECTID = "ProjectID";
 		public static final String REJECTED = "Rejected";
 		public static final String VISIBLE = "Visible";
+	}*/
+	public static final class TABLE_REQUESTS {
+		public static final String REQUESTID = "RequestID";
+		public static final String WEEK = "Week";
+		public static final String RATIO = "Ratio";
+		public static final String SENDER = "Sender";
+		public static final String RESOURCE = "Resource";
+		public static final String PROJECTID = "ProjectID";
 	}
 
 	public static final String TABLE_GROUPS = "Groups";

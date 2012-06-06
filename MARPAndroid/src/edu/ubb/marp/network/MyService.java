@@ -77,6 +77,10 @@ public class MyService extends Service {
 			case RESOURCEMODIFICATIONS:
 				resourceModifications(intent);
 				break;
+				
+			case USERMODIFICATIONS:
+				userModifications(intent);
+				break;
 
 			case REQUESTS:
 				requests(intent);
@@ -483,7 +487,43 @@ public class MyService extends Service {
 				json.put("active", intent.getBooleanExtra("active", false));
 				break;
 			}
-			// TODO Ezek utan kell varni valaszt?
+
+			json.put("username", pref.getString("username", ""));
+			json.put("password", pref.getString("password", ""));
+
+			// json.put("uri", uri);
+			JSONArray array = new JSONArray();
+			array.put(json);
+
+			Log.i(tag, "httpclient elott " + json.toString());
+			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
+		} catch (JSONException e) {
+		}
+	}
+	
+	private void userModifications(Intent intent){
+		Log.i(tag, "userModifications");
+		Uri uri = intent.getData();
+		int cmd = Integer.parseInt(uri.getPathSegments().get(0));
+
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+		try {
+			JSONObject json = new JSONObject();
+			json.put("command", cmd);
+
+			switch (cmd) {
+			case Constants.INSERTNEWUSER:
+				// json.put("projectid", uri.getPathSegments().get(1));
+				json.put("username", intent.getStringExtra("username"));
+				json.put("password", intent.getStringExtra("password"));
+				json.put("phonenumber", intent.getStringExtra("phonenumber"));
+				json.put("email", intent.getStringExtra("email"));
+				json.put("resourcename", intent.getStringExtra("resourcename"));
+				json.put("active", intent.getBooleanExtra("resourcetypename", false));
+				json.put("resourcegroupname", "Team1");
+				break;
+			}
 
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
@@ -705,7 +745,6 @@ public class MyService extends Service {
 					mainColumns[0] = TABLE_PROJECTS.PROJECTID;
 					new RefreshData(uri.build(), getContentResolver(), mainColumns, requestid, this, false, false).execute(r);
 				}
-
 				break;
 
 			case 2:// Query - booking + resources
@@ -765,14 +804,11 @@ public class MyService extends Service {
 					incRequests();
 					uri = new Uri.Builder();
 					uri.authority(DatabaseContract.PROVIDER_NAME);
-					uri.path(DatabaseContract.TABLE_BOOKING);
+					uri.path(DatabaseContract.TABLE_BOOKINGASSIGNMENTS);
 					uri.scheme("content");
-					mainColumns = new String[3];
-					mainColumns[0] = TABLE_BOOKING.PROJECTID;
-					mainColumns[1] = TABLE_BOOKING.RESOURCEID;
-					mainColumns[2] = TABLE_BOOKING.WEEK;
-					new RefreshData(uri.build(), getContentResolver(), mainColumns, requestid, this, true, false)
-							.execute(r.getJSONArray(0));
+					mainColumns = new String[1];
+					mainColumns[0] = TABLE_BOOKING.RESOURCEID;
+					new RefreshData(uri.build(), getContentResolver(), mainColumns, requestid, this, true, false).execute(r);
 				}
 				break;
 
@@ -954,6 +990,7 @@ public class MyService extends Service {
 					Intent intent = new Intent(Constants.BROADCAST_ACTION);
 					intent.putExtra("originalReqeustid", requestid);
 					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
 					int errorCode = -1;
 					if (result != null)
 						try {
@@ -981,6 +1018,7 @@ public class MyService extends Service {
 					Intent intent = new Intent(Constants.BROADCAST_ACTION);
 					intent.putExtra("originalReqeustid", requestid);
 					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
 					int errorCode = -1;
 					if (result != null)
 						try {
@@ -1008,6 +1046,7 @@ public class MyService extends Service {
 					Intent intent = new Intent(Constants.BROADCAST_ACTION);
 					intent.putExtra("originalReqeustid", requestid);
 					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
 					int errorCode = -1;
 					if (result != null)
 						try {
@@ -1035,6 +1074,7 @@ public class MyService extends Service {
 					Intent intent = new Intent(Constants.BROADCAST_ACTION);
 					intent.putExtra("originalReqeustid", requestid);
 					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
 					int errorCode = -1;
 					if (result != null)
 						try {
@@ -1063,6 +1103,7 @@ public class MyService extends Service {
 					Intent intent = new Intent(Constants.BROADCAST_ACTION);
 					intent.putExtra("originalReqeustid", requestid);
 					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
 					int errorCode = -1;
 					if (result != null)
 						try {
@@ -1112,9 +1153,89 @@ public class MyService extends Service {
 					}
 				}
 				break;
+				
+			case Constants.INSERTNEWRESOURCE:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("resourcecreated") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+				
+			case Constants.INSERTNEWUSER:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("userinserted") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+				
+			case Constants.LOADREQUESTSCMD:
+				result = r.getJSONObject(0);
+				try {
+					if (result.getInt("error") <= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", false);
+						intent.putExtra("error", result.getInt("error"));
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					uri = new Uri.Builder();
+					uri.authority(DatabaseContract.PROVIDER_NAME);
+					uri.path(DatabaseContract.TABLE_REQUESTS);
+					uri.scheme("content");
+
+					mainColumns = new String[1];
+					mainColumns[0] = TABLE_REQUESTS.REQUESTID;
+					new RefreshData(uri.build(), getContentResolver(), mainColumns, requestid, this, false, false).execute(r);
+				}
+				break;
 			}
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Intent intent = new Intent(Constants.BROADCAST_ACTION);
+			intent.putExtra("originalReqeustid", requestid);
+			intent.putExtra("Successful", false);
+			intent.putExtra("error", -40);
+			afterRefresh(intent);
 		} catch (Exception e) {
 		}
 

@@ -90,7 +90,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				"ratio float," +
 				"isleader bool)");
 		
-		db.execSQL("CREATE TABLE Requests(" +
+		db.execSQL("CREATE TABLE BookingAssignments(" +
+				"resourceid integer," +
+				"projectid integer," +
+				"week integer," +
+				"ratio float," +
+				"isleader bool)");
+		
+		/*db.execSQL("CREATE TABLE Requests(" +
 				"RequestID integer primary key," +
 				"Week integer," +
 				"Ratio float," +
@@ -98,7 +105,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				"Resource varchar(45)," +
 				"ProjectID integer," +
 				"Rejected bool" +
-				"Visible bool)");
+				"Visible bool)");*/
+		db.execSQL("CREATE TABLE Requests(" +
+				"RequestID integer primary key," +
+				"Week integer," +
+				"Ratio float," +
+				"Sender varchar(45)," +
+				"Resource varchar(45)," +
+				"ProjectID integer)");
 		
 		db.execSQL("CREATE TABLE Groups(" +
 				"GroupID integer," +

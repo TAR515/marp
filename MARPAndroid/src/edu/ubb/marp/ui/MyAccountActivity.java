@@ -292,6 +292,39 @@ public class MyAccountActivity extends Activity {
 		});
 		alertDialog.show();
 	}
+	
+	private void queryData(){
+		Uri.Builder uri = new Uri.Builder();
+		uri = new Uri.Builder();
+		uri.authority(DatabaseContract.PROVIDER_NAME);
+		uri.path(DatabaseContract.TABLE_USERS);
+		uri.scheme("content");
+
+		ContentResolver cr = getContentResolver();
+
+		Log.i(tag, "query elott");
+		Cursor c = cr.query(uri.build(), null,
+				TABLE_USERS.USERNAME + "='"
+						+ PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "")
+						+ "'", null, null);
+		Log.i(tag, "query utan");
+
+		if (c.moveToFirst()) {
+			Log.i(tag, "ifben");
+			// setArrayList("Vizer Arnold", "Arni00",
+			// "0742764458",
+			// "vizer_arnold@yahoo.com");
+			String name = c.getString(c.getColumnIndex(TABLE_USERS.USERRESOURCENAME));
+			String username = c.getString(c.getColumnIndex(TABLE_USERS.USERNAME));
+			String tel = c.getString(c.getColumnIndex(TABLE_USERS.USERPHONENUMBER));
+			String email = c.getString(c.getColumnIndex(TABLE_USERS.USEREMAIL));
+			Log.i(tag, name + " " + username + " " + tel + " " + email);
+
+			setArrayList(name, username, tel, email);
+
+			refresh();
+		}
+	}
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -300,36 +333,8 @@ public class MyAccountActivity extends Activity {
 				if (intent.getBooleanExtra("Successful", false)) {
 					if (!intent.getBooleanExtra("change", false)) {						
 						loading.dismiss();
-						Uri.Builder uri = new Uri.Builder();
-						uri = new Uri.Builder();
-						uri.authority(DatabaseContract.PROVIDER_NAME);
-						uri.path(DatabaseContract.TABLE_USERS);
-						uri.scheme("content");
-
-						ContentResolver cr = getContentResolver();
-
-						Log.i(tag, "query elott");
-						Cursor c = cr.query(uri.build(), null,
-								TABLE_USERS.USERNAME + "='"
-										+ PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "")
-										+ "'", null, null);
-						Log.i(tag, "query utan");
-
-						if (c.moveToFirst()) {
-							Log.i(tag, "ifben");
-							// setArrayList("Vizer Arnold", "Arni00",
-							// "0742764458",
-							// "vizer_arnold@yahoo.com");
-							String name = c.getString(c.getColumnIndex(TABLE_USERS.USERRESOURCENAME));
-							String username = c.getString(c.getColumnIndex(TABLE_USERS.USERNAME));
-							String tel = c.getString(c.getColumnIndex(TABLE_USERS.USERPHONENUMBER));
-							String email = c.getString(c.getColumnIndex(TABLE_USERS.USEREMAIL));
-							Log.i(tag, name + " " + username + " " + tel + " " + email);
-
-							setArrayList(name, username, tel, email);
-
-							refresh();
-						}
+						
+						queryData();
 					} else {
 						if (intent.getBooleanExtra("changePassword", false)) {
 							SharedPreferences pref = PreferenceManager
@@ -354,7 +359,10 @@ public class MyAccountActivity extends Activity {
 					}
 				} else {
 					loading.dismiss();
-					messageBoxShowRetry(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
+					if ((!intent.getBooleanExtra("change", false))&&(intent.getIntExtra("error", 10000) == 0)){
+						queryData();
+					}else
+						messageBoxShowRetry(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
 				}
 			}
 		}

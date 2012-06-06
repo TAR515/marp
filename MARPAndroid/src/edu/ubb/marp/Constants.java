@@ -8,7 +8,7 @@ import android.graphics.YuvImage;
 
 public final class Constants {
 	public enum ACTIONS {
-		LOGIN, QUERY, QUERYWITHOUTSTORING, NEWPROJECT, CHANGEPROJECT, RESOURCEMODIFICATIONS, REQUESTS, ADDRESOURCETOPROJECT, RESOURCERESERVATIONMODIFICATION, CHANGEUSERNAME, CHANGEUSERRESOURCENAME, CHANGEUSERPHONENUMBER, CHANGEUSEREMAIL, CHANGEUSERPASSWORD
+		LOGIN, QUERY, QUERYWITHOUTSTORING, NEWPROJECT, CHANGEPROJECT, RESOURCEMODIFICATIONS, USERMODIFICATIONS, REQUESTS, ADDRESOURCETOPROJECT, RESOURCERESERVATIONMODIFICATION, CHANGEUSERNAME, CHANGEUSERRESOURCENAME, CHANGEUSERPHONENUMBER, CHANGEUSEREMAIL, CHANGEUSERPASSWORD
 	}
 
 	public enum STRIPEACTIVITYACTIONS {
@@ -20,6 +20,7 @@ public final class Constants {
 	public static final int QUERYUSER = 131;
 	
 	public static final int LOADASSIGNMENTSCMD = 4;
+	public static final int LOADREQUESTSCMD = 6;
 
 	public static final int QUERYAVAILABLERESOURCESCODE = 303;
 	public static final int CHANGEPROJECTOPENEDSTATUS = 221;
@@ -33,6 +34,8 @@ public final class Constants {
 	public static final int REMOVERESOURCEFROMGROUP = 312;
 	public static final int UPDATERESOURCE = 321;
 	public static final int BUYSELLRESOURCE = 322;
+	
+	public static final int INSERTNEWUSER = 101;
 
 	public static final int CREATENEWREQUESTFORUSER = 401;
 	public static final int CREATENEWREQUESTFORRESOURCE = 402;
@@ -52,7 +55,7 @@ public final class Constants {
 	public static final int CHANGEUSEREMAILCMD = 123;
 	public static final int CHANGEUSERPHONENUMBERCMD = 124;
 
-	private static Date startDate = new Date(2007, 0, 1);
+	private static Date startDate = new Date(107, 0, 1);
 
 	public static String getErrorMessage(int code) {
 		switch (code) {
@@ -126,6 +129,9 @@ public final class Constants {
 			return "Leader already exists";
 		case -29:
 			return "Leader not exists";
+			
+		case -40:
+			return "No data";
 		default:
 			return "";
 		}
