@@ -75,7 +75,7 @@ public class LoadAssignmentsCommand extends BaseCommandOperations implements Com
 						elements[3] = (int) booking.getRatio();
 						element = booking.isLeader();
 	
-						response = addMoreIntAndBool(keys, elements, element, response);
+						response = addMoreIntAndOneBool(keys, elements, element, response);
 					}
 			}
 			catch (DalException e) {

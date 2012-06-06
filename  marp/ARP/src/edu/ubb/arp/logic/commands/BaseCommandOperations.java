@@ -151,7 +151,7 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		return result;
 	}
 	
-	public JSONArray addMoreIntAndBool(String keys[], int elements[],Boolean element, JSONArray response) {
+	public JSONArray addMoreIntAndOneBool(String keys[], int elements[],Boolean element, JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONArray result = JSONArray.fromObject(response);
 		
@@ -191,6 +191,31 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		JSONObject obj = new JSONObject();
 		obj.put(keys[0], new Integer(intElement));
 		obj.put(keys[keys.length-1],new String(stringElement));
+		result.add(obj);
+
+		return result;
+	}
+	
+	public JSONArray addMoreIntAndString(String keys[], int intElements[],String stringElement[], JSONArray response) {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		JSONArray result = JSONArray.fromObject(response);
+		
+		if (keys == null) {
+			logger.error(getClass().getName() + methodName + "parameter: key is null");
+			return setError(-1);
+		}
+		
+		if (result == null) {
+			result = new JSONArray();
+		}
+		
+		JSONObject obj = new JSONObject();
+		for(int i = 0; i < intElements.length; i++) {
+			obj.put(keys[i], new Integer(intElements[i]));
+		}
+		for(int i = intElements.length; i < stringElement.length; i++) {
+			obj.put(keys[i], stringElement[i]);
+		}
 		result.add(obj);
 
 		return result;

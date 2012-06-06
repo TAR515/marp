@@ -47,13 +47,15 @@ public class LoadRequestsCommand extends BaseCommandOperations implements Comman
 		Requests currentRequest = null;
 		int elements[] = null;
 		String keys[] = null;
+		String names[] = null;
 		
 		try {
 			userName = getString(0,"username", request);
 			currentRequest = new Requests();
 			result = new ArrayList<Requests>();
 			elements = new int[6];
-			keys = new String[6];
+			keys = new String[8];
+			names = new String[2];
 		} catch (IllegalStateException e) {
 			logger.error(getClass().getName() + methodName + e);
 			System.out.println("illegal state exception");
@@ -70,6 +72,8 @@ public class LoadRequestsCommand extends BaseCommandOperations implements Comman
 				keys[3] = "senderid";
 				keys[4] = "resourceid";
 				keys[5] = "projectid";
+				keys[6] = "sendername";
+				keys[7] = "resourcename";
 				
 				while(it.hasNext()) {
 					currentRequest = it.next();
@@ -79,8 +83,9 @@ public class LoadRequestsCommand extends BaseCommandOperations implements Comman
 					elements[3] = currentRequest.getSender().getResourceID();
 					elements[4] = currentRequest.getResource().getResourceID();
 					elements[5] = currentRequest.getProject().getProjectID();
-					
-					response = addMoreInt(keys, elements, response);
+					names[0] = currentRequest.getSender().getUsers().getUserName();
+					names[1] = currentRequest.getResource().getUsers().getUserName();
+					response = addMoreIntAndString(keys, elements, names, response);
 				}
 			}
 			catch (DalException e) {

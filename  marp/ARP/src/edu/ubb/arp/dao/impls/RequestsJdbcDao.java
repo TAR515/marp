@@ -13,6 +13,7 @@ import edu.ubb.arp.dao.RequestsDao;
 import edu.ubb.arp.dao.model.Projects;
 import edu.ubb.arp.dao.model.Requests;
 import edu.ubb.arp.dao.model.Resources;
+import edu.ubb.arp.dao.model.Users;
 import edu.ubb.arp.exceptions.DalException;
 /**
  * 
@@ -474,10 +475,16 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 		Requests retValue = new Requests();
 		
 		Resources sender = new Resources();
+		Users senderUser = new Users();
+		senderUser.setUserName(getString(rs, "SenderUserName"));
 		sender.setResourceID(getInt(rs, "SenderID"));
+		sender.setUsers(senderUser);
 		
 		Resources target = new Resources();
+		Users targetrUser = new Users();
+		targetrUser.setUserName(getString(rs, "TargetUserName"));
 		target.setResourceID(getInt(rs, "ResourceID"));
+		target.setUsers(targetrUser);
 		
 		Projects project = new Projects();
 		project.setProjectID(getInt(rs, "ProjectID"));
