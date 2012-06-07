@@ -2,6 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
         android:id="@+id/refreshProjects"
+        android:icon="@drawable/ic_menu_refresh"
         android:title="Refresh">
     </item>
     <item android:id="@+id/projectid" android:title="New project"
@@ -10,7 +11,7 @@
     <item android:id="@+id/requestsid" android:title="Requests"
         android:icon ="@android:drawable/ic_menu_edit" ></item>
     <item android:id="@+id/myaccountid" android:title="My Account"
-        android:icon ="@android:drawable/ic_menu_my_calendar"></item>
+        android:icon ="@drawable/ic_menu_friendslist"></item>
     <item android:id="@+id/about" android:title = "About"
         android:icon = "@android:drawable/ic_menu_info_details"></item>
     <item  android:id="@+id/logout" android:title="Logout" 
@@ -18,7 +19,7 @@
     <item  android:id="@+id/addresourcemnuitem" android:title="Add resource" 
         android:icon="@android:drawable/ic_lock_power_off"></item>
     <item  android:id="@+id/addusermenuitem" android:title="Add user" 
-        android:icon="@android:drawable/ic_lock_power_off"></item>
+        android:icon="@drawable/ic_menu_logout"></item>
     
 
 </menu>
