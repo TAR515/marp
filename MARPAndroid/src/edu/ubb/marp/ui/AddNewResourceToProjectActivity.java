@@ -32,6 +32,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -57,8 +58,10 @@ public class AddNewResourceToProjectActivity extends Activity {
 			
 			sendRequestForResources();
 			
-			TextView startWeekText = (TextView)findViewById(R.id.startweek);
-			TextView endWeekText = (TextView)findViewById(R.id.endweek);
+		//	TextView startWeekText = (TextView)findViewById(R.id.startweek);
+		//	TextView endWeekText = (TextView)findViewById(R.id.endweek);
+			DatePicker startDatePicker = (DatePicker) findViewById(R.id.startWeekDateAddResource);
+			DatePicker endDatePicker = (DatePicker) findViewById(R.id.endWeekDateAddResource);
 			
 			Uri.Builder uri = new Uri.Builder();
 			uri = new Uri.Builder();
@@ -74,22 +77,29 @@ public class AddNewResourceToProjectActivity extends Activity {
 
 			c.moveToFirst();
 			
-			startWeekText.setText(Integer.toString(c.getInt(c.getColumnIndex(TABLE_PROJECTS.STARTWEEK))));
-			endWeekText.setText(Integer.toString(c.getInt(c.getColumnIndex(TABLE_PROJECTS.DEADLINE))));
+			Date d1 = new Date();
+			Date d2 = new Date();
+			d1 = Constants.convertWeekToRealDate(Integer.parseInt(Integer.toString(c.getInt(c.getColumnIndex(TABLE_PROJECTS.STARTWEEK)))));
+			d2 = Constants.convertWeekToRealDate(Integer.parseInt(Integer.toString(c.getInt(c.getColumnIndex(TABLE_PROJECTS.STARTWEEK)))));
+			startDatePicker.init(d1.getYear()+1900, d1.getMonth(), d1.getDate(), null);
+			endDatePicker.init(d2.getYear()+1900, d2.getMonth(), d2.getDate(), null);
+			
+			//startWeekText.setText(Integer.toString(c.getInt(c.getColumnIndex(TABLE_PROJECTS.STARTWEEK))));
+			//endWeekText.setText(Integer.toString(c.getInt(c.getColumnIndex(TABLE_PROJECTS.DEADLINE))));
 			
 			Button nextButton = (Button) findViewById(R.id.nextAddButton);
 			nextButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					//sendRequest();
-					EditText startweekText = (EditText) findViewById(R.id.startweek);
+				/*	EditText startweekText = (EditText) findViewById(R.id.startweek);
 					EditText endweekText = (EditText) findViewById(R.id.endweek);
 					
 					if ((startweekText.getText().toString().isEmpty())
 							|| (endweekText.getText().toString().isEmpty()))
 						messageBoxShow("Please fill in all fields", "Error!");
-					else {
+					else {*/
 						sendRequestToAddNewResource();
-					}
+					//}
 				}
 			});
 			
@@ -187,12 +197,18 @@ public class AddNewResourceToProjectActivity extends Activity {
 		uriSending.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
 		uriSending.scheme("content");
 
-		EditText startweekText = (EditText) findViewById(R.id.startweek);
-		EditText endweekText = (EditText) findViewById(R.id.endweek);
+	//	EditText startweekText = (EditText) findViewById(R.id.startweek);
+	//	EditText endweekText = (EditText) findViewById(R.id.endweek);
+		DatePicker startDatePicker = (DatePicker) findViewById(R.id.startWeekDateAddResource);
+		DatePicker endDatePicker = (DatePicker) findViewById(R.id.endWeekDateAddResource);
+		
 		Spinner sp=(Spinner)findViewById(R.id.resourcesSpinner);
 
-		int startWeek = Integer.parseInt(startweekText.getText().toString());
-		int endWeek = Integer.parseInt(endweekText.getText().toString());
+		Date startDate = new Date(startDatePicker.getYear()-1900,startDatePicker.getMonth(),startDatePicker.getDayOfMonth());
+		Date endDate = new Date(endDatePicker.getYear()-1900,endDatePicker.getMonth(),endDatePicker.getDayOfMonth());
+		
+		int startWeek = Constants.convertDateToWeek(startDate);
+		int endWeek = Constants.convertDateToWeek(endDate);
 		//projectName = projectNameText.getText().toString();
 
 		if (endWeek - startWeek > 24)
@@ -269,13 +285,23 @@ public class AddNewResourceToProjectActivity extends Activity {
 						Intent myIntent = new Intent(getApplicationContext(), StripeActivity.class);
 						Bundle bundle = new Bundle();
 						
-						EditText startweekText = (EditText) findViewById(R.id.startweek);
-						EditText endweekText = (EditText) findViewById(R.id.endweek);
+				//		EditText startweekText = (EditText) findViewById(R.id.startweek);
+				//		EditText endweekText = (EditText) findViewById(R.id.endweek);
+						DatePicker startDatePicker = (DatePicker) findViewById(R.id.startWeekDateAddResource);
+						DatePicker endDatePicker = (DatePicker) findViewById(R.id.endWeekDateAddResource);
+						
 						CheckBox cb=(CheckBox)findViewById(R.id.leaderCheckBox);
 						Spinner sp=(Spinner)findViewById(R.id.resourcesSpinner);
 						
-						int startWeek=Integer.parseInt(startweekText.getText().toString());
-						int endWeek=Integer.parseInt(endweekText.getText().toString());
+						
+						Date startDate = new Date(startDatePicker.getYear()-1900,startDatePicker.getMonth(),startDatePicker.getDayOfMonth());
+						Date endDate = new Date(endDatePicker.getYear()-1900,endDatePicker.getMonth(),endDatePicker.getDayOfMonth());
+						
+						int startWeek = Constants.convertDateToWeek(startDate);
+						int endWeek = Constants.convertDateToWeek(endDate);
+						
+						//int startWeek=Integer.parseInt(startweekText.getText().toString());
+						//int endWeek=Integer.parseInt(endweekText.getText().toString());
 						if(endWeek-startWeek>24)
 							endWeek=startWeek+24;
 						

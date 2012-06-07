@@ -22,7 +22,13 @@ import android.widget.RadioGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-/**Element */
+
+/**
+ * 
+ * @author Vizer Arnold
+ *
+ */
+
 public class RowElement extends View {
 
 	/* This tool shows the used ratio of a resource*/
@@ -91,6 +97,7 @@ public class RowElement extends View {
 	int height = 0;
 	/* original is set when the class is called, and will be the used ratio of the resource*/
 	int original =0;
+	int originalNeeded = 0;
 	/* will be true when the button is clicked*/
 	boolean buttonUpClicked = false;
 	/* will be true when the button is clicked*/
@@ -102,6 +109,7 @@ public class RowElement extends View {
 	/* will be true when the background color is yellow*/
 	boolean isYellow = false;
 	/* other Row elements*/
+	boolean modify = false;
 	RowElement elements[];
 	/* this is the index of copy about this class*/
 	int myIndex = 0;
@@ -109,6 +117,7 @@ public class RowElement extends View {
 	int columns = 0;
 	
 	/** The constructor set the initial state of the views*/
+	
 	
 	public RowElement(Context context, Display display) {
 		super(context);
@@ -341,6 +350,9 @@ public class RowElement extends View {
 		columns = column;
 		elements = array;
 	}
+	public void setModify(boolean modify){
+		this.modify = modify;
+	}
 	private void setAllHide(){
 		buttonDownClicked =false;
 		buttonUpClicked = false;
@@ -506,8 +518,8 @@ public class RowElement extends View {
 	public void setInitialState(){
 		setWhite();
 		ratioText.setText("Ratio: " + original + " %");
-		needed.setText("You want: 0 %");
-		percent.setText("0 %");
+		needed.setText("You want: "+originalNeeded+" %");
+		percent.setText(originalNeeded +" %");
 	}
 	public void applyToThisClick(){
 		int chackedItem = group.getCheckedRadioButtonId();
@@ -564,6 +576,30 @@ public class RowElement extends View {
 		}
 		
 	}
+	public void applyMyRatioToAll2(int ratio){
+		setInitialState();
+		StringTokenizer st = new StringTokenizer(percent.getText().toString());
+		StringTokenizer st2 = new StringTokenizer(ratioText.getText().toString());
+		st2.nextToken();
+		int number = Integer.parseInt(st.nextToken());
+		int ratioT = Integer.parseInt(st2.nextToken());
+		
+		number = number-ratio;
+		ratioT = ratioT-number;
+		number = ratio;
+		if(number<=100){
+			percent.setText(number + " %");
+			ratioText.setText("Ratio: " + ratioT + " %" );
+			needed.setText("You want: " + number +" %");
+			if((ratioT+number)>100){
+				setRed();
+			}else{
+				setGreen();
+			}
+		}
+		
+	}
+	
 	public boolean ratioButtonIsClicked(){
 		return buttonUpClicked;
 	}
@@ -612,5 +648,8 @@ public class RowElement extends View {
 	}
 	public void setDateText(String s){
 		dateText.setText(s);
+	}
+	public void setOriginalNeeded(int number){
+		this.originalNeeded = number;
 	}
 }

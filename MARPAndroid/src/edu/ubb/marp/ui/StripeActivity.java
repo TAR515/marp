@@ -228,8 +228,10 @@ public class StripeActivity extends Activity {
 			elements[i].setText(s[i][0], s[i][1]);
 			if (action == STRIPEACTIVITYACTIONS.update) {
 				String temp = booking[i] + " %";
+				StringTokenizer st = new StringTokenizer(temp);
 				elements[i].setPercentText(temp);
 				elements[i].setNeededText("You want: " + temp);
+				elements[i].setOriginalNeeded(Integer.parseInt(st.nextToken()));
 			}
 		}
 	}
@@ -258,7 +260,7 @@ public class StripeActivity extends Activity {
 						Log.i("lefoglalt szazalek", "" + ratio);
 
 						for (int i = from + 1; i < columns; i++) {
-							elements[i].applyMyRatioToAll(ratio);
+							elements[i].applyMyRatioToAll2(ratio);
 						}
 
 					}

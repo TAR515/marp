@@ -1,6 +1,8 @@
 package edu.ubb.marp.ui;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import edu.ubb.marp.Constants;
 import edu.ubb.marp.R;
@@ -26,6 +28,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -46,7 +49,17 @@ public class NewProjectActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i(tag, "onCreate");
-
+		//DatePicker startWeekDate = (DatePicker) findViewById(R.id.startWeekNewProject);
+		//DatePicker endWeekDate = (DatePicker) findViewById(R.id.endWeekNewProject);
+		
+		/*Calendar cal = Calendar.getInstance();
+		int Year = cal.get(Calendar.YEAR);
+		int Month = cal.get(Calendar.MONTH);
+		int Day = cal.get(Calendar.DAY_OF_MONTH);
+		
+		startWeekDate.init(Year, Month, Day , null);
+		endWeekDate.init(Year, Month, Day , null);*/
+		
 		setContentView(R.layout.newproject);
 		
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -73,13 +86,14 @@ public class NewProjectActivity extends Activity {
 			public void onClick(View v) {
 				//sendRequest();
 				EditText projectNameText = (EditText) findViewById(R.id.projectName);
-				EditText startweekText = (EditText) findViewById(R.id.startweek);
-				EditText deadlineText = (EditText) findViewById(R.id.deadline);
+				//EditText startweekText = (EditText) findViewById(R.id.startweek);
+				//EditText deadlineText = (EditText) findViewById(R.id.deadline);
+				
 				EditText nextreleaseText = (EditText) findViewById(R.id.nextrelease);
 				
 				if ((projectNameText.getText().toString().isEmpty())
-						|| (startweekText.getText().toString().isEmpty())
-						|| (deadlineText.getText().toString().isEmpty())
+					//	|| (startweekText.getText().toString().isEmpty())
+						//|| (deadlineText.getText().toString().isEmpty())
 						|| (nextreleaseText.getText().toString().isEmpty()))
 					messageBoxShow("Please fill in all fields", "Error!");
 				else {
@@ -111,6 +125,7 @@ public class NewProjectActivity extends Activity {
 				}
 			}
 		});
+
 	}
 
 	@Override
@@ -135,12 +150,42 @@ public class NewProjectActivity extends Activity {
 		uriSending.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
 		uriSending.scheme("content");
 
-		EditText startWeekText = (EditText) findViewById(R.id.startweek);
-		EditText deadLineText = (EditText) findViewById(R.id.deadline);
+	//	EditText startWeekText = (EditText) findViewById(R.id.startweek);
+	//	EditText deadLineText = (EditText) findViewById(R.id.deadline);
+		Log.i("Idaig eljott","1");
+		DatePicker startWeekDate = (DatePicker) findViewById(R.id.startWeekNewProject);
+		DatePicker endWeekDate = (DatePicker) findViewById(R.id.endWeekNewProject);
+		
 		EditText projectNameText = (EditText) findViewById(R.id.projectName);
+		
+		Log.i("Idaig eljott","2");
+		Date d  = new Date();
+		d.setYear(startWeekDate.getYear()-1900);
+		d.setMonth(startWeekDate.getMonth());
+		d.setDate(startWeekDate.getDayOfMonth());
+		Log.i("Ev",""+d.getYear());
+		Log.i("Honap",""+d.getMonth());
+		Log.i("Nap",""+d.getDate());
+		
+		Date d2  = new Date();
+		d2.setYear(endWeekDate.getYear()-1900);
+		d2.setMonth(endWeekDate.getMonth());
+		d2.setDate(endWeekDate.getDayOfMonth());
+		Log.i("Ev",""+d2.getYear());
+		Log.i("Honap",""+d2.getMonth());
+		Log.i("Nap",""+d2.getDate());
+		
+		Log.i("Idaig eljott","3");
 
-		startWeek = Integer.parseInt(startWeekText.getText().toString());
-		deadLine = Integer.parseInt(deadLineText.getText().toString());
+		/*innen kezdodik a hiba ... */
+		startWeek = Constants.convertDateToWeek(d);
+		deadLine = Constants.convertDateToWeek(d2);
+		Log.i("Idaig eljott","4");
+		
+		Log.i("startWeek", ""+startWeek);
+		Log.i("endWeek", ""+endWeek);
+		
+		
 		projectName = projectNameText.getText().toString();
 
 		if (deadLine - startWeek > 24)
