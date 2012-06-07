@@ -1,5 +1,9 @@
 package edu.ubb.arp.dao.model;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *contains getters and setters , hashCode , equals and toString methods  
+ */
 public class ResourcesWorkingOnProject {
 	private int projectID = -1;
 	private String projectName = null;
@@ -9,7 +13,9 @@ public class ResourcesWorkingOnProject {
 	private String nextRelease = null;
 	private String statusName = null;
 	private boolean isLeader = false;
-	
+	/**
+	 * constructor
+	 */
 	public ResourcesWorkingOnProject() {
 		super();
 		this.projectID = -1;
@@ -21,7 +27,17 @@ public class ResourcesWorkingOnProject {
 		this.statusName = null;
 		this.isLeader = false;
 	}
-	
+	/**
+	 * constructor
+	 * @param projectID
+	 * @param projectName
+	 * @param openStatus
+	 * @param startWeek
+	 * @param deadline
+	 * @param nextRelease
+	 * @param statusName
+	 * @param isLeader
+	 */
 	public ResourcesWorkingOnProject(int projectID, String projectName, boolean openStatus, int startWeek, int deadline,
 			String nextRelease, String statusName, boolean isLeader) {
 		super();

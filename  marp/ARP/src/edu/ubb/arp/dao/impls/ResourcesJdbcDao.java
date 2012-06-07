@@ -15,18 +15,41 @@ import edu.ubb.arp.dao.model.ResourceTypes;
 import edu.ubb.arp.dao.model.Resources;
 import edu.ubb.arp.dao.model.Users;
 import edu.ubb.arp.exceptions.DalException;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *contains methods which work with the Resources
+ */
 public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
-
+	/**
+	 * constructor 
+	 * @param dataSource
+	 */
 	public ResourcesJdbcDao(DataSource dataSource) {
 		super(dataSource);
 	}
-
+	/**
+	 * constructor
+	 * @param dataSource
+	 * @param maxResultSize
+	 */
 	public ResourcesJdbcDao(DataSource dataSource, int maxResultSize) {
 		super(dataSource, maxResultSize);
 	}
 
-	@Override
+	/** Creates a new resource witch can't be a human(user).
+	 * 
+	 * @param resourceName
+	 *            can be same with a user resource name but must be different from an another non human resource name
+	 * @param active
+	 *            can be set as true or false, false indicates that the resource aren't working
+	 * @param resourceTypeName
+	 *            indicates what kind of resource is it
+	 * @param resourceGroupName
+	 *            every resource must be at least in one group
+	 * @return ErrorCode if the returned value is lower than 0 | Created resource id if the returned value is bigger than 0
+	 * @throws DalException
+	 *             The exception contains ErrorCode and ErrorMessage of the problem that arises */
 	public int createResource(String resourceName, boolean active, String resourceTypeName, String resourceGroupName)
 			throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
@@ -64,7 +87,20 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		return errmsg;
 	}
 
-	@Override
+	/**
+	 * updates a resource's attributes
+	 * @param oldResourceName is the old name of the resource 
+	 * @param oldActive is the old active attribute of the resource
+	 * @param oldResourceTypeName is the old resource type name attribute of the resource
+	 * @param oldResourceGroupName is the old group name attribute of the resource
+	 * @param newResourceName is the new name of the resource
+	 * @param newActive is the new active attribute of the resource
+	 * @param newResourceTypeName is the new resource type name attribute of the resource
+	 * @param newResourceGroupName is the new group name attribute of the resource
+	 * @return returns the resource's id if there was no error else returns an error message
+	 * @throws SQLException if there is no connection
+	 * @throws DalException if a stored procedure returns an error message
+	 */
 	public int updateResource(String oldResourceName, boolean oldActive, String oldResourceTypeName, String oldResourceGroupName,
 			String newResourceName, boolean newActive, String newResourceTypeName, String newResourceGroupName)
 			throws SQLException, DalException {
@@ -106,7 +142,14 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return errmsg;
 	}
-
+	/**
+	 * sets a resource active attribute to true/false
+	 * @param resourceName is the name of the resource which's active attribute will be updated
+	 * @param active is true if the resource is hired , false if fired
+	 * @return returns the resource's id  if there was no error else returns an error message
+	 * @throws SQLException if there is no connection
+	 * @throws DalException if a stored procedure returns an error message
+	 */
 	public int setActive(String resourceName, boolean active) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -140,7 +183,14 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return errmsg;
 	}
-
+	/**
+	 * adds a resource to a group
+	 * @param resourceName is the name of the resource to add to the group
+	 * @param groupName is the name of the group to which the resource will be added
+	 * @return returns the resource's id if there was no error else returns an error message
+	 * @throws SQLException if there is no connection
+	 * @throws DalException if a stored procedure returns an error message
+	 */
 	public int addResourceToGroup(String resourceName, String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -173,7 +223,13 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return errmsg;
 	}
-
+	/**
+	 * adds  a resource to a group
+	 * @param resource is the resources which will be added to the group
+	 * @param group is the group to which the resource will be added
+	 * @throws SQLException if there is no connection
+	 * @throws DalException if a stored procedure returns an error message
+	 */
 	public void addResourceToGroup(Resources resource, Groups group) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -188,7 +244,13 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
 	}
-
+	/**
+	 * adds a resource to multiple groups
+	 * @param resourceName is the name of the resource which will be added to the groups
+	 * @param groupNames is a list a groups in which the resource will added to
+	 * @throws SQLException if there is no connection
+	 * @throws DalException if a stored procedure returns an error message
+	 */
 	public void addResourceToGroups(String resourceName, String[] groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -206,7 +268,13 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
 	}
-
+	/**
+	 * adds a resource to multiple groups
+	 * @param resource is the resources which will be added to the group
+	 * @param groups is a list a groups in which the resource will added to
+	 * @throws SQLException if there is no connection
+	 * @throws DalException if a stored procedure returns an error message
+	 */
 	public void addResourceToGroups(Resources resource, List<Groups> groups) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -224,7 +292,14 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			logger.debug(getClass().getName() + methodName + "-> EXIT");
 		}
 	}
-
+	/**
+	 * removes a resource from a group
+	 * @param resourceName is the name of the resource which will be removed from a group
+	 * @param groupName is the name of the group from which the resource will be removed from 
+	 * @return return the id of the resource if there was no error else returns an error message
+	 * @throws SQLException if there is no connection
+	 * @throws DalException if a stored procedure returns an error message
+	 */
 	public int removeResourceFromGroup(String resourceName, String groupName) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -257,7 +332,13 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return errmsg;
 	}
-
+	/**
+	 * removes a resource from a group
+	 * @param resource is the resource  which will be removed from a group
+	 * @param group is the group from which the resource will be removed from 
+	 * @throws SQLException if there is no connection
+	 * @throws DalException if a stored procedure returns an error message
+	 */
 	public void removeResourceFromGroup(Resources resource, Groups group) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -291,7 +372,13 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 	 * 
 	 * return retvalue; }
 	 */
-
+	/**
+	 * 
+	 * @param resourceID is a list of resources which which's attributes will be loaded 
+	 * @return a list of resources if there was no error else returns an error message
+	 * @throws DalException if there is no connection
+	 * @throws SQLException if a stored procedure returns an error message
+	 */
 	public List<Resources> loadResources(List<Integer> resourceID) throws DalException, SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -320,15 +407,17 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		return result;
 	}
 
-	/** @param resourceID
-	 * @param startWeek
-	 * @param endWeek
-	 * @param projectName
-	 * @param action
-	 *            - "insert" for new resource to a project / "modify" to modify somebody in a project / "newproject" for new project.
-	 * @return
-	 * @throws DalException
-	 * @throws SQLException */
+	/**
+	 * 
+	 * @param resourceID is the id of the resource which's booking will be loaded
+	 * @param startWeek is the start week from where the booking will be loaded
+	 * @param endWeek is the last week of the loaded booking of the resource
+	 * @param projectName is the name of the project in which the resource's booking will be loaded 
+	 * @param action is insert if the resource will be inserted in booking , update if the resource's ratio will be updated or new if a new project will be created
+	 * @return returns the booking of the resource from start week to end week in all projects he works in if there was no error , otherwise an error message 
+	 * @throws DalException  if there is no connection
+	 * @throws SQLException if a stored procedure returns an error message
+	 */
 	public List<Integer> loadResourceTotalEngages(int resourceID, int startWeek, int endWeek, String projectName, String action)
 			throws DalException, SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
@@ -374,7 +463,16 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return result;
 	}
-
+	/**
+	 * 
+	 * @param resourceID is the id of the resource which's booking in the current project  will be loaded 
+	 * @param startWeek is the start week from where the booking will be loaded
+	 * @param endWeek is the last week of the loaded booking of the resource
+	 * @param projectName is the name of the project in which the resource's booking will be loaded 
+	 * @return returns the booking of the resource from start week to end week in the project if there was no error , otherwise an error message 
+	 * @throws DalException if there is no connection
+	 * @throws SQLException if a stored procedure returns an error message
+	 */
 	public List<Integer> loadResourceCurrentProjectEngages(int resourceID, int startWeek, int endWeek, String projectName)
 			throws DalException, SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
@@ -415,7 +513,11 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return result;
 	}
-
+	/**
+	 * 
+	 * @return all resources names and id's
+	 * @throws SQLException if a stored procedure returns an error message 
+	 */
 	public List<Resources> LoadResources() throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		List<Resources> result = new ArrayList<Resources>();
@@ -441,7 +543,12 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return result;
 	}
-	
+	/**
+	 * returns a Resources object containing the result of the stored procedure
+	 * @param rs contains the result of the stored procedure
+	 * @return returns a Resources object containing the result of the stored procedure
+	 * @throws SQLException if a stored procedure returns an error message
+	 */
 	private Resources fillJustResourceIDAndName(ResultSet rs) throws SQLException {
 		Resources resource = new Resources();
 
@@ -449,7 +556,14 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		resource.setResourceName(getString(rs, "ResourceName"));
 		return resource;
 	}
-	
+	/**
+	 * loads the resource's attributes
+	 * @param resourceID is the id of the resource to be load
+	 * @param con is the connection to the database
+	 * @return  returns the resource's attributes
+	 * @throws SQLException if a stored procedure returns an error message
+	 * @throws DalException if a stored procedure returns an error message
+	 */
 	private Resources loadResource(int resourceID, Connection con) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
@@ -486,7 +600,12 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		return result;
 	}
 
-	@Override
+	/**
+	 * returns an object filled with the stored procedures result
+	 * @param rs contains the stored procedures result
+	 * @return returns an object filled with the stored procedures result
+	 * 
+	 */
 	protected Object fillObject(ResultSet rs) throws SQLException {
 		Resources resource = new Resources();
 
