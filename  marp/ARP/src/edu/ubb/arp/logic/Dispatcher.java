@@ -12,7 +12,7 @@ import edu.ubb.arp.logic.commands.LoadAssignmentsCommand;
 import edu.ubb.arp.logic.commands.LoadProjectTableCommand;
 import edu.ubb.arp.logic.commands.LoadProjectsUserIsWorkingOnCommand;
 import edu.ubb.arp.logic.commands.LoadRequestsCommand;
-import edu.ubb.arp.logic.commands.LoadResourceCommand;
+import edu.ubb.arp.logic.commands.LoadAllActiveResourcesCommand;
 import edu.ubb.arp.logic.commands.LoadUserDataCommand;
 import edu.ubb.arp.logic.commands.projects.AddResourceToprojectCommand;
 import edu.ubb.arp.logic.commands.projects.ChangeProjectCurrentStatusCommand;
@@ -44,7 +44,6 @@ import edu.ubb.arp.logic.commands.users.ChangeUserPhoneNumberCommand;
 import edu.ubb.arp.logic.commands.users.ChangeUserResourceNameCommand;
 import edu.ubb.arp.logic.commands.users.InsertNewUserCommand;
 import edu.ubb.arp.logic.commands.users.RemoveUserFromGroupCommand;
-import edu.ubb.arp.logic.commands.users.SetUserActiveCommand;
 
 public class Dispatcher extends BaseCommandOperations {
 	private static final Logger logger = Logger.getLogger(Dispatcher.class);
@@ -87,7 +86,7 @@ public class Dispatcher extends BaseCommandOperations {
 					response = command.execute();
 					break;	
 				case 3: 
-					command = new LoadResourceCommand(request);
+					command = new LoadAllActiveResourcesCommand(request);
 					response = command.execute();
 					break;	
 				case 4: 
@@ -109,10 +108,6 @@ public class Dispatcher extends BaseCommandOperations {
 					break;
 				case 102: // add user to group
 					command = new AddUserToGroupCommand(request);
-					response = command.execute();
-					break;
-				case 111: // fire / hire user
-					command = new SetUserActiveCommand(request);
 					response = command.execute();
 					break;
 				case 112: // remove user from group

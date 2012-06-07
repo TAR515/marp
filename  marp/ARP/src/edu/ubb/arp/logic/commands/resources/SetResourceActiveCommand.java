@@ -41,11 +41,13 @@ public class SetResourceActiveCommand extends BaseCommandOperations implements C
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");
 		
-		String resourceName = null;
+		int resourceID = -1;
 		boolean active = false;
+		int currentWeek = -1;
 		
 		try {
-			resourceName = getString(0,"resourcename", request);
+			resourceID = getInt(0,"resourceid", request);
+			currentWeek = getInt(0,"currentweek", request);
 			active = getBool(0,"active", request);
 			
 		} catch (IllegalStateException e) {
@@ -56,7 +58,7 @@ public class SetResourceActiveCommand extends BaseCommandOperations implements C
 		
 		if (!errorCheck(response)) {
 			try {
-				int setActive = resourceDao.setActive(resourceName, active);
+				int setActive = resourceDao.setActive(resourceID, active, currentWeek);
 				response = addInt("setactive", setActive, response);
 			} catch (DalException e) {
 				logger.error(getClass().getName() + methodName + e.getErrorMessage());

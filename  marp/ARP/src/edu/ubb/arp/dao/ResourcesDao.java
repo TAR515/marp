@@ -31,11 +31,12 @@ public interface ResourcesDao {
 	 * sets a resource active attribute to true/false
 	 * @param resourceName is the name of the resource which's active attribute will be updated
 	 * @param active is true if the resource is hired , false if fired
+	 * @param currentWeek the actual number of week
 	 * @return returns the resource's id  if there was no error else returns an error message
 	 * @throws SQLException if there is no connection
 	 * @throws DalException if a stored procedure returns an error message
 	 */
-	public int setActive(String resourceName, boolean active) throws SQLException, DalException;
+	public int setActive(int resourceID, boolean active, int currentWeek) throws SQLException, DalException;
 	/**
 	 * updates a resource's attributes
 	 * @param oldResourceName is the old name of the resource 
@@ -143,8 +144,8 @@ public interface ResourcesDao {
 	 */
 	/**
 	 * 
-	 * @return all resources names and id's
+	 * @return all active resources names and id's
 	 * @throws SQLException SQLException if a stored procedure returns an error message
 	 */
-	public List<Resources> LoadResources()throws SQLException;
+	public List<Resources> LoadAllActiveResources()throws SQLException;
 }

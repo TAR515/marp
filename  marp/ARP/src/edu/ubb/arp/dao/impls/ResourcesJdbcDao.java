@@ -150,7 +150,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 	 * @throws SQLException if there is no connection
 	 * @throws DalException if a stored procedure returns an error message
 	 */
-	public int setActive(String resourceName, boolean active) throws SQLException, DalException {
+	public int setActive(int resourceID, boolean active, int currentWeek) throws SQLException, DalException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int errmsg = 0;
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -160,11 +160,12 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		ResultSet rs = null;
 		try {
 			connection = getConnection();
-			stmt = createProcedure(connection, "resource_set_active", 3);
+			stmt = createProcedure(connection, "resource_set_active", 4);
 
 			int paramIndex = 1;
-			setString(stmt, paramIndex++, resourceName);
+			setInt(stmt, paramIndex++, resourceID);
 			setBoolean(stmt, paramIndex++, active);
+			setInt(stmt, paramIndex++, currentWeek);
 			stmt.registerOutParameter(paramIndex++, java.sql.Types.INTEGER);
 
 			stmt.executeUpdate();
@@ -518,7 +519,33 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 	 * @return all resources names and id's
 	 * @throws SQLException if a stored procedure returns an error message 
 	 */
-	public List<Resources> LoadResources() throws SQLException {
+	public List<Resources> LoadAllActiveResources() throws SQLException {
+		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
+		List<Resources> result = new ArrayList<Resources>();
+		logger.debug(getClass().getName() + methodName + "-> START");
+		Connection connection = null;
+		java.sql.CallableStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stmt = createProcedure(connection, "load_active_resources", 0);
+
+			rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				result.add((Resources) fillJustResourceIDAndName(rs));
+			}
+		} catch (SQLException e) {
+			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
+			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
+		} finally {
+			closeSQLObjects(null, rs, stmt);
+			logger.debug(getClass().getName() + methodName + "-> EXIT");
+		}
+		return result;
+	}
+	
+	public List<Resources> LoadAllResources() throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		List<Resources> result = new ArrayList<Resources>();
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -543,6 +570,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		}
 		return result;
 	}
+	
 	/**
 	 * returns a Resources object containing the result of the stored procedure
 	 * @param rs contains the result of the stored procedure

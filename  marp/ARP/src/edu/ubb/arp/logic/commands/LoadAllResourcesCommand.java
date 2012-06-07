@@ -14,13 +14,13 @@ import edu.ubb.arp.dao.ResourcesDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.dao.model.Resources;
 
-public class LoadResourceCommand extends BaseCommandOperations implements Command {
-	private static final Logger logger = Logger.getLogger(LoadResourceCommand.class);
+public class LoadAllResourcesCommand extends BaseCommandOperations implements Command {
+	private static final Logger logger = Logger.getLogger(LoadAllActiveResourcesCommand.class);
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private ResourcesDao resourceDao = null;
 	
-	public LoadResourceCommand (JSONArray request) {
+	public LoadAllResourcesCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
 		try {
@@ -44,7 +44,7 @@ public class LoadResourceCommand extends BaseCommandOperations implements Comman
 		String stringElement = new String();
 		Resources resources = new Resources();
 			try{
-				result = resourceDao.LoadResources();
+				result = resourceDao.LoadAllActiveResources();
 				Iterator<Resources> it = result.iterator();
 				while(it.hasNext()) {
 					resources = it.next();
