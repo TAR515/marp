@@ -22,6 +22,11 @@ import edu.ubb.marp.R;
 import edu.ubb.marp.database.DatabaseContract;
 import edu.ubb.marp.network.MyService;
 
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ * 
+ */
 public class ReActivateResourceActivity extends Activity {
 	private final static String tag = "ReActivateResourceActivity";
 
@@ -32,36 +37,49 @@ public class ReActivateResourceActivity extends Activity {
 	private String[] resourcenames;
 	private int myresourceid;
 	private String projectName;
-	
+
+	/**
+	 * Called when the activity is first created.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.reactivateresource);
-			
-			sendRequestForResources();
-			
-			Button nextButton = (Button) findViewById(R.id.nextResourceButton);
-			nextButton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					sendRequestToReActivateResource();
-				}
-			});
+
+		sendRequestForResources();
+
+		Button nextButton = (Button) findViewById(R.id.nextResourceButton);
+		nextButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				sendRequestToReActivateResource();
+			}
+		});
 	}
 
+	/**
+	 * Called when the activity is reloaded.
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
 
-		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
+		registerReceiver(broadcastReceiver, new IntentFilter(
+				Constants.BROADCAST_ACTION));
 	}
 
+	/**
+	 * Called before the activity gone on background
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
 
-	/** this method is called when a messagebox needs to be appered */
+	/**
+	 * this method is called when a message box needs to be appeared with OK
+	 * button
+	 * */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -75,6 +93,15 @@ public class ReActivateResourceActivity extends Activity {
 		alertDialog.show();
 	}
 
+	/**
+	 * called when a message box needs to be appeared with 2 buttons: Retry and
+	 * Cancel
+	 * 
+	 * @param message
+	 *            is the message of the message box
+	 * @param title
+	 *            is the title of the message box
+	 */
 	public void messageBoxShowForResources(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -93,7 +120,14 @@ public class ReActivateResourceActivity extends Activity {
 		});
 		alertDialog.show();
 	}
-	
+
+	/**
+	 * 
+	 * @param message
+	 *            is the message of the message box
+	 * @param title
+	 *            is the title of the message box
+	 */
 	public void messageBoxShowToReActivateResource(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -112,6 +146,9 @@ public class ReActivateResourceActivity extends Activity {
 		alertDialog.show();
 	}
 
+	/**
+	 * 
+	 */
 	private void sendRequestForResources() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
@@ -128,8 +165,11 @@ public class ReActivateResourceActivity extends Activity {
 		intent.putExtra("requestid", requestid);
 		startService(intent);
 	}
-	
-	private void sendRequestToReActivateResource(){
+
+	/**
+	 * 
+	 */
+	private void sendRequestToReActivateResource() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
 		Uri.Builder uriSending = new Uri.Builder();
@@ -137,7 +177,7 @@ public class ReActivateResourceActivity extends Activity {
 		uriSending.path(Integer.toString(Constants.SETRESOURCEACTIVECMD));
 		uriSending.scheme("content");
 
-		Spinner sp=(Spinner)findViewById(R.id.resourcesActivateSpinner);
+		Spinner sp = (Spinner) findViewById(R.id.resourcesActivateSpinner);
 
 		Intent intent = new Intent(this, MyService.class);
 		intent.putExtra("ACTION", "RESOURCEMODIFICATIONS");
@@ -150,30 +190,41 @@ public class ReActivateResourceActivity extends Activity {
 		intent.putExtra("requestid", requestid);
 		startService(intent);
 	}
-	
+
+	/**
+	 * 
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// if(sentIntent.equals(intent)){
+
 			Log.i(tag, "Broadcast received");
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				loading.dismiss();
 				if (intent.getBooleanExtra("Successful", false)) {
-					if(intent.getBooleanExtra("Resources", false)){
-					resourceids = intent.getIntArrayExtra("resourceid");
-					resourcenames = intent.getStringArrayExtra("resourcename");
-					
-					Spinner sp = (Spinner)findViewById(R.id.resourcesActivateSpinner);
-					ArrayAdapter<String> adapter=new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, resourcenames);
-					sp.setAdapter(adapter);
-					}else{
+					if (intent.getBooleanExtra("Resources", false)) {
+						resourceids = intent.getIntArrayExtra("resourceid");
+						resourcenames = intent
+								.getStringArrayExtra("resourcename");
+
+						Spinner sp = (Spinner) findViewById(R.id.resourcesActivateSpinner);
+						ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+								getApplicationContext(),
+								android.R.layout.simple_spinner_dropdown_item,
+								resourcenames);
+						sp.setAdapter(adapter);
+					} else {
 						finish();
 					}
 				} else {
-					if(intent.getBooleanExtra("Resources", false)){
-						messageBoxShowForResources(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
-					}else{
-						messageBoxShowToReActivateResource(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
+					if (intent.getBooleanExtra("Resources", false)) {
+						messageBoxShowForResources(
+								Constants.getErrorMessage(intent.getIntExtra(
+										"error", 0)), "Error");
+					} else {
+						messageBoxShowToReActivateResource(
+								Constants.getErrorMessage(intent.getIntExtra(
+										"error", 0)), "Error");
 					}
 				}
 			}

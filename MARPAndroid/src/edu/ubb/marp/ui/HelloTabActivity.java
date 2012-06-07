@@ -7,10 +7,16 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TabHost;
-
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ *
+ */
 public class HelloTabActivity extends TabActivity {
-    /** Called when the activity is first created. */
-    @Override
+	/**
+	 * Initialize and create the Tab Activity
+	 */
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i("Hellotab", "setcontent elott");
@@ -39,12 +45,6 @@ public class HelloTabActivity extends TabActivity {
                           res.getDrawable(R.drawable.ic_tab_assignements))
                       .setContent(intent);
         tabHost.addTab(spec);
-
-       /* intent = new Intent().setClass(this, SongsActivity.class);
-        spec = tabHost.newTabSpec("songs").setIndicator("Songs",
-                          res.getDrawable(R.drawable.ic_tab_songs))
-                      .setContent(intent);
-        tabHost.addTab(spec);*/
 
         tabHost.setCurrentTab(2);
     }

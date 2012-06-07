@@ -1,5 +1,5 @@
 package edu.ubb.marp.ui;
-/*proba*/
+
 import java.util.Date;
 
 import edu.ubb.marp.Constants;
@@ -35,7 +35,11 @@ import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ *
+ */
 public class AssignmentsActivity extends Activity {
 	private final static String tag = "AssignmentsActivity";
 

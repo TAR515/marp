@@ -35,7 +35,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Spinner;
-
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ *
+ */
 public class ModifyProjectActivity extends Activity {
 	private static final String tag = "ModifyProjectActivity";
 
@@ -48,7 +52,9 @@ public class ModifyProjectActivity extends Activity {
 	private int openedStatus, deadLine;
 
 	ArrayList<ListRecord> listItems = new ArrayList<ListRecord>();
-
+	/**
+	 * Called when the activity is first created.
+	 */
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		setContentView(R.layout.myaccount);
@@ -80,20 +86,31 @@ public class ModifyProjectActivity extends Activity {
 			setListItems(projectName, openedStatus, deadLine, nextRelease, currentStatus);
 		}
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
 
 		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
-
+	/**
+	 * 
+	 * @param name name of the project
+	 * @param openedStatus is the status of the project, example Opened or Closed
+	 * @param deadline is the date when the project ends
+	 * @param nextReliese is the version number of the project
+	 * @param currentStatus	is the current status of the project
+	 */
 	private void setListItems(String name, int openedStatus, int deadline, String nextReliese, String currentStatus) {
 		listItems = new ArrayList<ListRecord>();
 
@@ -143,7 +160,12 @@ public class ModifyProjectActivity extends Activity {
 			}
 		});
 	}
-
+	/**
+	 * 
+	 * @param title title of the edit box
+	 * @param editableText is the text, which will be edited
+	 * @param position is the position of the clicked list item
+	 */
 	public void editDialog(String title, String editableText, int position) {
 
 		AlertDialog alertDialog;
@@ -154,7 +176,7 @@ public class ModifyProjectActivity extends Activity {
 		alertDialog.setTitle(title);
 		alertDialog.setView(editDialog);
 		final int myPosition = position;
-		// final String newText = editDialog.getText().toString();
+		
 		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
@@ -209,7 +231,12 @@ public class ModifyProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
-
+	/**
+	 * 
+	 * @param title is the title of the message box
+	 * @param status is the status of the project, which is Opened or Closed
+	 * @param position is the position of the list item
+	 */
 	public void editOpenedStatus(String title, String status, int position) {
 
 		AlertDialog alertDialog;
@@ -262,7 +289,12 @@ public class ModifyProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
-
+	/**
+	 * 
+	 * @param title is the message box title
+	 * @param date is the deadline date of the project
+	 * @param position is the position of the clicked list item
+	 */
 	public void editDeadline(String title, String date, int position) {
 
 		AlertDialog alertDialog;
@@ -274,11 +306,10 @@ public class ModifyProjectActivity extends Activity {
 		alertDialog.setView(d);
 		final int myPosition = position;
 		
-		// final String newText = editDialog.getText().toString();
 		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				// Intent intent;
+				
 				loading = ProgressDialog.show(context, "Loading", "Please wait...");
 
 				switch (myPosition) {
@@ -312,7 +343,11 @@ public class ModifyProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
-
+	/**
+	 * 
+	 * @param title is the message box title
+	 * @param position is the position of the clicked list item
+	 */
 	public void editCurrentStatus(String title, int position) {
 		String s[] = { "Accepted/Ready to Start", "Delivered", "Done", "Redy for delivery", "Specification", "Testing",
 				"Under developement" };
@@ -327,11 +362,11 @@ public class ModifyProjectActivity extends Activity {
 		alertDialog.setView(spinner);
 		final int myPosition = position;
 
-		// final String newText = editDialog.getText().toString();
+		
 		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				// Intent intent;
+				
 				loading = ProgressDialog.show(context, "Loading", "Please wait...");
 
 				switch (myPosition) {
@@ -363,7 +398,11 @@ public class ModifyProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
-
+	/**
+	 * 
+	 * @param message is the message of the Message Box
+	 * @param title	is the message box's title
+	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -376,7 +415,9 @@ public class ModifyProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
-
+	/**
+	 * 
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {

@@ -32,7 +32,11 @@ import edu.ubb.marp.database.DatabaseContract;
 import edu.ubb.marp.database.DatabaseContract.TABLE_PROJECTS;
 import edu.ubb.marp.database.DatabaseContract.TABLE_RESOURCES;
 import edu.ubb.marp.network.MyService;
-
+/**
+ * 
+ * @author Rakosi Alpar
+ *
+ */
 public class DeleteResourceActivity extends Activity {
 	private final static String tag = "DeleteResourceActivity";
 

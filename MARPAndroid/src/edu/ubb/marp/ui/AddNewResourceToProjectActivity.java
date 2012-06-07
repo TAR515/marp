@@ -36,7 +36,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ *
+ */
 public class AddNewResourceToProjectActivity extends Activity {
 	private final static String tag = "AddNewResourceToProjectActivity";
 
@@ -48,6 +52,9 @@ public class AddNewResourceToProjectActivity extends Activity {
 	private int myresourceid;
 	private String projectName;
 	
+	/**
+	 *  Create the activity and loads the layout and resources
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,8 +65,7 @@ public class AddNewResourceToProjectActivity extends Activity {
 			
 			sendRequestForResources();
 			
-		//	TextView startWeekText = (TextView)findViewById(R.id.startweek);
-		//	TextView endWeekText = (TextView)findViewById(R.id.endweek);
+		
 			DatePicker startDatePicker = (DatePicker) findViewById(R.id.startWeekDateAddResource);
 			DatePicker endDatePicker = (DatePicker) findViewById(R.id.endWeekDateAddResource);
 			
@@ -84,22 +90,13 @@ public class AddNewResourceToProjectActivity extends Activity {
 			startDatePicker.init(d1.getYear()+1900, d1.getMonth(), d1.getDate(), null);
 			endDatePicker.init(d2.getYear()+1900, d2.getMonth(), d2.getDate(), null);
 			
-			//startWeekText.setText(Integer.toString(c.getInt(c.getColumnIndex(TABLE_PROJECTS.STARTWEEK))));
-			//endWeekText.setText(Integer.toString(c.getInt(c.getColumnIndex(TABLE_PROJECTS.DEADLINE))));
 			
 			Button nextButton = (Button) findViewById(R.id.nextAddButton);
 			nextButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
-					//sendRequest();
-				/*	EditText startweekText = (EditText) findViewById(R.id.startweek);
-					EditText endweekText = (EditText) findViewById(R.id.endweek);
-					
-					if ((startweekText.getText().toString().isEmpty())
-							|| (endweekText.getText().toString().isEmpty()))
-						messageBoxShow("Please fill in all fields", "Error!");
-					else {*/
+		
 						sendRequestToAddNewResource();
-					//}
+
 				}
 			});
 			
@@ -121,10 +118,11 @@ public class AddNewResourceToProjectActivity extends Activity {
 			});
 	}
 
-	/** this method is called when a messagebox needs to be appered */
+	/** 
+	 * this method is called when a messagebox needs to be appeared with 1 button
+	 * */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
-
 		alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle(title);
 		alertDialog.setMessage(message);
@@ -135,6 +133,12 @@ public class AddNewResourceToProjectActivity extends Activity {
 		alertDialog.show();
 	}
 
+	/**
+	 * this method is called when a messagebox needs to be appeared with 2 buttons
+	 * @param message is the message of the messagebox
+	 * @param title is the title of the messagebox
+	 * 
+	 */
 	public void messageBoxShowForResources(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -153,7 +157,11 @@ public class AddNewResourceToProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
-	
+	/**
+	 * this method is called when a messagebox needs to be appeared with 2 buttons to add new resource
+	 * @param message is the message of the messagebox
+	 * @param title is the title of the messagebox
+	 */
 	public void messageBoxShowToAddNewResource(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -171,7 +179,9 @@ public class AddNewResourceToProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
-
+	/**
+	 * 
+	 */
 	private void sendRequestForResources() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
@@ -188,7 +198,9 @@ public class AddNewResourceToProjectActivity extends Activity {
 		intent.putExtra("requestid", requestid);
 		startService(intent);
 	}
-	
+	/**
+	 * 
+	 */
 	private void sendRequestToAddNewResource(){
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
@@ -196,9 +208,7 @@ public class AddNewResourceToProjectActivity extends Activity {
 		uriSending.authority(DatabaseContract.PROVIDER_NAME);
 		uriSending.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
 		uriSending.scheme("content");
-
-	//	EditText startweekText = (EditText) findViewById(R.id.startweek);
-	//	EditText endweekText = (EditText) findViewById(R.id.endweek);
+		
 		DatePicker startDatePicker = (DatePicker) findViewById(R.id.startWeekDateAddResource);
 		DatePicker endDatePicker = (DatePicker) findViewById(R.id.endWeekDateAddResource);
 		
@@ -209,7 +219,7 @@ public class AddNewResourceToProjectActivity extends Activity {
 		
 		int startWeek = Constants.convertDateToWeek(startDate);
 		int endWeek = Constants.convertDateToWeek(endDate);
-		//projectName = projectNameText.getText().toString();
+	
 
 		if (endWeek - startWeek > 24)
 			endWeek = startWeek + 24;
@@ -227,7 +237,9 @@ public class AddNewResourceToProjectActivity extends Activity {
 		intent.putExtra("requestid", requestid);
 		startService(intent);
 	}
-	
+	/**
+	 * 
+	 */
 	public void setMyResourceID(){
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -250,20 +262,26 @@ public class AddNewResourceToProjectActivity extends Activity {
 
 		myresourceid = c.getInt(c.getColumnIndex(TABLE_RESOURCES.RESOURCEID));
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
 
 		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
-	
+	/**
+	 * 
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -285,8 +303,7 @@ public class AddNewResourceToProjectActivity extends Activity {
 						Intent myIntent = new Intent(getApplicationContext(), StripeActivity.class);
 						Bundle bundle = new Bundle();
 						
-				//		EditText startweekText = (EditText) findViewById(R.id.startweek);
-				//		EditText endweekText = (EditText) findViewById(R.id.endweek);
+				
 						DatePicker startDatePicker = (DatePicker) findViewById(R.id.startWeekDateAddResource);
 						DatePicker endDatePicker = (DatePicker) findViewById(R.id.endWeekDateAddResource);
 						
@@ -300,8 +317,6 @@ public class AddNewResourceToProjectActivity extends Activity {
 						int startWeek = Constants.convertDateToWeek(startDate);
 						int endWeek = Constants.convertDateToWeek(endDate);
 						
-						//int startWeek=Integer.parseInt(startweekText.getText().toString());
-						//int endWeek=Integer.parseInt(endweekText.getText().toString());
 						if(endWeek-startWeek>24)
 							endWeek=startWeek+24;
 						

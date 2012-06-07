@@ -8,7 +8,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+/**
+ * 
+ * @author Vizer Arnold
+ *
+ */
 public class ChangePassword extends View{
 	/* the text views represents the text over the edit texts*/
 	TextView oldPassText;
@@ -21,7 +25,11 @@ public class ChangePassword extends View{
 	EditText newPass2;
 	/*the layout*/
 	LinearLayout linear;
-	
+	/**
+	 * 
+	 * @param Context of the view
+	 * initializes the attributes
+	 */
 	public ChangePassword(Context context) {
 		super(context);
 		// TODO Auto-generated constructor stub
@@ -51,20 +59,32 @@ public class ChangePassword extends View{
 		linear.addView(newPassText2);
 		linear.addView(newPass2);
 	}
-	/* returns the layout*/
+	/**
+	 * 
+	 * @return the view
+	 */
 	public View returnView(){
 		return linear;
 	}
 	
-	/* returns the old pass text*/
+	/**
+	 * 
+	 * @return the old password text
+	 */
 	public String getOldPass(){
 		return oldPass.getText().toString();
 	}
-	/* returns the new pass text*/
+	/**
+	 * 
+	 * @return the new password text
+	 */
 	public String getNewPass1(){
 		return newPass1.getText().toString();
 	}
-	/* returns the second new pass text*/
+	/**
+	 * 
+	 * @return the retyped new password text
+	 */
 	public String getNewPass2(){
 		return newPass2.getText().toString();
 	}

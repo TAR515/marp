@@ -1,105 +1,252 @@
 package edu.ubb.marp.ui;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import edu.ubb.marp.Constants;
 import edu.ubb.marp.R;
+import edu.ubb.marp.database.DatabaseContract;
+import edu.ubb.marp.database.DatabaseContract.TABLE_PROJECTS;
+import edu.ubb.marp.database.DatabaseContract.TABLE_REQUESTS;
+import edu.ubb.marp.database.DatabaseContract.TABLE_RESOURCES;
+import edu.ubb.marp.network.MyService;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ *
+ */
+public class RequestActivity extends Activity{
+	private static final String tag = "RequestActivity";
 
-public class RequestActivity extends ListActivity{
-	ArrayList<String> list = new ArrayList<String>();
-	String[] a = {"Projekt 1", "Projekt 2","Projekt 3","Projekt 4","Projekt 5"};
-	String[] b = {"Projekt 6", "Projekt 7","Projekt 8","Projekt 9","Projekt 10"};
-	  @Override
-	  public void onCreate(Bundle savedInstanceState) {
-		  super.onCreate(savedInstanceState);
-		  ListAdapter adapter= new ArrayAdapter<String>(this, R.layout.list_item, list);
-		  setListAdapter(adapter);
-		 
-		  ListView lv = getListView();
-		  lv.setTextFilterEnabled(true);
+	private long requestid;
+	private ProgressDialog loading;
+	private Context context;
+	private int currentRequestID;
+	private String projectName, senderUserName, targetResource, ratio;
+	private int week, projectID, myresourceid;
+
+	ArrayList<ListRecord> listItems = new ArrayList<ListRecord>();
+	/**
+	 * Called when the activity is created
+	 */
+	public void onCreate(Bundle bundle) {
+		super.onCreate(bundle);
+		setContentView(R.layout.myaccount);
+
+		context = this;
 		
-		  setList(a);
-		  final ListView lvv = lv;
-		  lv.setOnItemClickListener(new OnItemClickListener() {
-			  public void onItemClick(AdapterView<?> parent, View view,
-					  int position, long id) {
-				  
-				 //newIntent();
-			  }
-		  });
-	  }
-	
-	  /**/
-	  
-	  
-	  public void setList(String[] str){
-		  list.clear();
-		  for(int i=0;i<str.length;i++){
-			  list.add(str[i]);
-		  }
-		  //list.add("Show More");
-	  }
-	  
-	  public void concat(String[] str){
-		  list.remove("Show More");
-		  for(int i=0;i<str.length;i++){
-			  list.add(str[i]);
-		  }
-		  //list.add("Show More");
-	  }
-	  /*@Override
-	  public boolean onCreateOptionsMenu(Menu menu) {
-	      MenuInflater inflater = getMenuInflater();
-	      inflater.inflate(R.menu.project, menu);
-	      return true;
-	  }
-	  @Override
-	  public boolean onOptionsItemSelected(MenuItem item) {
-	      // Handle item selection
-	      switch (item.getItemId()) {
-	          case R.id.myaccountid:
-	        	  Intent myIntent = new Intent(this, MyAccountActivity.class);
-	    		  this.startActivity(myIntent);
-	              return true;
-	          default:
-	              return super.onOptionsItemSelected(item);
-	      }
-	  }*/
-	  public void messageBoxShow(String message, String title){
-	    	AlertDialog alertDialog;
-	    	
-	      	alertDialog = new AlertDialog.Builder(this).create();
-	    	alertDialog.setTitle(title);
-	    	alertDialog.setMessage(message);
-	    	alertDialog.setButton("Retry",
-	    		    new DialogInterface.OnClickListener() {
-	    		        public void onClick(DialogInterface dialog, int which) {
-	    		            
-	    		        }
-	    		    });
-	    	alertDialog.setButton2("Cancel",
-	    		    new DialogInterface.OnClickListener() {
-	    		        public void onClick(DialogInterface dialog, int which) {
-	    		            
-	    		        }
-	    		    });
-	    	alertDialog.show();
-	    }
-	  /*
-	  public void newIntent(){
-		  Intent myIntent = new Intent(this, ResourcesFromProjectActivity.class);
-		  this.startActivity(myIntent);
-	  }*/
+		currentRequestID = getIntent().getExtras().getInt("requestid");
+
+		Uri.Builder uri = new Uri.Builder();
+		uri = new Uri.Builder();
+		uri.authority(DatabaseContract.PROVIDER_NAME);
+		uri.path(DatabaseContract.TABLE_REQUESTS);
+		uri.scheme("content");
+
+		ContentResolver cr = getContentResolver();
+
+		Cursor c = cr.query(uri.build(), null, TABLE_REQUESTS.REQUESTID + " = " + Integer.toString(currentRequestID), null, null);
+		Log.i(tag, "query utan");
+
+		if (c.moveToFirst()) {
+			Log.i(tag, "ifben");
+
+			senderUserName = c.getString(c.getColumnIndex(TABLE_REQUESTS.SENDERUSERNAME));
+			targetResource = c.getString(c.getColumnIndex(TABLE_REQUESTS.RESOURCERESOURCENAME));
+			week = c.getInt(c.getColumnIndex(TABLE_REQUESTS.WEEK));
+			ratio = c.getString(c.getColumnIndex(TABLE_REQUESTS.RATIO));
+			projectID = c.getInt(c.getColumnIndex(TABLE_REQUESTS.PROJECTID));
+			
+			uri.path(DatabaseContract.TABLE_PROJECTS);
+			c = cr.query(uri.build(), null, TABLE_PROJECTS.PROJECTID + " = " + Integer.toString(projectID), null, null);
+			if (c.moveToFirst()) {
+				projectName = c.getString(c.getColumnIndex(TABLE_PROJECTS.PROJECTNAME));
+			}
+
+			setListItems(projectName, senderUserName, targetResource, week, ratio);
+
+			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+			uri.path(DatabaseContract.TABLE_RESOURCES);
+			String projection[] = { TABLE_RESOURCES.RESOURCEID };
+			c = cr.query(uri.build(), projection, TABLE_RESOURCES.USERNAME + " = '" + pref.getString("username", "") + "'", null, null);
+			c.moveToFirst();
+			myresourceid = c.getInt(c.getColumnIndex(TABLE_RESOURCES.RESOURCEID));
+		}
+	}
+	/**
+	 * Called when the Activity is loaded
+	 */
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
+	}
+	/**
+	 * Called before the activity goes on background
+	 */
+	@Override
+	protected void onStop() {
+		super.onStop();
+		unregisterReceiver(broadcastReceiver);
+	}
+	/**
+	 * 
+	 * @param name
+	 * @param sender
+	 * @param target
+	 * @param currentWeek
+	 * @param currentRatio
+	 */
+	private void setListItems(String name, String sender, String target, int currentWeek, String currentRatio) {
+		Log.i(tag, "setlistitems");
+		listItems = new ArrayList<ListRecord>();
+
+		ListRecord item = new ListRecord("Project name", name);
+		listItems.add(item);
+
+		item = new ListRecord("Sender", sender);
+		listItems.add(item);
+
+		item = new ListRecord("Target resource", target);
+		listItems.add(item);
+
+		item = new ListRecord("Week", Constants.convertWeekToDate(week));
+		listItems.add(item);
+
+		item = new ListRecord("Ratio", currentRatio);
+		listItems.add(item);
+
+		item = new ListRecord("Accept", "");
+		listItems.add(item);
+		
+		item = new ListRecord("Reject", "");
+		listItems.add(item);
+
+		ListView listView = (ListView) findViewById(R.id.ListViewId);
+		listView.setAdapter(new ListItemAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, listItems));
+		
+		
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+				switch(pos){
+				case 5:
+					break;
+				case 6:
+					break;
+				}
+			}
+		});
+	}
+	/**
+	 * 
+	 */
+	private void sendRequest(){
+		loading = ProgressDialog.show(this, "Loading", "Please wait...");
+
+		Uri.Builder uriSending = new Uri.Builder();
+		uriSending.authority(DatabaseContract.PROVIDER_NAME);
+		uriSending.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
+		uriSending.scheme("content");
+
+		Intent intent = new Intent(this, MyService.class);
+		intent.putExtra("ACTION", "QUERYWITHOUTSTORING");
+		intent.setData(uriSending.build());
+		intent.putExtra("startweek", week);
+		intent.putExtra("endweek", week);
+		intent.putExtra("action", "update");
+		intent.putExtra("projectname", projectName);
+		intent.putExtra("resourceid", Integer.parseInt(targetResource));
+
+		requestid = new Date().getTime();
+		intent.putExtra("requestid", requestid);
+		startService(intent);
+	}
+	/**
+	 * 
+	 * @param message
+	 * @param title
+	 */
+	public void messageBoxShowRetry(String message, String title) {
+		AlertDialog alertDialog;
+
+		alertDialog = new AlertDialog.Builder(this).create();
+		alertDialog.setTitle(title);
+		alertDialog.setMessage(message);
+		alertDialog.setButton("Retry", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				sendRequest();
+			}
+		});
+		alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		alertDialog.show();
+	}
+	/**
+	 * 
+	 */
+	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
+				loading.dismiss();
+
+				if (intent.getBooleanExtra("Successful", false)) {
+					// finish();
+					int[] results = intent.getIntArrayExtra("results");
+					int[] currentProjectResults = intent.getIntArrayExtra("ratioincurrentproject");
+
+					Intent myIntent = new Intent(getApplicationContext(), StripeActivity.class);
+					Bundle bundle = new Bundle();
+
+					bundle.putString("ACTION", "request");
+					bundle.putString("projectname", projectName);
+					bundle.putInt("projectid", projectID);
+					bundle.putInt("targetresourceid", Integer.parseInt(targetResource));
+					bundle.putInt("senderresourceid", myresourceid);
+					bundle.putInt("startweek", week);
+					bundle.putInt("endweek", week);
+					bundle.putIntArray("results", results);
+					bundle.putIntArray("booking", currentProjectResults);
+
+					myIntent.putExtras(bundle);
+					startActivity(myIntent);
+				} else {
+					messageBoxShowRetry(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
+				}
+			}
+		}
+	};
 }

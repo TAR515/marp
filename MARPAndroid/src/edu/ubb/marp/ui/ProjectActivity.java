@@ -37,40 +37,30 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
-
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ *
+ */
 public class ProjectActivity extends ListActivity {
 	private static final String tag = "ProjectActivity";
 
 	private ProgressDialog loading;
 
-	// private Intent sentIntent;
+
 	private long requestid;
 	private String[] ids;
 	private String[] projectNames;
 	private boolean[] isLeader;
 	private boolean leaved;
-
+	/**
+	 * Called when the activity is first created.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i(tag, "onCreate");
-		/*
-		 * ListAdapter adapter= new ArrayAdapter<String>(this,
-		 * R.layout.list_item, list); setListAdapter(adapter);
-		 * 
-		 * ListView lv = getListView(); lv.setTextFilterEnabled(true);
-		 * 
-		 * setList(a); final ListView lvv = lv;
-		 */
-		/*
-		 * ListView lv=(ListView)findViewById(android.R.id.list);
-		 * lv.setOnItemClickListener(new OnItemClickListener() { public void
-		 * onItemClick(AdapterView<?> parent, View view, int position, long id)
-		 * { Intent myIntent = new Intent(getApplicationContext(),
-		 * ResourcesActivity.class); Bundle bundle=new Bundle();
-		 * bundle.putString("projectid", ids[position]);
-		 * myIntent.putExtras(bundle); startActivity(myIntent); } });
-		 */
+		
 		
 		leaved = false;
 
@@ -78,7 +68,9 @@ public class ProjectActivity extends ListActivity {
 		Log.i(tag, "setcontent utan");
 		sendRequest();
 	}
-
+	/**
+	 * 
+	 */
 	private void sendRequest() {
 		loading = ProgressDialog.show(this, "Loading",
 				"Please wait...");
@@ -86,18 +78,18 @@ public class ProjectActivity extends ListActivity {
 		Uri.Builder uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
 		uri.path(Integer.toString(Constants.PROJECTSCMD));
-		// uri.appendPath("Projects");
 		uri.scheme("content");
 
 		Intent intent = new Intent(this, MyService.class);
 		intent.putExtra("ACTION", "QUERY");
 		intent.setData(uri.build());
-		// sentIntent=intent;
 		requestid = new Date().getTime();
 		intent.putExtra("requestid", requestid);
 		startService(intent);
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -110,13 +102,17 @@ public class ProjectActivity extends ListActivity {
 		registerReceiver(broadcastReceiver, new IntentFilter(
 				Constants.BROADCAST_ACTION));
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -124,7 +120,11 @@ public class ProjectActivity extends ListActivity {
 		return true;
 	}
 
-	/** this method is called when a messagebox needs to be appered */
+	/** 
+	 * is called when a message box needs to be appeared 
+	 * @param message is the message of the message box
+	 * @param title is the title of the message box
+	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -142,7 +142,9 @@ public class ProjectActivity extends ListActivity {
 		});
 		alertDialog.show();
 	}
-
+	/**
+	 * is called when the user selects one of the menu items 
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
@@ -203,7 +205,9 @@ public class ProjectActivity extends ListActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+	/**
+	 * 
+	 */
 	private void queryData(){
 		Uri.Builder uri = new Uri.Builder();
 		uri = new Uri.Builder();
@@ -249,19 +253,21 @@ public class ProjectActivity extends ListActivity {
 
 		String[] from = { TABLE_PROJECTS.PROJECTNAME,
 				TABLE_PROJECTS.ISLEADER };
-		// int[] to = { android.R.id.text1, android.R.id.text2 };
+		
 		int[] to = { R.id.text1, R.id.text2 };
 		SimpleCursorAdapter projects = new SimpleCursorAdapter(
 				getApplicationContext(), R.layout.projects_row, c,
 				from, to);
 		setListAdapter(projects);
 	}
-
+	/**
+	 * 
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.i(tag, "megjott a broadcast");
-			// if(sentIntent.equals(intent)){
+			
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				if (intent.getBooleanExtra("Successful", false)) {
 					loading.dismiss();
@@ -270,7 +276,7 @@ public class ProjectActivity extends ListActivity {
 					Uri.Builder uri = new Uri.Builder();
 					uri.authority(DatabaseContract.PROVIDER_NAME);
 					uri.path("131");
-					//uri.appendPath("Projects");
+					
 					uri.scheme("content");
 
 					Intent myIntent = new Intent(getApplicationContext(),
@@ -278,7 +284,7 @@ public class ProjectActivity extends ListActivity {
 					myIntent.putExtra("ACTION", "QUERY");
 					myIntent.setData(uri.build());
 
-					//requestid=new Date().getTime();
+					
 					myIntent.putExtra("requestid", (long)0);
 					startService(myIntent);
 				} else {
@@ -293,7 +299,9 @@ public class ProjectActivity extends ListActivity {
 			}
 		}
 	};
-
+	/**
+	 * 
+	 */
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		leaved = true;
 		
@@ -306,6 +314,9 @@ public class ProjectActivity extends ListActivity {
 		myIntent.putExtras(bundle);
 		startActivity(myIntent);
 	}
+	/**
+	 * the method shows a windows abut creators and the version number of the project
+	 */
 	public void aboutMessage() {
 
 		AboutMessage about = new AboutMessage(this);

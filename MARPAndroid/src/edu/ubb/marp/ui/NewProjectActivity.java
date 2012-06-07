@@ -31,7 +31,11 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ *
+ */
 public class NewProjectActivity extends Activity {
 	private static final String tag = "NewProjectActivity";
 	private ProgressDialog loading;
@@ -44,21 +48,14 @@ public class NewProjectActivity extends Activity {
 	private String projectName;
 	private int[] booking;
 	private int minWeek, maxWeek;
-
+	/**
+	 * Called when the activity is first created.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i(tag, "onCreate");
-		//DatePicker startWeekDate = (DatePicker) findViewById(R.id.startWeekNewProject);
-		//DatePicker endWeekDate = (DatePicker) findViewById(R.id.endWeekNewProject);
 		
-		/*Calendar cal = Calendar.getInstance();
-		int Year = cal.get(Calendar.YEAR);
-		int Month = cal.get(Calendar.MONTH);
-		int Day = cal.get(Calendar.DAY_OF_MONTH);
-		
-		startWeekDate.init(Year, Month, Day , null);
-		endWeekDate.init(Year, Month, Day , null);*/
 		
 		setContentView(R.layout.newproject);
 		
@@ -84,42 +81,17 @@ public class NewProjectActivity extends Activity {
 		Button addButton = (Button) findViewById(R.id.addProjectButton);
 		addButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				//sendRequest();
+				
 				EditText projectNameText = (EditText) findViewById(R.id.projectName);
-				//EditText startweekText = (EditText) findViewById(R.id.startweek);
-				//EditText deadlineText = (EditText) findViewById(R.id.deadline);
+				
 				
 				EditText nextreleaseText = (EditText) findViewById(R.id.nextrelease);
 				
 				if ((projectNameText.getText().toString().isEmpty())
-					//	|| (startweekText.getText().toString().isEmpty())
-						//|| (deadlineText.getText().toString().isEmpty())
+					
 						|| (nextreleaseText.getText().toString().isEmpty()))
 					messageBoxShow("Please fill in all fields", "Error!");
 				else {
-				
-				/*Intent myIntent = new Intent(getApplicationContext(), StripeActivity.class);
-				Bundle bundle = new Bundle();
-				
-				int startWeek=Integer.parseInt(startweek.getText().toString());
-				int endWeek;
-				int deadLine=Integer.parseInt(deadline.getText().toString());
-				if(deadLine-startWeek>24)
-					endWeek=startWeek+24;
-				else
-					endWeek=deadLine;
-				
-				bundle.putString("ACTION", "NEWPROJECT");
-				bundle.putString("projectname", projectName.getText().toString());
-				bundle.putBoolean("openedstatus", openedStatus.isChecked());
-				bundle.putString("startweek", startweek.getText().toString());
-				bundle.putString("endweek", Integer.toString(endWeek));
-				bundle.putString("deadline", deadline.getText().toString());
-				bundle.putString("nextrelease", nextrelease.getText().toString());
-				bundle.putString("statusname", status.getSelectedItem().toString());
-
-				myIntent.putExtras(bundle);
-				startActivity(myIntent);*/
 					
 					sendRequest();
 				}
@@ -127,7 +99,9 @@ public class NewProjectActivity extends Activity {
 		});
 
 	}
-
+	/**
+	 * Called when the activity is reloaded.
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -135,13 +109,17 @@ public class NewProjectActivity extends Activity {
 		registerReceiver(broadcastReceiver, new IntentFilter(
 				Constants.BROADCAST_ACTION));
 	}
-
+	/**
+	 * Called when before the activity gone on background.
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
-	
+	/**
+	 * 
+	 */
 	private void sendRequest() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
@@ -150,8 +128,6 @@ public class NewProjectActivity extends Activity {
 		uriSending.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
 		uriSending.scheme("content");
 
-	//	EditText startWeekText = (EditText) findViewById(R.id.startweek);
-	//	EditText deadLineText = (EditText) findViewById(R.id.deadline);
 		Log.i("Idaig eljott","1");
 		DatePicker startWeekDate = (DatePicker) findViewById(R.id.startWeekNewProject);
 		DatePicker endWeekDate = (DatePicker) findViewById(R.id.endWeekNewProject);
@@ -177,7 +153,7 @@ public class NewProjectActivity extends Activity {
 		
 		Log.i("Idaig eljott","3");
 
-		/*innen kezdodik a hiba ... */
+
 		startWeek = Constants.convertDateToWeek(d);
 		deadLine = Constants.convertDateToWeek(d2);
 		Log.i("Idaig eljott","4");
@@ -207,43 +183,13 @@ public class NewProjectActivity extends Activity {
 		startService(intent);
 	}
 
-	/*public void sendRequest() {
-		EditText projectName = (EditText) findViewById(R.id.projectName);
-		CheckBox openedStatus = (CheckBox) findViewById(R.id.openedStatus);
-		EditText startweek = (EditText) findViewById(R.id.startweek);
-		EditText deadline = (EditText) findViewById(R.id.deadline);
-		EditText nextrelease = (EditText) findViewById(R.id.nextrelease);
-		Spinner status = (Spinner) findViewById(R.id.statusSpinner);
+	
 
-		if ((projectName.getText().toString().isEmpty())
-				|| (startweek.getText().toString().isEmpty())
-				|| (deadline.getText().toString().isEmpty())
-				|| (nextrelease.getText().toString().isEmpty()))
-			messageBoxShow("Please fill in all fields", "Error!");
-		else {
-			loading = ProgressDialog.show(this, "Login",
-					"Please wait...", true);
-
-			Uri.Builder uri = new Uri.Builder();
-
-			Intent intent = new Intent(this, MyService.class);
-			intent.putExtra("ACTION", "NEWPROJECT");
-			intent.putExtra("projectname", projectName.getText().toString());
-			intent.putExtra("openedstatus", openedStatus.isChecked());
-			intent.putExtra("startweek", startweek.getText().toString());
-			intent.putExtra("deadline", deadline.getText().toString());
-			intent.putExtra("nextrelease", nextrelease.getText().toString());
-			intent.putExtra("statusname", status.getSelectedItem().toString());
-			intent.setData(uri.build());
-
-			requestid = new Date().getTime();
-			intent.putExtra("requestid", requestid);
-
-			startService(intent);
-		}
-	}*/
-
-	/** this method is called when a messagebox needs to be appered */
+	/**
+	 * is called when a message box with Retry and Cancel button needs to be appeared
+	 * @param message is the message of the message box
+	 * @param title is the message box's title
+	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -262,28 +208,10 @@ public class NewProjectActivity extends Activity {
 		alertDialog.show();
 	}
 
-	/*private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Log.i(tag, "BroadcastReceiver");
-			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
-				loading.dismiss();
-				if (intent.getBooleanExtra("Successful", false)) {
-					//finish();
-					Intent myIntent = new Intent(getApplicationContext(),
-							StripeActivity.class);
-					Bundle bundle = new Bundle();
-					bundle.putString("projectid", ids[position]);
-					myIntent.putExtras(bundle);
-					startActivity(myIntent);
-				} else {
-					messageBoxShow(Constants.getErrorMessage(intent
-							.getIntExtra("error", 0)), "Error");
-				}
-			}
-		}
-	};*/
 	
+	/**
+	 * 
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -292,7 +220,7 @@ public class NewProjectActivity extends Activity {
 				loading.dismiss();
 
 				if (intent.getBooleanExtra("Successful", false)) {
-					// finish();
+		
 					int[] results = intent.getIntArrayExtra("results");
 					
 					CheckBox openedStatus = (CheckBox) findViewById(R.id.openedStatus);

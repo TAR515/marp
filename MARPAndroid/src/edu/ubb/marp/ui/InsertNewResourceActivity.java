@@ -22,12 +22,20 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
-
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ *
+ */
 public class InsertNewResourceActivity extends Activity {
 	private static final String tag = "InsertNewResourceActivity";
 	private ProgressDialog loading;
 	private long requestid;
 
+	
+	/**
+	 *  Called when the activity is first created.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,20 +50,27 @@ public class InsertNewResourceActivity extends Activity {
 			}
 		});
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
 
 		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
+	/**
+	 * 
+	 */
 
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
-
+	/**
+	 * 
+	 */
 	private void sendRequest() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
@@ -86,7 +101,9 @@ public class InsertNewResourceActivity extends Activity {
 		}
 	}
 
-	/** this method is called when a messagebox needs to be appered */
+	/** 
+	 * this method is called when a messagebox with 2 buttons needs to be appered 
+	 * */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -104,7 +121,9 @@ public class InsertNewResourceActivity extends Activity {
 		});
 		alertDialog.show();
 	}
-
+	/**
+	 * 
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {

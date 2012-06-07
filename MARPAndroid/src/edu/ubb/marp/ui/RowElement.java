@@ -41,7 +41,7 @@ public class RowElement extends View {
 	TextView needed;
 	/* button up can access the user to edit the ratio */
 	Button buttonUp;
-	/* button down access the user to other funcionalities
+	/* button down access the user to other functionalities
 	 * about applying the selected ratio*/
 	Button buttonDown;
 	/* ratioButtonUp add 10 % to the needed ratio*/
@@ -116,8 +116,13 @@ public class RowElement extends View {
 	/* number of elements*/
 	int columns = 0;
 	
-	/** The constructor set the initial state of the views*/
-	
+	/**
+	 * The constructor set the initial state of the views
+	 * @param context
+	 * 	is the context of the view
+	 * @param display
+	 * 	is the display of the screen
+	 */
 	
 	public RowElement(Context context, Display display) {
 		super(context);
@@ -163,7 +168,7 @@ public class RowElement extends View {
 		percent.setGravity(Gravity.CENTER);
 		percent.setTextColor(Color.BLACK);
 
-		ratioText.setText("Ratio: 60 %");
+		ratioText.setText("Total: 60 %");
 		ratioText.setWidth(width);
 		ratioText.setTextColor(Color.BLACK);
 		ratioText.setHeight(height);
@@ -344,39 +349,64 @@ public class RowElement extends View {
 		st.nextToken();
 		original = Integer.parseInt(st.nextToken());
 	}
-
+	/**
+	 * Load the array list of the elements
+	 * @param array
+	 * 	is the array of the elements
+	 * @param column
+	 * 	is the number of the elements
+	 * @param index
+	 * 	is the index of the current element from the array
+	 */
 	public void setElements(RowElement array[],int column, int index){
 		myIndex = index;
 		columns = column;
 		elements = array;
 	}
+	/**
+	 * set the modify attribute
+	 * @param modify
+	 * 	
+	 */
 	public void setModify(boolean modify){
 		this.modify = modify;
 	}
+	/**
+	 * called to change the appropriate elements visibility to invisible
+	 */
 	private void setAllHide(){
 		buttonDownClicked =false;
 		buttonUpClicked = false;
 		hideAcceptItems();
 		hideRatioItems();
 	}
+	/**
+	 * called to hide the Upside items
+	 */
 	private void hideRatioItems() {
 
 		row.setVisibility(row.INVISIBLE);
 		buttonUp.setBackgroundResource(R.drawable.moreoptions48);
 	}
-
+	/**
+	 * called to hide the bottom items 
+	 */
 	private void hideAcceptItems() {
 		row7.setVisibility(group.INVISIBLE);
 		row8.setVisibility(applyToThis.INVISIBLE);
 		row9.setVisibility(applyToAll.INVISIBLE);
 		buttonDown.setBackgroundResource(R.drawable.accept48);
 	}
-
+	/**
+	 * called to set visibility on visible to the upside items
+	 */
 	private void showRatioItems() {
 		row.setVisibility(row.VISIBLE);
 		buttonUp.setBackgroundResource(R.drawable.whitetableup48);
 	}
-
+	/**
+	 * called to set visibility on visible to the bottom items
+	 */
 	private void showAcceptItems() {
 		row7.setVisibility(group.VISIBLE);
 		row8.setVisibility(applyToThis.VISIBLE);
@@ -384,7 +414,9 @@ public class RowElement extends View {
 		buttonDown.setBackgroundResource(R.drawable.whitetabledown48);
 
 	}
-
+	/**
+	 * called to set the background white
+	 */
 	private void setWhite() {
 		needed.setBackgroundResource(R.drawable.whitemiddle48);
 		ratioText.setBackgroundResource(R.drawable.whitetableup48);
@@ -393,7 +425,9 @@ public class RowElement extends View {
 		isGreen =false;
 		isYellow = false;
 	}
-
+	/**
+	 * called to set the background red
+	 */
 	public void setRed() {
 		needed.setBackgroundResource(R.drawable.redmiddle48);
 		ratioText.setBackgroundResource(R.drawable.redtableup48);
@@ -402,8 +436,10 @@ public class RowElement extends View {
 		isGreen =false;
 		isYellow = false;
 	}
-
-	public void setGreen() {
+	/**
+	 * called to set the background green
+	 */
+	public void setGreen() {	
 		needed.setBackgroundResource(R.drawable.greenmiddle48);
 		ratioText.setBackgroundResource(R.drawable.greentableup48);
 		dateText.setBackgroundResource(R.drawable.greentabledown48);
@@ -411,7 +447,9 @@ public class RowElement extends View {
 		isGreen =true;
 		isYellow = false;
 	}
-
+	/**
+	 * called to set the background yellow
+	 */
 	public void setYellow() {
 		needed.setBackgroundResource(R.drawable.yellowmiddle48);
 		ratioText.setBackgroundResource(R.drawable.yellowtableup48);
@@ -420,11 +458,16 @@ public class RowElement extends View {
 		isGreen =false;
 		isYellow = true;
 	}
-
+	/**
+	 * 
+	 * @return the view
+	 */
 	public TableLayout returnView() {
 		return a;
 	}
-
+	/**
+	 *  called to increase the ratio by 10% 
+	 */
 	private void countRatio() {
 		StringTokenizer st = new StringTokenizer(percent.getText().toString());
 		Integer number = Integer.parseInt(st.nextToken());
@@ -436,7 +479,7 @@ public class RowElement extends View {
 			allRatio = allRatio + 10;
 			percent.setText(number + " %");
 			needed.setText("You want: "+ number + " %");
-			ratioText.setText("Ratio: " + allRatio + " %");
+			ratioText.setText("Total: " + allRatio + " %");
 			if (allRatio <= 100 && allRatio >= 0) {
 				setGreen();
 			} else {
@@ -444,7 +487,9 @@ public class RowElement extends View {
 			}
 		}
 	}
-	/**/
+	/**
+	 * call to decrease the ratio by 10%
+	 */
 	private void deCountRatio() {
 		StringTokenizer st = new StringTokenizer(percent.getText().toString());
 		Integer number = Integer.parseInt(st.nextToken());
@@ -456,7 +501,7 @@ public class RowElement extends View {
 			allRatio = allRatio - 10;
 			percent.setText(number + " %");
 			needed.setText("You want: "+number + " %");
-			ratioText.setText("Ratio: " + allRatio + " %");
+			ratioText.setText("Total: " + allRatio + " %");
 			if (allRatio == original){
 				setWhite();
 			}else{
@@ -468,7 +513,9 @@ public class RowElement extends View {
 			}
 		}
 	}
-	
+	/**
+	 * called when the user click on the Change Ratio button to show or hide the ratio items
+	 */
 	public void buttonUpShowHide(){
 		if (buttonUpClicked) {
 			hideRatioItems();
@@ -483,7 +530,9 @@ public class RowElement extends View {
 			buttonUpClicked = true;
 		}
 	}
-	
+	/**
+	 * Called when the user click on the More Option Button to show or hide the Radio buttons
+	 */
 	public void buttonDownShowHide(){
 		
 		if (buttonDownClicked) {
@@ -501,26 +550,33 @@ public class RowElement extends View {
 		}
 	}
 	/**
-	 * uncheck all radiobuttons, and checkboxes*/
+	 * Clear all radio button check
+	 * */
 	private void clearOptions(){
-		/*accept.setChecked(false);
-		dontAccept.setChecked(false);
-		sendRequest.setChecked(false);*/
 		group.clearCheck();
 	}
+	/**
+	 * called when the user accepted the available ratio, and set the You want Ratio
+	 */
 	public void accept(){
 		setGreen();
 		int available = 100 - original;
-		ratioText.setText("Ratio: 100 %");
+		ratioText.setText("Total: 100 %");
 		needed.setText("You want: " + available +" %");
 		percent.setText(available + " %");
 	}
+	/**
+	 *  called when the element need to be in the initial state
+	 */
 	public void setInitialState(){
 		setWhite();
-		ratioText.setText("Ratio: " + original + " %");
+		ratioText.setText("Total: " + original + " %");
 		needed.setText("You want: "+originalNeeded+" %");
 		percent.setText(originalNeeded +" %");
 	}
+	/**
+	 * is called when the user pressed The apply To All button and set the current row item
+	 */
 	public void applyToThisClick(){
 		int chackedItem = group.getCheckedRadioButtonId();
 		if(chackedItem == 1){
@@ -536,25 +592,50 @@ public class RowElement extends View {
 		}
 		buttonDownShowHide();
 	}
+	/**
+	 * 
+	 * @return which radio button is checked
+	 */
 	public int getGroupCheckedRadioButtonId(){
 		return group.getCheckedRadioButtonId();
 	}
+	/**
+	 * 
+	 * @return  the apply to all button
+	 */
 	public Button getApplyToAllButton(){
 		return applyToAll;
 	}
+	/**
+	 * 
+	 * @return the radio group, with the radio buttons
+	 */
 	public RadioGroup getRadioGroup(){
 		return group;
 	}
+	/**
+	 * set the date and ratio 
+	 * @param date the date of the week
+	 * @param ratio the total ratio of the user on that week
+	 */
 	public void setText(String date, String ratio){
-		ratioText.setText("Ratio: " + ratio + " %");
+		ratioText.setText("Total: " + ratio + " %");
 		dateText.setText("Date: "+date);
 		original = Integer.parseInt(ratio);
 	}
+	/**
+	 * 
+	 * @return the needed ratio
+	 */
 	public int getCurrentNeededRatio(){
 		StringTokenizer st = new StringTokenizer(percent.getText().toString());
 		return(Integer.parseInt(st.nextToken()));
 	}
 	
+	/**
+	 * apply the selected ratio to all other row elements from the array
+	 * @param ratio is the users usage ratio number of a week
+	 */
 	public void applyMyRatioToAll(int ratio){
 		setInitialState();
 		StringTokenizer st = new StringTokenizer(percent.getText().toString());
@@ -566,7 +647,7 @@ public class RowElement extends View {
 		number = number+ratio;
 		if(number<=100){
 			percent.setText(number + " %");
-			ratioText.setText("Ratio: " + (number+ratioT + " %") );
+			ratioText.setText("Total: " + (number+ratioT + " %") );
 			needed.setText("You want: " + number +" %");
 			if((ratioT+number)>100){
 				setRed();
@@ -576,6 +657,10 @@ public class RowElement extends View {
 		}
 		
 	}
+	/**
+	 * apply the selected ratio to all other row elements from the array
+	 * @param ratiois the users usage ratio number of a week
+	 */
 	public void applyMyRatioToAll2(int ratio){
 		setInitialState();
 		StringTokenizer st = new StringTokenizer(percent.getText().toString());
@@ -589,9 +674,9 @@ public class RowElement extends View {
 		number = ratio;
 		if(number<=100){
 			percent.setText(number + " %");
-			ratioText.setText("Ratio: " + ratioT + " %" );
+			ratioText.setText("Total: " + ratioT + " %" );
 			needed.setText("You want: " + number +" %");
-			if((ratioT+number)>100){
+			if((ratioT)>100){
 				setRed();
 			}else{
 				setGreen();
@@ -599,56 +684,119 @@ public class RowElement extends View {
 		}
 		
 	}
-	
+	/**
+	 * 
+	 * @return true if the ratio button is clicked
+	 */
 	public boolean ratioButtonIsClicked(){
 		return buttonUpClicked;
 	}
+	/**
+	 * 
+	 * @return true if the more options button is clicked
+	 */
 	public boolean optionButtonIsClicked(){
 		return buttonDownClicked;
 	}
+	/**
+	 * 
+	 * @return the date of the element
+	 */
 	public String getDate(){
 		StringTokenizer st = new StringTokenizer(dateText.getText().toString());
 		st.nextToken();
 		return st.nextToken();
 	}
+	/**
+	 * 	
+	 * @return the total ratio  
+	 */
 	public String getratio(){
 		StringTokenizer st = new StringTokenizer(ratioText.getText().toString());
 		st.nextToken();
 		return st.nextToken();
 	}
+	/**
+	 * 
+	 * @return true if the background is red
+	 */
 	public boolean isRed(){
 		return isRed;
 	}
+	/**
+	 * 
+	 * @return true if the background is green
+	 */
 	public boolean isGreen(){
 		return isGreen;
 	}
+	/**
+	 * 
+	 * @return true if the background is yellow
+	 */
 	public boolean isYellow(){
 		return isYellow;
 	}
+	/**
+	 * 
+	 * @return the text of the selected percent
+	 */
 	public String getPercentText(){
 		return percent.getText().toString();
 	}
+	/**
+	 * set the percent
+	 * @param s is the selected percent
+	 */
 	public void setPercentText(String s){
 		percent.setText(s);
 	}
+	/**
+	 * 
+	 * @return the total ratio
+	 */
 	public String getRatioText(){
 		return ratioText.getText().toString();
 	}
+	/**
+	 * set the ratio text
+	 * @param s is the ratio text
+	 */
 	public void setRatioText(String s){
 		ratioText.setText(s);
 	}
+	/**
+	 * 
+	 * @return the needed ratio
+	 */
 	public String getNeededText(){
 		return needed.getText().toString();
 	}
+	/**
+	 * set the needed ratio
+	 * @param s is the ratio
+	 */
 	public void setNeededText(String s){
 		needed.setText(s);
 	}
+	/**
+	 * 
+	 * @return the date
+	 */
 	public String getDateText(){
 		return dateText.getText().toString();
 	}
+	/**
+	 * set the element's date
+	 * @param s is the date
+	 */
 	public void setDateText(String s){
 		dateText.setText(s);
 	}
+	/**
+	 * set the original needed ratio
+	 * @param number is the ratio
+	 */
 	public void setOriginalNeeded(int number){
 		this.originalNeeded = number;
 	}

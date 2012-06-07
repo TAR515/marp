@@ -41,7 +41,11 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TableRow;
-
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ *
+ */
 public class StripeActivity extends Activity {
 	private static final String tag = "StripeActivity";
 
@@ -62,12 +66,7 @@ public class StripeActivity extends Activity {
 	Button applyToAll;
 	int columns;
 	Display display;
-	/*
-	 * String loadstr[][] = { { "2001.03.10", "0" }, { "2001.03.10", "10" }, {
-	 * "2001.03.10", "20" }, { "2001.03.10", "30" }, { "2001.03.10", "40" }, {
-	 * "2001.03.10", "50" }, { "2001.03.10", "60" }, { "2001.03.10", "70" }, {
-	 * "2001.03.10", "80" }, { "2001.03.10", "90" } };
-	 */
+	
 	String loadstr[][];
 	boolean klicked = false;
 
@@ -127,7 +126,7 @@ public class StripeActivity extends Activity {
 
 				setColumns(length, loadstr);
 
-				// this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				
 				LinearLayout l = new LinearLayout(context);
 				for (int i = 0; i < columns; i++) {
 					l.addView(elements[i].returnView());
@@ -157,69 +156,31 @@ public class StripeActivity extends Activity {
 		} else
 			RestoreInstanceState(savedInstanceState);
 
-		/*
-		 * display = getWindowManager().getDefaultDisplay(); setColumns(10,
-		 * loadstr);
-		 * 
-		 * this.requestWindowFeature(Window.FEATURE_NO_TITLE); LinearLayout l =
-		 * new LinearLayout(this); for (int i = 0; i < columns; i++) {
-		 * l.addView(elements[i].returnView()); } for (int i = 0; i < columns;
-		 * i++) { applyToAll = elements[i].getApplyToAllButton(); final int from
-		 * = i; final int id = elements[i].getGroupCheckedRadioButtonId(); final
-		 * RadioGroup rad = elements[i].getRadioGroup();
-		 * elements[i].setElements(elements, columns, i);
-		 * applyToAll.setOnClickListener(new OnClickListener() { public void
-		 * onClick(View v) { Log.i("melyiket piszkalom : ", "" + from);
-		 * Log.i("ID : ", "" + id); setElements(from, rad); } }); } ScrollView
-		 * scroll = new ScrollView(this); scroll.setLayoutParams(new
-		 * TableRow.LayoutParams( TableRow.LayoutParams.MATCH_PARENT,
-		 * TableRow.LayoutParams.MATCH_PARENT));
-		 * 
-		 * HorizontalScrollView horizontal = new HorizontalScrollView(this);
-		 * 
-		 * scroll.addView(l); horizontal.addView(scroll);
-		 * setContentView(horizontal);
-		 */
+		
 	}
 
-	/*
-	 * private void sendRequest() { loading = ProgressDialog.show(this,
-	 * "Loading", "Please wait...");
-	 * 
-	 * Uri.Builder uriSending = new Uri.Builder();
-	 * uriSending.authority(DatabaseContract.PROVIDER_NAME);
-	 * uriSending.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
-	 * uriSending.scheme("content");
-	 * 
-	 * Intent intent = new Intent(this, MyService.class);
-	 * intent.putExtra("ACTION", "QUERYWITHOUTSTORING");
-	 * intent.setData(uriSending.build()); intent.putExtra("startweek",
-	 * startweek); intent.putExtra("endweek", endweek);
-	 * intent.putExtra("action", action.toString());
-	 * intent.putExtra("projectname", projectname);
-	 * 
-	 * switch (action) { case newproject: intent.putExtra("action",
-	 * "newproject"); break;
-	 * 
-	 * case update: intent.putExtra("resourceid", targetresourceid); break; }
-	 * 
-	 * requestid = new Date().getTime(); intent.putExtra("requestid",
-	 * requestid); startService(intent); }
+	/**
+	 * Called when the Activity is reloaded
 	 */
-
 	@Override
 	protected void onStart() {
 		super.onStart();
 
 		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
-
+	/**
+	 * Called before the activity goes on the background
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
-
+	/**
+	 * initialize the array of row elements
+	 * @param n the number of columns
+	 * @param s the elements
+	 */
 	private void setColumns(int n, String[][] s) {
 		columns = n;
 		elements = new RowElement[columns];
@@ -235,7 +196,11 @@ public class StripeActivity extends Activity {
 			}
 		}
 	}
-
+	/**
+	 * set the elements to a state 
+	 * @param from the index of the beginning
+	 * @param group the radiogroup of an element to know which radio button is selected
+	 */
 	private void setElements(int from, RadioGroup group) {
 		int id = group.getCheckedRadioButtonId();
 
@@ -269,27 +234,31 @@ public class StripeActivity extends Activity {
 		}
 		elements[from].buttonDownShowHide();
 	}
-
+	/**
+	 * cleare all the elements
+	 */
 	private void clearAll() {
 		for (int i = 0; i < columns; i++) {
 			elements[i].setInitialState();
 		}
 	}
-
+	/**
+	 *  create the menu option
+	 */
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.newprojectmenu, menu);
 		return true;
 	}
-
+	/**
+	 * called when an item is selected from the menu
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.send:
-			/*
-			 * implement the menu click method
-			 */
+		
 			boolean isOneRed = false;
 			for (int i = 0; i < columns; i++) {
 				if (elements[i].isRed()) {
@@ -413,11 +382,14 @@ public class StripeActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
+	/**
+	 * restore the state of the activity after rotating the screen
+	 * @param savedInstanceState
+	 */
 	protected void RestoreInstanceState(Bundle savedInstanceState) {
 		// super.onRestoreInstanceState(savedInstanceState);
 		// Read values from the "savedInstanceState"-object and put them in your
-		// textview
+		
 		Log.i(tag, "restore");
 
 		requestid = savedInstanceState.getLong("requestid");
@@ -455,7 +427,9 @@ public class StripeActivity extends Activity {
 			}
 		}
 	}
-
+	/**
+	 * save the activity state before rotating the screen
+	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		// Save the values you need from your textview into "outState"-object
@@ -483,7 +457,11 @@ public class StripeActivity extends Activity {
 		super.onSaveInstanceState(outState);
 
 	}
-
+	/**
+	 * is called when the items are sent
+	 * @param message is the message of the message box
+	 * @param title is the title of the message box
+	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -497,7 +475,9 @@ public class StripeActivity extends Activity {
 		});
 		alertDialog.show();
 	}
-
+	/**
+	 * 
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -506,12 +486,7 @@ public class StripeActivity extends Activity {
 				loading.dismiss();
 
 				if (intent.getBooleanExtra("Successful", false)) {
-					/*
-					 * Intent myIntent = new Intent(getApplicationContext(),
-					 * Login.class);
-					 * myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					 * startActivity(myIntent);
-					 */
+					
 					finish();
 				} else {
 					messageBoxShow(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");

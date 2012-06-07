@@ -31,16 +31,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ *
+ */
 public class RequestsActivity extends ListActivity{
 	private static final String tag = "RequestsActivity";
 
 	private ProgressDialog loading;
 
-	// private Intent sentIntent;
+	
 	private long requestid;
 	private int[] ids;
-
+	/**
+	 * Called when the activity is first created
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,7 +56,9 @@ public class RequestsActivity extends ListActivity{
 		Log.i(tag, "setcontent utan");
 		sendRequest();
 	}
-
+	/**
+	 * 
+	 */
 	private void sendRequest() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
@@ -62,12 +70,14 @@ public class RequestsActivity extends ListActivity{
 		Intent intent = new Intent(this, MyService.class);
 		intent.putExtra("ACTION", "QUERY");
 		intent.setData(uri.build());
-		// sentIntent=intent;
+		
 		requestid = new Date().getTime();
 		intent.putExtra("requestid", requestid);
 		startService(intent);
 	}
-
+	/**
+	 * Called when the activity is reloaded
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -75,55 +85,22 @@ public class RequestsActivity extends ListActivity{
 		registerReceiver(broadcastReceiver, new IntentFilter(
 				Constants.BROADCAST_ACTION));
 	}
-
+	/**
+	 * Called before the activity goes on background
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
 
-	/*@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.project, menu);
-		return true;
-	}
+	
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		Intent myIntent;
-		switch (item.getItemId()) {
-		case R.id.myaccountid:
-			myIntent = new Intent(this, MyAccountActivity.class);
-			startActivity(myIntent);
-			return true;
-		case R.id.logout:
-			SharedPreferences pref = PreferenceManager
-					.getDefaultSharedPreferences(getApplicationContext());
-			Editor editor = pref.edit();
-			editor.putBoolean("remember", false);
-
-			editor.apply();
-
-			myIntent = new Intent(getApplicationContext(), Login.class);
-			myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(myIntent);
-			return true;
-		case R.id.projectid:
-			myIntent = new Intent(getApplicationContext(), NewProjectActivity.class);
-			startActivity(myIntent);
-			return true;
-		case R.id.requestsid:
-			myIntent = new Intent(getApplicationContext(), RequestsActivity.class);
-			startActivity(myIntent);
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}*/
-
-	/** this method is called when a messagebox needs to be appered */
+	/**
+	 * is called when there is no connection
+	 * @param message is the message of the message box
+	 * @param title is the title of the message box
+	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -141,8 +118,10 @@ public class RequestsActivity extends ListActivity{
 		});
 		alertDialog.show();
 	}
-	
-	private void queryData(){
+	/**
+	 * 
+	 */
+	private void queryData(){	
 		Uri.Builder uri = new Uri.Builder();
 		uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
@@ -173,19 +152,20 @@ public class RequestsActivity extends ListActivity{
 
 		String[] from = { TABLE_REQUESTS.SENDERUSERNAME,
 				TABLE_REQUESTS.RESOURCERESOURCENAME };
-		// int[] to = { android.R.id.text1, android.R.id.text2 };
+		
 		int[] to = { R.id.text1, R.id.text2 };
 		SimpleCursorAdapter projects = new SimpleCursorAdapter(
 				getApplicationContext(), R.layout.projects_row, c,
 				from, to);
 		setListAdapter(projects);
 	}
-
+	/**
+	 * 
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.i(tag, "megjott a broadcast");
-			// if(sentIntent.equals(intent)){
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				if (intent.getBooleanExtra("Successful", false)) {
 					loading.dismiss();
@@ -202,7 +182,10 @@ public class RequestsActivity extends ListActivity{
 			}
 		}
 	};
-
+	
+	/**
+	 * list view click listener , is called when there is a click on the list view
+	 */
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		Intent myIntent = new Intent(getApplicationContext(), RequestActivity.class);
 		Bundle bundle = new Bundle();

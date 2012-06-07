@@ -21,12 +21,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ *
+ */
 public class InsertNewUserActivity extends Activity {
 	private static final String tag = "InsertNewUserActivity";
 	private ProgressDialog loading;
 	private long requestid;
 
+	/**
+	 * Called when the activity is first created.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,20 +48,26 @@ public class InsertNewUserActivity extends Activity {
 			}
 		});
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
 
 		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
-
+	/**
+	 * 
+	 */
 	private void sendRequest() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
@@ -92,7 +105,11 @@ public class InsertNewUserActivity extends Activity {
 		}
 	}
 
-	/** this method is called when a messagebox needs to be appered */
+	/**
+	 * is called when a message box needs to be appeared with 2 buttons
+	 * @param message is the message is the message box
+	 * @param title is the title of the message box
+	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -111,6 +128,9 @@ public class InsertNewUserActivity extends Activity {
 		alertDialog.show();
 	}
 
+	/**
+	 * 
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {

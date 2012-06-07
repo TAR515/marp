@@ -39,13 +39,17 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ * 
+ */
 public class ResourcesActivity extends Activity {
-	/** Called when the activity is first created. */
+
 	private final static String tag = "ResourcesActivity";
 
 	private ProgressDialog loading;
 
-	// private Intent sentIntent;
 	private long requestid;
 	private String projectid;
 	private String projectName;
@@ -58,52 +62,18 @@ public class ResourcesActivity extends Activity {
 	private boolean[] isUser;
 	protected int column;
 	protected int row;
-	/*
-	 * String[][] s=
-	 * {{"Resource","Year","Start","End","% of FTE","1","2","3","4"
-	 * ,"5","6","7","8"
-	 * ,"9","10"},{"Robi","2012","1","3","0.3","1","2","3","4","5"
-	 * ,"6","7","8","9","10"},
-	 * {"Adorjan","2012","3","6","0.3","1","2","3","4","5"
-	 * ,"6","7","8","9","10"},
-	 * {"Alpar","2012","2","3","0.3","1","2","3","4","5","6"
-	 * ,"7","8","9","10"},{"Sanyi"
-	 * ,"2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,{"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}
-	 * ,
-	 * {"Sanyi","2012","6","9","0.3","1","2","3","4","5","6","7","8","9","10"}};
-	 */
 
 	protected String[][] data;
 
-	/*
-	 * protected void setData(String[][] a, int n, int m) { data = a; row = n;
-	 * column = m; }
-	 */
-
+	/**
+	 * Called when the activity is first created.
+	 * */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// setData(s,20,15);
-		// projectid=savedInstanceState.getString("projectid");
+
 		Log.i(tag, "onCreate");
-		
+
 		leaved = false;
 
 		if ((savedInstanceState == null) || (savedInstanceState.isEmpty())) {
@@ -116,6 +86,9 @@ public class ResourcesActivity extends Activity {
 			RestoreInstanceState(savedInstanceState);
 	}
 
+	/**
+	 * 
+	 */
 	private void sendRequest() {
 
 		numberOfBroadcasts = 0;
@@ -125,7 +98,6 @@ public class ResourcesActivity extends Activity {
 		Uri.Builder uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
 		uri.path("2");
-		// uri.appendPath("Projects");
 
 		uri.appendPath(projectid);
 		uri.scheme("content");
@@ -133,31 +105,41 @@ public class ResourcesActivity extends Activity {
 		Intent intent = new Intent(this, MyService.class);
 		intent.putExtra("ACTION", "QUERY");
 		intent.setData(uri.build());
-		// sentIntent=intent;
+
 		requestid = new Date().getTime();
 		intent.putExtra("requestid", requestid);
 		startService(intent);
 
 	}
 
+	/**
+	 * called when the activity is reloaded
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
-		
-		if(leaved){
+
+		if (leaved) {
 			leaved = false;
 			sendRequest();
 		}
 
-		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
+		registerReceiver(broadcastReceiver, new IntentFilter(
+				Constants.BROADCAST_ACTION));
 	}
 
+	/**
+	 * Called before the activity goes on background
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
 
+	/**
+	 * Called when the user click on the menu button
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (isLeader) {
@@ -167,16 +149,19 @@ public class ResourcesActivity extends Activity {
 		return true;
 	}
 
+	/**
+	 * Called when the user select one of the menu items
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
 		Intent myIntent;
 		Bundle bundle;
 		switch (item.getItemId()) {
 		case R.id.newid:
 			leaved = true;
-			
-			myIntent = new Intent(getApplicationContext(), AddNewResourceToProjectActivity.class);
+
+			myIntent = new Intent(getApplicationContext(),
+					AddNewResourceToProjectActivity.class);
 			bundle = new Bundle();
 			bundle.putInt("projectid", Integer.parseInt(projectid));
 			bundle.putString("projectname", projectName);
@@ -185,7 +170,8 @@ public class ResourcesActivity extends Activity {
 			startActivity(myIntent);
 			return true;
 		case R.id.modifyProject:
-			myIntent = new Intent(getApplicationContext(), ModifyProjectActivity.class);
+			myIntent = new Intent(getApplicationContext(),
+					ModifyProjectActivity.class);
 			bundle = new Bundle();
 			bundle.putInt("projectid", Integer.parseInt(projectid));
 			bundle.putString("projectname", projectName);
@@ -201,9 +187,13 @@ public class ResourcesActivity extends Activity {
 		}
 	}
 
+	/**
+	 * Called when the user rotate the screen and save the current state of the
+	 * activity
+	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		// Save the values you need from your textview into "outState"-object
+		
 		Log.i(tag, "onsave");
 		for (int i = 0; i < row; i++)
 			outState.putStringArray(Integer.toString(i), data[i]);
@@ -219,10 +209,15 @@ public class ResourcesActivity extends Activity {
 
 	}
 
+	/**
+	 * Called when the user rotate the screen and reload the saved state of the
+	 * activity
+	 * 
+	 * @param savedInstanceState
+	 *            where the data will be saved
+	 */
 	protected void RestoreInstanceState(Bundle savedInstanceState) {
-		// super.onRestoreInstanceState(savedInstanceState);
-		// Read values from the "savedInstanceState"-object and put them in your
-		// textview
+		
 		Log.i(tag, "restore");
 
 		row = savedInstanceState.getInt("row");
@@ -240,6 +235,14 @@ public class ResourcesActivity extends Activity {
 		refresh();
 	}
 
+	/**
+	 * Called when there is no internet connection
+	 * 
+	 * @param message
+	 *            is the message of the message box
+	 * @param title
+	 *            is the title of the message box
+	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -258,38 +261,55 @@ public class ResourcesActivity extends Activity {
 		alertDialog.show();
 	}
 
+	/**
+	 * 
+	 */
 	public void refresh() {
 		LinearLayout linear = new LinearLayout(this);
 		linear.setOrientation(LinearLayout.VERTICAL);
-		linear.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+		linear.setLayoutParams(new TableRow.LayoutParams(
+				TableRow.LayoutParams.MATCH_PARENT,
+				TableRow.LayoutParams.MATCH_PARENT));
 
 		ScrollView vscroll = new ScrollView(this);
-		vscroll.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+		vscroll.setLayoutParams(new TableRow.LayoutParams(
+				TableRow.LayoutParams.MATCH_PARENT,
+				TableRow.LayoutParams.WRAP_CONTENT));
 
 		HorizontalScrollView hscroll = new HorizontalScrollView(this);
-		hscroll.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+		hscroll.setLayoutParams(new TableRow.LayoutParams(
+				TableRow.LayoutParams.MATCH_PARENT,
+				TableRow.LayoutParams.MATCH_PARENT));
 
 		TableLayout table = new TableLayout(this);
-		table.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
+		table.setLayoutParams(new TableLayout.LayoutParams(
+				TableLayout.LayoutParams.MATCH_PARENT,
+				TableLayout.LayoutParams.MATCH_PARENT));
 		table.setStretchAllColumns(true);
 
 		for (int i = 0; i < row; i++) {
 			TableRow row = new TableRow(this);
 			if (i == 0) {
-				row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+				row.setLayoutParams(new TableRow.LayoutParams(
+						TableRow.LayoutParams.MATCH_PARENT,
+						TableRow.LayoutParams.WRAP_CONTENT));
 			} else {
-				row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
+				row.setLayoutParams(new TableRow.LayoutParams(
+						TableRow.LayoutParams.WRAP_CONTENT,
+						TableRow.LayoutParams.WRAP_CONTENT));
 			}
 			for (int j = 0; j < column; j++) {
 				Color color = new Color();
 				TextView column = new TextView(this);
 
-				TableRow.LayoutParams params = new TableRow.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				TableRow.LayoutParams params = new TableRow.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 				params.setMargins(1, 1, 1, 1);
 
 				column.setLayoutParams(params);
 
-				column.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+				column.setGravity(Gravity.CENTER_VERTICAL
+						| Gravity.CENTER_HORIZONTAL);
 				Display display = getWindowManager().getDefaultDisplay();
 				int width = display.getWidth() / 4; // deprecated
 				int height = display.getHeight() / 10;
@@ -302,7 +322,6 @@ public class ResourcesActivity extends Activity {
 				}
 				column.setText(data[i][j]);
 
-				// column.setTextSize(15);
 				if ((i == 0)) {
 					column.setBackgroundColor(color.DKGRAY);
 					column.setTextColor(color.WHITE);
@@ -316,9 +335,11 @@ public class ResourcesActivity extends Activity {
 				column.setOnClickListener(new View.OnClickListener() {
 
 					public void onClick(View v) {
-						// messageBoxShow(text.getText().toString(), "click");
+
 						if (isUser[currentRow]) {
-							Intent myIntent = new Intent(getApplicationContext(), ResourceActivity.class);
+							Intent myIntent = new Intent(
+									getApplicationContext(),
+									ResourceActivity.class);
 							Bundle bundle = new Bundle();
 							bundle.putString("username", data[currentRow][0]);
 							myIntent.putExtras(bundle);
@@ -331,14 +352,17 @@ public class ResourcesActivity extends Activity {
 					column.setOnLongClickListener(new View.OnLongClickListener() {
 
 						public boolean onLongClick(View v) {
-							Intent myIntent = new Intent(getApplicationContext(), ModifyResourceReservation.class);
+							Intent myIntent = new Intent(
+									getApplicationContext(),
+									ModifyResourceReservation.class);
 							Bundle bundle = new Bundle();
 							bundle.putString("projectname", projectName);
-							bundle.putInt("projectid", Integer.parseInt(projectid));
-							bundle.putInt("resourceid", resourceIDs[currentRow - 1]);
-							bundle.putString("resourcename", data[currentRow][0]);
-							// bundle.putStringArray("bookings",
-							// data[currentRow]);
+							bundle.putInt("projectid",
+									Integer.parseInt(projectid));
+							bundle.putInt("resourceid",
+									resourceIDs[currentRow - 1]);
+							bundle.putString("resourcename",
+									data[currentRow][0]);
 
 							int startPos = 1;
 							int endPos = data[0].length - 1;
@@ -350,14 +374,16 @@ public class ResourcesActivity extends Activity {
 							int[] booking = new int[endPos - startPos + 1];
 							int l = 0;
 							for (int k = startPos; k <= endPos; k++)
-								booking[l++] = Integer.parseInt(data[currentRow][k].split("\\.")[0]);
+								booking[l++] = Integer
+										.parseInt(data[currentRow][k]
+												.split("\\.")[0]);
 
 							bundle.putIntArray("booking", booking);
 							bundle.putInt("minweek", minWeek + startPos - 1);
 							bundle.putInt("maxweek", minWeek + endPos - 1);
 
 							leaved = true;
-							
+
 							myIntent.putExtras(bundle);
 							startActivity(myIntent);
 							return true;
@@ -379,6 +405,9 @@ public class ResourcesActivity extends Activity {
 		setContentView(hscroll);
 	}
 
+	/**
+	 * 
+	 */
 	private void queryData() {
 		Uri.Builder uri = new Uri.Builder();
 		uri = new Uri.Builder();
@@ -387,21 +416,32 @@ public class ResourcesActivity extends Activity {
 		uri.scheme("content");
 
 		ContentResolver cr = getContentResolver();
-		Cursor cBooking = cr.query(uri.build(), null, TABLE_BOOKING.PROJECTID + "=" + projectid, null, TABLE_BOOKING.PROJECTID);
+		Cursor cBooking = cr.query(uri.build(), null, TABLE_BOOKING.PROJECTID
+				+ "=" + projectid, null, TABLE_BOOKING.PROJECTID);
 
-		String projection[] = { "MIN(" + TABLE_BOOKING.WEEK + ") as min", "MAX(" + TABLE_BOOKING.WEEK + ") as max" };
-		Cursor c = cr.query(uri.build(), projection, TABLE_BOOKING.PROJECTID + "=" + projectid, null, null);
+		String projection[] = { "MIN(" + TABLE_BOOKING.WEEK + ") as min",
+				"MAX(" + TABLE_BOOKING.WEEK + ") as max" };
+		Cursor c = cr.query(uri.build(), projection, TABLE_BOOKING.PROJECTID
+				+ "=" + projectid, null, null);
 		c.moveToFirst();
 		minWeek = c.getInt(c.getColumnIndex("min"));
 		int maxWeek = c.getInt(c.getColumnIndex("max"));
 
-		uri.path(DatabaseContract.TABLE_RESOURCES + ", " + DatabaseContract.TABLE_BOOKING);
+		uri.path(DatabaseContract.TABLE_RESOURCES + ", "
+				+ DatabaseContract.TABLE_BOOKING);
 		String projection2[] = {
-				"DISTINCT(" + DatabaseContract.TABLE_RESOURCES + "." + TABLE_RESOURCES.RESOURCEID + ") as " + TABLE_RESOURCES.RESOURCEID,
+				"DISTINCT(" + DatabaseContract.TABLE_RESOURCES + "."
+						+ TABLE_RESOURCES.RESOURCEID + ") as "
+						+ TABLE_RESOURCES.RESOURCEID,
 				TABLE_RESOURCES.RESOURCENAME, TABLE_RESOURCES.USERNAME };
-		Cursor cResources = cr.query(uri.build(), projection2, DatabaseContract.TABLE_RESOURCES + "." + TABLE_RESOURCES.RESOURCEID + "="
-				+ DatabaseContract.TABLE_BOOKING + "." + TABLE_BOOKING.RESOURCEID + " AND " + DatabaseContract.TABLE_BOOKING + "."
-				+ TABLE_BOOKING.PROJECTID + "=" + projectid, null, TABLE_RESOURCES.RESOURCEID);
+		Cursor cResources = cr.query(uri.build(), projection2,
+				DatabaseContract.TABLE_RESOURCES + "."
+						+ TABLE_RESOURCES.RESOURCEID + "="
+						+ DatabaseContract.TABLE_BOOKING + "."
+						+ TABLE_BOOKING.RESOURCEID + " AND "
+						+ DatabaseContract.TABLE_BOOKING + "."
+						+ TABLE_BOOKING.PROJECTID + "=" + projectid, null,
+				TABLE_RESOURCES.RESOURCEID);
 
 		row = cResources.getCount() + 1;
 		column = maxWeek - minWeek + 2;
@@ -419,11 +459,14 @@ public class ResourcesActivity extends Activity {
 		cResources.moveToFirst();
 		isUser = new boolean[row];
 		for (int i = 1; i < row; i++) {
-			resourceIDs[i - 1] = cResources.getInt(cResources.getColumnIndex(TABLE_RESOURCES.RESOURCEID));
+			resourceIDs[i - 1] = cResources.getInt(cResources
+					.getColumnIndex(TABLE_RESOURCES.RESOURCEID));
 
-			data[i][0] = cResources.getString(cResources.getColumnIndex(TABLE_RESOURCES.USERNAME));
+			data[i][0] = cResources.getString(cResources
+					.getColumnIndex(TABLE_RESOURCES.USERNAME));
 			if (data[i][0].isEmpty()) {
-				data[i][0] = cResources.getString(cResources.getColumnIndex(TABLE_RESOURCES.RESOURCENAME));
+				data[i][0] = cResources.getString(cResources
+						.getColumnIndex(TABLE_RESOURCES.RESOURCENAME));
 				isUser[i] = false;
 			} else
 				isUser[i] = true;
@@ -441,19 +484,25 @@ public class ResourcesActivity extends Activity {
 			int i = 0;
 
 			week = cBooking.getInt(cBooking.getColumnIndex(TABLE_BOOKING.WEEK));
-			ratio = cBooking.getFloat(cBooking.getColumnIndex(TABLE_BOOKING.RATIO));
-			resourceID = cBooking.getInt(cBooking.getColumnIndex(TABLE_BOOKING.RESOURCEID));
+			ratio = cBooking.getFloat(cBooking
+					.getColumnIndex(TABLE_BOOKING.RATIO));
+			resourceID = cBooking.getInt(cBooking
+					.getColumnIndex(TABLE_BOOKING.RESOURCEID));
 
 			while (resourceIDs[i] != resourceID)
 				i++;
 			data[i + 1][week - minWeek + 1] = Float.toString(ratio);
 
 			while (cBooking.moveToNext()) {
-				week = cBooking.getInt(cBooking.getColumnIndex(TABLE_BOOKING.WEEK));
-				ratio = cBooking.getFloat(cBooking.getColumnIndex(TABLE_BOOKING.RATIO));
-				resourceID = cBooking.getInt(cBooking.getColumnIndex(TABLE_BOOKING.RESOURCEID));
+				week = cBooking.getInt(cBooking
+						.getColumnIndex(TABLE_BOOKING.WEEK));
+				ratio = cBooking.getFloat(cBooking
+						.getColumnIndex(TABLE_BOOKING.RATIO));
+				resourceID = cBooking.getInt(cBooking
+						.getColumnIndex(TABLE_BOOKING.RESOURCEID));
 
-				while ((i < resourceIDs.length) && (resourceIDs[i] != resourceID))
+				while ((i < resourceIDs.length)
+						&& (resourceIDs[i] != resourceID))
 					i++;
 				if (i < resourceIDs.length)
 					data[i + 1][week - minWeek + 1] = Float.toString(ratio);
@@ -463,10 +512,13 @@ public class ResourcesActivity extends Activity {
 		refresh();
 	}
 
+	/**
+	 * 
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// if(sentIntent.equals(intent)){
+
 			Log.i(tag, "Broadcast received");
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				if (intent.getBooleanExtra("Successful", false)) {
@@ -482,10 +534,12 @@ public class ResourcesActivity extends Activity {
 					}
 				} else {
 					loading.dismiss();
-					if ((numberOfBroadcasts == 0) && (intent.getIntExtra("error", 10000) == 0)) {
+					if ((numberOfBroadcasts == 0)
+							&& (intent.getIntExtra("error", 10000) == 0)) {
 						queryData();
 					} else
-						messageBoxShow(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
+						messageBoxShow(Constants.getErrorMessage(intent
+								.getIntExtra("error", 0)), "Error");
 				}
 			}
 		}

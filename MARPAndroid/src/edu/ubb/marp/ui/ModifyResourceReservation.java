@@ -38,6 +38,11 @@ import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+/**
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ * 
+ */
 public class ModifyResourceReservation extends Activity {
 	private static final String tag = "ModifyResourceReservation";
 	private ProgressDialog loading;
@@ -50,6 +55,9 @@ public class ModifyResourceReservation extends Activity {
 	private int[] booking;
 	private int minWeek, maxWeek;
 
+	/**
+	 * Called when the activity is first created.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,7 +65,8 @@ public class ModifyResourceReservation extends Activity {
 
 		setContentView(R.layout.modifyresourcereservation);
 
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(this);
 
 		Uri.Builder uri = new Uri.Builder();
 		uri = new Uri.Builder();
@@ -69,12 +78,14 @@ public class ModifyResourceReservation extends Activity {
 
 		String projection[] = { TABLE_RESOURCES.RESOURCEID };
 
-		Cursor c = cr.query(uri.build(), projection, TABLE_RESOURCES.USERNAME + " = '" + pref.getString("username", "") + "'", null, null);
+		Cursor c = cr.query(uri.build(), projection, TABLE_RESOURCES.USERNAME
+				+ " = '" + pref.getString("username", "") + "'", null, null);
 
 		c.moveToFirst();
-		
-		TextView toModify = (TextView)findViewById(R.id.tomodify);
-		toModify.setText("Modify: "+getIntent().getExtras().getString("resourcename"));
+
+		TextView toModify = (TextView) findViewById(R.id.tomodify);
+		toModify.setText("Modify: "
+				+ getIntent().getExtras().getString("resourcename"));
 
 		myresourceid = c.getInt(c.getColumnIndex(TABLE_RESOURCES.RESOURCEID));
 
@@ -85,122 +96,77 @@ public class ModifyResourceReservation extends Activity {
 		minWeek = getIntent().getExtras().getInt("minweek");
 		maxWeek = getIntent().getExtras().getInt("maxweek");
 
-		//EditText startweek = (EditText) findViewById(R.id.startweekMod);
-		//EditText endweek = (EditText) findViewById(R.id.endweekMod);
-		
 		DatePicker startDatePicker = (DatePicker) findViewById(R.id.startweekdate);
 		DatePicker endDatePicker = (DatePicker) findViewById(R.id.endweekdate);
-		
-	//	Date startDate = Constants.convertWeekToRealDate2(minWeek);
-	//	Date endDate = Constants.convertWeekToRealDate2(maxWeek);
-		
-		Log.i("Start Date min", ""+ minWeek);
-		Log.i("End Date max", ""+ maxWeek);
-		
-		//Log.i("Start Date", ""+ startDate);		
-		//Log.i("End Date", ""+ endDate);
-		
+
+		Log.i("Start Date min", "" + minWeek);
+		Log.i("End Date max", "" + maxWeek);
+
 		Date startWeekDate = Constants.convertWeekToRealDate(minWeek);
 		Date endWeekDate = Constants.convertWeekToRealDate(maxWeek);
-		
-		//Log.i("Start Date", ""+ startWeekString);		
-		//Log.i("End Date", ""+ endWeekString);
-		
-		//String startWeekElements[] = startWeekString.split("\\.");
-		//String endWeekElements[] = endWeekString.split("\\.");
-		
-		//Log.i("Start Date", ""+ Constants.convertWeekToDate(minWeek));
-		//Log.i("End Date", ""+ Constants.convertWeekToDate(maxWeek));
-		//Log.i("Start Date Year", ""+ Integer.parseInt(startWeekElements[0]));	
-		//Log.i("Start Date Month", ""+ Integer.parseInt(startWeekElements[1]));	
-		//Log.i("Start Date Day", ""+ Integer.parseInt(startWeekElements[2]));	
-		//startDatePicker.init(startDate.getYear(), startDate.getMonth(), startDate.getDay(), null);
 
-		//startDatePicker.init(Integer.parseInt(startWeekElements[0]), Integer.parseInt(startWeekElements[1]), Integer.parseInt(startWeekElements[2]), null);
-		startDatePicker.init(startWeekDate.getYear()+1900, startWeekDate.getMonth(), startWeekDate.getDate(), null);
+		startDatePicker.init(startWeekDate.getYear() + 1900,
+				startWeekDate.getMonth(), startWeekDate.getDate(), null);
 
-		//endDatePicker.init(Integer.parseInt(endWeekElements[0]), Integer.parseInt(endWeekElements[1]),Integer.parseInt(endWeekElements[2]),null);
-		endDatePicker.init(endWeekDate.getYear()+1900, endWeekDate.getMonth(), endWeekDate.getDate(), null);
-
-		//startweek.setText(Integer.toString(minWeek));
-		//endweek.setText(Integer.toString(maxWeek));
+		endDatePicker.init(endWeekDate.getYear() + 1900,
+				endWeekDate.getMonth(), endWeekDate.getDate(), null);
 
 		Button addButton = (Button) findViewById(R.id.next);
 		addButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				// sendRequest();
-				/*EditText startweek = (EditText) findViewById(R.id.startweekMod);
-				EditText endweek = (EditText) findViewById(R.id.endweekMod);
 
-				if ((startweek.getText().toString().isEmpty()) || (endweek.getText().toString().isEmpty()))
-					messageBoxShow("Please fill in all fields", "Error!");
-				else {
-					/*
-					 * Intent myIntent = new Intent(getApplicationContext(),
-					 * StripeActivity.class); Bundle bundle = new Bundle();
-					 * 
-					 * int startWeek =
-					 * Integer.parseInt(startweek.getText().toString()); int
-					 * endWeek = Integer.parseInt(endweek.getText().toString());
-					 * ; if (endWeek - startWeek > 24) endWeek = startWeek + 24;
-					 * 
-					 * bundle.putString("ACTION", "MODRESOURCERESERVATION");
-					 * bundle.putString("projectname", projectName);
-					 * bundle.putInt("projectid", projectID);
-					 * bundle.putInt("targetresourceid", resourceID);
-					 * bundle.putInt("senderresourceid", myresourceid);
-					 * bundle.putString("startweek",
-					 * startweek.getText().toString());
-					 * bundle.putString("endweek", Integer.toString(endWeek));
-					 * 
-					 * myIntent.putExtras(bundle); startActivity(myIntent);
-					 */
-					sendRequest();
-				//}
+				sendRequest();
+
 			}
 		});
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
 
-		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
+		registerReceiver(broadcastReceiver, new IntentFilter(
+				Constants.BROADCAST_ACTION));
 	}
-
+	/**
+	 * 
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
-
+	/**
+	 * 
+	 */
 	private void sendRequest() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
 		Uri.Builder uriSending = new Uri.Builder();
 		uriSending.authority(DatabaseContract.PROVIDER_NAME);
-		uriSending.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
+		uriSending
+				.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
 		uriSending.scheme("content");
-
-	//	EditText startWeekText = (EditText) findViewById(R.id.startweekMod);
-	//	EditText endWeekText = (EditText) findViewById(R.id.endweekMod);
 
 		DatePicker startDatePicker = (DatePicker) findViewById(R.id.startweekdate);
 		DatePicker endDatePicker = (DatePicker) findViewById(R.id.endweekdate);
-	
-		Date startDate = new Date(startDatePicker.getYear()-1900,startDatePicker.getMonth(),startDatePicker.getDayOfMonth());
-		Date endDate = new Date(endDatePicker.getYear()-1900,endDatePicker.getMonth(),endDatePicker.getDayOfMonth());
-		
 
-		Log.i("Start Date", ""+ startDate);
-		Log.i("End Date", ""+ endDate);
-		
+		Date startDate = new Date(startDatePicker.getYear() - 1900,
+				startDatePicker.getMonth(), startDatePicker.getDayOfMonth());
+		Date endDate = new Date(endDatePicker.getYear() - 1900,
+				endDatePicker.getMonth(), endDatePicker.getDayOfMonth());
+
+		Log.i("Start Date", "" + startDate);
+		Log.i("End Date", "" + endDate);
+
 		startWeek = Constants.convertDateToWeek(startDate);
 		endWeek = Constants.convertDateToWeek(endDate);
-		
-		Log.i("StartWeek", ""+startWeek);
-		Log.i("EndWeek", ""+ endWeek);
-		
+
+		Log.i("StartWeek", "" + startWeek);
+		Log.i("EndWeek", "" + endWeek);
+
 		if (endWeek - startWeek > 24)
 			endWeek = startWeek + 24;
 
@@ -218,7 +184,11 @@ public class ModifyResourceReservation extends Activity {
 		startService(intent);
 	}
 
-	/** this method is called when a messagebox needs to be appered */
+	/**
+	 * is called when a message box with OK button needs to be appeared
+	 * @param message is the message box's message
+	 * @param title is the message box's title
+	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -231,7 +201,11 @@ public class ModifyResourceReservation extends Activity {
 		});
 		alertDialog.show();
 	}
-
+	/**
+	 * is called when a message box with Retry and Cancel buttons needs to be appeared
+	 * @param message is the message of the message box
+	 * @param title is the title of the message box
+	 */
 	public void messageBoxShowRetry(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -249,7 +223,9 @@ public class ModifyResourceReservation extends Activity {
 		});
 		alertDialog.show();
 	}
-
+	/**
+	 * 
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -261,7 +237,8 @@ public class ModifyResourceReservation extends Activity {
 					// finish();
 					int[] results = intent.getIntArrayExtra("results");
 
-					Intent myIntent = new Intent(getApplicationContext(), StripeActivity.class);
+					Intent myIntent = new Intent(getApplicationContext(),
+							StripeActivity.class);
 					Bundle bundle = new Bundle();
 
 					bundle.putString("ACTION", "update");
@@ -283,7 +260,8 @@ public class ModifyResourceReservation extends Activity {
 					myIntent.putExtras(bundle);
 					startActivity(myIntent);
 				} else {
-					messageBoxShowRetry(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
+					messageBoxShowRetry(Constants.getErrorMessage(intent
+							.getIntExtra("error", 0)), "Error");
 				}
 			}
 		}
