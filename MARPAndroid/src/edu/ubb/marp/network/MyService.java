@@ -461,15 +461,6 @@ public class MyService extends Service {
 				json.put("resourcetypename", intent.getStringExtra("resourcetypename"));
 				json.put("resourcegroupname", intent.getStringExtra("resourcegroupname"));
 				break;
-			case Constants.ADDRESOURCETOGROUP:
-				json.put("resourcename", intent.getStringExtra("resourcename"));
-				json.put("resourcename", intent.getStringExtra("resourcename"));
-				json.put("groupname", intent.getStringExtra("groupname"));
-				break;
-			case Constants.REMOVERESOURCEFROMGROUP:
-				json.put("resourcename", intent.getStringExtra("resourcename"));
-				json.put("groupname", intent.getStringExtra("groupname"));
-				break;
 			case Constants.UPDATERESOURCE:
 				json.put("oldresourcename", intent.getStringExtra("oldresourcename"));
 				json.put("oldactive", intent.getBooleanExtra("oldactive", false));
@@ -480,8 +471,9 @@ public class MyService extends Service {
 				json.put("newresourcetypename", intent.getStringExtra("newresourcetypename"));
 				json.put("newresourcegroupname", intent.getStringExtra("newresourcegroupname"));
 				break;
-			case Constants.BUYSELLRESOURCE:
-				json.put("resourcename", intent.getStringExtra("resourcename"));
+			case Constants.SETRESOURCEACTIVECMD:
+				json.put("resourceid", intent.getIntExtra("resourceid", 0));
+				json.put("currentweek", intent.getIntExtra("currentweek", 0));
 				json.put("active", intent.getBooleanExtra("active", false));
 				break;
 			}
@@ -513,8 +505,8 @@ public class MyService extends Service {
 			switch (cmd) {
 			case Constants.INSERTNEWUSER:
 				// json.put("projectid", uri.getPathSegments().get(1));
-				json.put("username", intent.getStringExtra("username"));
-				json.put("password", intent.getStringExtra("password"));
+				json.put("targetusername", intent.getStringExtra("targetusername"));
+				json.put("targetpassword", intent.getStringExtra("targetpassword"));
 				json.put("phonenumber", intent.getStringExtra("phonenumber"));
 				json.put("email", intent.getStringExtra("email"));
 				json.put("resourcename", intent.getStringExtra("resourcename"));
@@ -661,8 +653,6 @@ public class MyService extends Service {
 				json.put("currentweek", intent.getStringExtra("currentweek"));
 				break;
 			case Constants.UPDATEREQUESTRATIOOFUSER:
-				break;
-			case Constants.UPDATEREQUESTRATIOOFRATIO:
 				break;
 			}
 			// TODO Ezek utan kell varni valaszt?
@@ -1152,6 +1142,44 @@ public class MyService extends Service {
 				}
 				break;
 				
+			case Constants.LOADINACTIVERESOURCES:
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("error") <= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", false);
+						intent.putExtra("Resources", true);
+						intent.putExtra("error", result.getInt("error"));
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", true);
+					intent.putExtra("Resources", true);
+
+					try {
+						//JSONArray array = r.getJSONArray(0);
+
+						int resourceids[] = new int[r.length()];
+						String resourcenames[] = new String[r.length()];
+						for (int i = 0; i < r.length(); i++){
+							JSONObject obj=r.getJSONObject(i);
+							resourceids[i] = obj.getInt("resourceid");
+							resourcenames[i] = obj.getString("resourcename");
+						}
+
+						intent.putExtra("resourceid", resourceids);
+						intent.putExtra("resourcename", resourcenames);
+
+						afterRefresh(intent);
+					} catch (JSONException errorReal) {
+						errorReal.printStackTrace();
+					}
+				}
+				break;
+				
 			case Constants.INSERTNEWRESOURCE:
 				result = null;
 				try {
@@ -1341,6 +1369,34 @@ public class MyService extends Service {
 				try {
 					result = r.getJSONObject(0);
 					if (result.getInt("projectcurrentstatuschanged") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+				
+			case Constants.SETRESOURCEACTIVECMD:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("setactive") >= 0) {
 						Intent intent = new Intent(Constants.BROADCAST_ACTION);
 						intent.putExtra("originalReqeustid", requestid);
 						intent.putExtra("Successful", true);

@@ -79,8 +79,8 @@ public class InsertNewUserActivity extends Activity {
 			Intent intent = new Intent(this, MyService.class);
 			intent.putExtra("ACTION", "USERMODIFICATIONS");
 			intent.setData(uriSending.build());
-			intent.putExtra("username", userName.getText().toString());
-			intent.putExtra("password", password.getText().toString());
+			intent.putExtra("targetusername", userName.getText().toString());
+			intent.putExtra("targetpassword", password.getText().toString());
 			intent.putExtra("phonenumber", phonenumber.getText().toString());
 			intent.putExtra("email", email.getText().toString());
 			intent.putExtra("resourcename", resourcename.getText().toString());

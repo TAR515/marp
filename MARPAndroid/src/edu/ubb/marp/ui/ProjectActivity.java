@@ -187,6 +187,18 @@ public class ProjectActivity extends ListActivity {
 			myIntent = new Intent(getApplicationContext(), InsertNewUserActivity.class);
 			startActivity(myIntent);
 			return true;
+		case R.id.reactivateresource:
+			myIntent = new Intent(getApplicationContext(), ReActivateResourceActivity.class);
+			startActivity(myIntent);
+			return true;
+		case R.id.deleteresource:
+			myIntent = new Intent(getApplicationContext(), DeleteResourceActivity.class);
+			startActivity(myIntent);
+			return true;
+		case R.id.requestsmenuitem:
+			myIntent = new Intent(getApplicationContext(), RequestsActivity.class);
+			startActivity(myIntent);
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}

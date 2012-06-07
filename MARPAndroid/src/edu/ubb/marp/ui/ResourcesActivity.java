@@ -174,6 +174,8 @@ public class ResourcesActivity extends Activity {
 		Bundle bundle;
 		switch (item.getItemId()) {
 		case R.id.newid:
+			leaved = true;
+			
 			myIntent = new Intent(getApplicationContext(), AddNewResourceToProjectActivity.class);
 			bundle = new Bundle();
 			bundle.putInt("projectid", Integer.parseInt(projectid));

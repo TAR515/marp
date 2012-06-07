@@ -114,14 +114,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				"Resource varchar(45)," +
 				"ProjectID integer)");*/
 		db.execSQL("CREATE TABLE Requests(" +
-				"RequestID integer primary key," +
-				"Week integer," +
-				"Ratio float," +
-				"SenderID integer," +
-				"ResourceID integer," +
-				"Sender varchar(45)," +
-				"Resource varchar(45)," +
-				"ProjectID integer)");
+				"requestid integer primary key," +
+				"week integer," +
+				"ratio float," +
+				"senderid integer," +
+				"resourceid integer," +
+				"senderusername varchar(45)," +
+				"resourceresourcename varchar(45)," +
+				"projectid integer)");
 		
 		db.execSQL("CREATE TABLE Groups(" +
 				"GroupID integer," +

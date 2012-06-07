@@ -10,8 +10,17 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.SingleClientConnManager;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.DefaultedHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
@@ -43,6 +52,19 @@ public class HttpClient extends AsyncTask<JSONArray, Integer, JSONArray> {
 		this.requestid = requestid;
 		if (httpclient == null) {
 			httpclient = new DefaultHttpClient();
+			/*SchemeRegistry schemeRegistry = new SchemeRegistry();
+			schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+			schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+
+			HttpParams params = new BasicHttpParams();
+			HttpConnectionParams.setConnectionTimeout(params, TIMEOUT);
+			HttpConnectionParams.setSoTimeout(params, SOTIMEOUT);
+
+			//SingleClientConnManager mgr = new SingleClientConnManager(params, schemeRegistry);
+			ClientConnectionManager mgr = new ThreadSafeClientConnManager(params, schemeRegistry);
+
+			httpclient = new DefaultHttpClient(mgr, params);*/
+			
 		}
 	}
 
@@ -111,7 +133,6 @@ public class HttpClient extends AsyncTask<JSONArray, Integer, JSONArray> {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e(tag, e.getMessage());
 
 			try {
 				JSONArray array = new JSONArray();

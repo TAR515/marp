@@ -93,6 +93,18 @@
             android:name=".ui.RequestsActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
+        <activity
+            android:name=".ui.DeleteResourceActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".ui.ReActivateResourceActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".ui.RequestActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
 
         <provider
             android:name=".database.CProvider"

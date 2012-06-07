@@ -1,25 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
     <item
         android:id="@+id/refreshProjects"
         android:icon="@drawable/ic_menu_refresh"
         android:title="Refresh">
     </item>
-    <item android:id="@+id/projectid" android:title="New project"
-        android:icon="@android:drawable/ic_menu_add">
+    <item
+        android:id="@+id/projectid"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="New project">
     </item>
-    <item android:id="@+id/requestsid" android:title="Requests"
-        android:icon ="@android:drawable/ic_menu_edit" ></item>
-    <item android:id="@+id/myaccountid" android:title="My Account"
-        android:icon ="@drawable/ic_menu_friendslist"></item>
-    <item android:id="@+id/about" android:title = "About"
-        android:icon = "@android:drawable/ic_menu_info_details"></item>
-    <item  android:id="@+id/logout" android:title="Logout" 
-        android:icon="@android:drawable/ic_lock_power_off"></item>
-    <item  android:id="@+id/addresourcemnuitem" android:title="Add resource" 
-        android:icon="@android:drawable/ic_lock_power_off"></item>
-    <item  android:id="@+id/addusermenuitem" android:title="Add user" 
-        android:icon="@drawable/ic_menu_logout"></item>
-    
+    <item
+        android:id="@+id/deleteresource"
+        android:icon="@android:drawable/ic_lock_power_off"
+        android:title="Delete resource">
+    </item>
+    <item
+        android:id="@+id/reactivateresource"
+        android:icon="@android:drawable/ic_lock_power_off"
+        android:title="Re-activate resource">
+    </item>
+    <item
+        android:id="@+id/requestsid"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="Requests">
+    </item>
+    <item
+        android:id="@+id/myaccountid"
+        android:icon="@drawable/ic_menu_friendslist"
+        android:title="My Account">
+    </item>
+    <item
+        android:id="@+id/about"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="About">
+    </item>
+    <item
+        android:id="@+id/logout"
+        android:icon="@android:drawable/ic_lock_power_off"
+        android:title="Logout">
+    </item>
+    <item
+        android:id="@+id/addresourcemnuitem"
+        android:icon="@android:drawable/ic_lock_power_off"
+        android:title="Add resource">
+    </item>
+    <item
+        android:id="@+id/addusermenuitem"
+        android:icon="@drawable/ic_menu_logout"
+        android:title="Add user">
+    </item>
+    <item
+        android:id="@+id/requestsmenuitem"
+        android:icon="@drawable/ic_menu_logout"
+        android:title="Requests">
+    </item>
 
 </menu>

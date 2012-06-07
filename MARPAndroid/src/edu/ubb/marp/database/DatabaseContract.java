@@ -84,12 +84,14 @@ public final class DatabaseContract {
 		public static final String VISIBLE = "Visible";
 	}*/
 	public static final class TABLE_REQUESTS {
-		public static final String REQUESTID = "RequestID";
-		public static final String WEEK = "Week";
-		public static final String RATIO = "Ratio";
-		public static final String SENDER = "Sender";
-		public static final String RESOURCE = "Resource";
-		public static final String PROJECTID = "ProjectID";
+		public static final String REQUESTID = "requestid";
+		public static final String WEEK = "week";
+		public static final String RATIO = "ratio";
+		public static final String SENDERID = "senderid";
+		public static final String RESOURCEID = "resourceid";
+		public static final String SENDERUSERNAME = "senderusername";
+		public static final String RESOURCERESOURCENAME = "resourceresourcename";
+		public static final String PROJECTID = "projectid";
 	}
 
 	public static final String TABLE_GROUPS = "Groups";

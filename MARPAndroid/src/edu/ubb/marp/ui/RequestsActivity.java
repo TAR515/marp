@@ -39,9 +39,7 @@ public class RequestsActivity extends ListActivity{
 
 	// private Intent sentIntent;
 	private long requestid;
-	private String[] ids;
-	private String[] projectNames;
-	private boolean[] isLeader;
+	private int[] ids;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -145,7 +143,7 @@ public class RequestsActivity extends ListActivity{
 	}
 	
 	private void queryData(){
-		/*Uri.Builder uri = new Uri.Builder();
+		Uri.Builder uri = new Uri.Builder();
 		uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
 		uri.path(DatabaseContract.TABLE_REQUESTS);
@@ -154,45 +152,33 @@ public class RequestsActivity extends ListActivity{
 		ContentResolver cr = getContentResolver();
 		Log.i(tag, "query elott");
 
-		String projection[] = { TABLE_REQUESTS.REQUESTID + " as _id", TABLE_REQUESTS.WEEK, TABLE_REQUESTS };
+		String projection[] = { TABLE_REQUESTS.REQUESTID + " as _id", TABLE_REQUESTS.SENDERUSERNAME, TABLE_REQUESTS.RESOURCERESOURCENAME };
 
 		Cursor c = cr.query(uri.build(), projection, null, null,
 				TABLE_PROJECTS.PROJECTID);
 		Log.i(tag, "query utan");
 
-		ids = new String[c.getCount()];
-		projectNames = new String[c.getCount()];
-		isLeader = new boolean[c.getCount()];
+		ids = new int[c.getCount()];
 		int i = 0;
 		if (c.moveToFirst()) {
 			int index = c.getColumnIndex("_id");
-			int index2 = c.getColumnIndex(TABLE_PROJECTS.PROJECTNAME);
-			int index3 = c.getColumnIndex(TABLE_PROJECTS.ISLEADER);
-			Log.i(tag, "while elott");
-			ids[i] = c.getString(index);
-			projectNames[i] = c.getString(index2);
-			isLeader[i++] = c.getString(index3).equals("Leader");
-			Log.i(tag, "lekerdezes " + ids[i - 1]);
+			ids[i++] = c.getInt(index);
 			while (c.moveToNext()) {
-				ids[i] = c.getString(index);
-				projectNames[i] = c.getString(index2);
-				isLeader[i++] = c.getString(index3).equals("Leader");
-				Log.i(tag, "lekerdezes " + ids[i - 1]);
+				ids[i++] = c.getInt(index);
 			}
-			Log.i(tag, "while utan");
 		}
 
 		c.moveToFirst();
 		startManagingCursor(c);
 
-		String[] from = { TABLE_PROJECTS.PROJECTNAME,
-				TABLE_PROJECTS.ISLEADER };
+		String[] from = { TABLE_REQUESTS.SENDERUSERNAME,
+				TABLE_REQUESTS.RESOURCERESOURCENAME };
 		// int[] to = { android.R.id.text1, android.R.id.text2 };
 		int[] to = { R.id.text1, R.id.text2 };
 		SimpleCursorAdapter projects = new SimpleCursorAdapter(
 				getApplicationContext(), R.layout.projects_row, c,
 				from, to);
-		setListAdapter(projects);*/
+		setListAdapter(projects);
 	}
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -218,12 +204,9 @@ public class RequestsActivity extends ListActivity{
 	};
 
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		Intent myIntent = new Intent(getApplicationContext(),
-				ResourcesActivity.class);
+		Intent myIntent = new Intent(getApplicationContext(), RequestActivity.class);
 		Bundle bundle = new Bundle();
-		bundle.putString("projectid", ids[position]);
-		bundle.putString("projectname", projectNames[position]);
-		bundle.putBoolean("isleader", isLeader[position]);
+		bundle.putInt("requestid", ids[position]);
 		myIntent.putExtras(bundle);
 		startActivity(myIntent);
 	}
