@@ -230,7 +230,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		java.sql.CallableStatement stmt = null;
 		try {
 			connection = getConnection();
-			stmt = createProcedure(connection, "set_project_open_status_by_project_id", 3);
+			stmt = createProcedure(connection, "set_project_opened_status_by_project_id", 3);
 
 			int paramIndex = 1;
 			setInt(stmt, paramIndex++, projectID);
@@ -1184,6 +1184,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			while (rs.next()) {
 				result.add(fillBooking(rs));
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
@@ -1245,6 +1246,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			while (rs.next()) {
 				resoult.add(fillProjectsWithIsLeader(rs));
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
@@ -1277,6 +1279,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 			while (rs.next()) {
 				resoult.add(fillProjects(rs));
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
@@ -1360,7 +1363,7 @@ public class ProjectsJdbcDao extends BaseDao implements ProjectsDao {
 		retValue.setDeadLine(getInt(rs, "Deadline"));
 		retValue.setNextRelease(getString(rs, "NextRelease"));
 		retValue.setStatusName(getString(rs, "StatusName"));
-		retValue.setLeader(false);
+		retValue.setLeader(true);
 		
 		return retValue;
 	}

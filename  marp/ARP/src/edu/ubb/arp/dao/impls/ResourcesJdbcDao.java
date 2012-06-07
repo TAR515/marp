@@ -505,6 +505,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			while (rs.next()) {
 				result.add(getInt(rs, "cpratio"));
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
@@ -535,6 +536,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			while (rs.next()) {
 				result.add((Resources) fillJustResourceIDAndName(rs));
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
@@ -561,6 +563,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 			while (rs.next()) {
 				result.add((Resources) fillJustResourceIDAndName(rs));
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);

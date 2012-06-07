@@ -457,6 +457,7 @@ public class RequestsJdbcDao extends BaseDao implements RequestsDao {
 			while (rs.next()) {
 				resoult.add(fillObject(rs));
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);

@@ -738,6 +738,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 				logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(errmsg));
 				return errmsg;
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + "SQL Exception: " + e);
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
@@ -783,6 +784,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 			while (rs.next()) {
 				user = (Users) fillObject(rs);
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(0));
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
@@ -863,6 +865,7 @@ public class UsersJdbcDao extends BaseDao implements UsersDao {
 				//System.out.println(getInt(rs, "ProjectID"));
 				booking.add(fillBooking(rs));
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			logger.error(getClass().getName() + methodName + DalException.errCodeToMessage(0));
 			throw new SQLException(getClass().getName() + methodName + "SQL Exception: ", e);
