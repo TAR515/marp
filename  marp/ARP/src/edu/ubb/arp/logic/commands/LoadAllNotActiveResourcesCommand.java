@@ -14,13 +14,13 @@ import edu.ubb.arp.dao.ResourcesDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.dao.model.Resources;
 
-public class LoadAllResourcesCommand extends BaseCommandOperations implements Command {
+public class LoadAllNotActiveResourcesCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(LoadAllActiveResourcesCommand.class);
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private ResourcesDao resourceDao = null;
 	
-	public LoadAllResourcesCommand (JSONArray request) {
+	public LoadAllNotActiveResourcesCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
 		try {
@@ -44,7 +44,7 @@ public class LoadAllResourcesCommand extends BaseCommandOperations implements Co
 		String stringElement = new String();
 		Resources resources = new Resources();
 			try{
-				result = resourceDao.LoadAllActiveResources();
+				result = resourceDao.LoadAllNotActiveResources();
 				Iterator<Resources> it = result.iterator();
 				while(it.hasNext()) {
 					resources = it.next();
@@ -54,7 +54,6 @@ public class LoadAllResourcesCommand extends BaseCommandOperations implements Co
 					stringElement = resources.getResourceName();
 					response = addIntAndString(keys, intElement, stringElement, response);
 				}
-
 			}
 			catch (SQLException e) {
 				logger.error(getClass().getName() + methodName + "SQL Exception: " + e);

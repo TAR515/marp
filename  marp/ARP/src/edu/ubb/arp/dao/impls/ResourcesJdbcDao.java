@@ -545,7 +545,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		return result;
 	}
 	
-	public List<Resources> LoadAllResources() throws SQLException {
+	public List<Resources> LoadAllNotActiveResources() throws SQLException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		List<Resources> result = new ArrayList<Resources>();
 		logger.debug(getClass().getName() + methodName + "-> START");
@@ -554,7 +554,7 @@ public class ResourcesJdbcDao extends BaseDao implements ResourcesDao {
 		ResultSet rs = null;
 		try {
 			connection = getConnection();
-			stmt = createProcedure(connection, "load_resources", 0);
+			stmt = createProcedure(connection, "load_not_active_resources", 0);
 
 			rs = stmt.executeQuery();
 

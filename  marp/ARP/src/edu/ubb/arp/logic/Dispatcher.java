@@ -8,7 +8,7 @@ import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.CheckUserCommand;
 import edu.ubb.arp.logic.commands.Command;
 import edu.ubb.arp.logic.commands.LoadAllProjectsCommand;
-import edu.ubb.arp.logic.commands.LoadAllResourcesCommand;
+import edu.ubb.arp.logic.commands.LoadAllNotActiveResourcesCommand;
 import edu.ubb.arp.logic.commands.LoadAssignmentsCommand;
 import edu.ubb.arp.logic.commands.LoadProjectTableCommand;
 import edu.ubb.arp.logic.commands.LoadProjectsUserIsWorkingOnCommand;
@@ -103,7 +103,7 @@ public class Dispatcher extends BaseCommandOperations {
 					response = command.execute();
 					break;
 				case 7:
-					command = new LoadAllResourcesCommand(request);
+					command = new LoadAllNotActiveResourcesCommand(request);
 					response = command.execute();
 					break;
 				// Users

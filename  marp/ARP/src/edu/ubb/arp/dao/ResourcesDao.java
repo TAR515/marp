@@ -148,4 +148,6 @@ public interface ResourcesDao {
 	 * @throws SQLException SQLException if a stored procedure returns an error message
 	 */
 	public List<Resources> LoadAllActiveResources()throws SQLException;
+	
+	public List<Resources> LoadAllNotActiveResources() throws SQLException;
 }
