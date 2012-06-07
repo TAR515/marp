@@ -51,8 +51,8 @@ public class InsertNewUserCommand extends BaseCommandOperations implements Comma
 		String resourceGroupName = null; 
 		
 		try {
-			userName = getString(0,"username",request);
-			password = getString(0,"password",request);
+			userName = getString(0,"targetusername",request);
+			password = getString(0,"targetpassword",request);
 			phoneNumber = getString(0,"phonenumber",request);
 			email = getString(0,"email",request);
 			resourceName = getString(0,"resourcename",request);
