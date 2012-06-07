@@ -119,7 +119,7 @@ public class StripeActivity extends Activity {
 				int j = startweek;
 				for (int i = 0; i < length; i++) {
 					loadstr[i][0] = Constants.convertWeekToDate(j++);
-					if (results.length != 0)
+					if (i < results.length)
 						loadstr[i][1] = Integer.toString(results[i]);
 					else
 						loadstr[i][1] = Integer.toString(0);

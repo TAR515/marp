@@ -279,10 +279,16 @@ public class AddNewResourceToProjectActivity extends Activity {
 						if(endWeek-startWeek>24)
 							endWeek=startWeek+24;
 						
+						boolean isLeader;
+						if(cb.isEnabled())
+							isLeader = cb.isChecked();
+						else
+							isLeader = false;
+						
 						bundle.putString("ACTION", "insert");
 						bundle.putInt("startweek", startWeek);
 						bundle.putInt("endweek", endWeek);
-						bundle.putBoolean("isleader", cb.isChecked());
+						bundle.putBoolean("isleader", isLeader);
 						bundle.putInt("projectid", projectid);
 						bundle.putInt("senderresourceid", myresourceid);
 						bundle.putInt("targetresourceid", resourceids[sp.getSelectedItemPosition()]);

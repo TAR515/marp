@@ -81,6 +81,18 @@
             android:name=".ui.ModifyProjectActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
+        <activity
+            android:name=".ui.InsertNewResourceActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".ui.InsertNewUserActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".ui.RequestsActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
 
         <provider
             android:name=".database.CProvider"

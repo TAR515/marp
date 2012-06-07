@@ -153,7 +153,7 @@ public class AssignmentsActivity extends Activity {
 				column.setWidth(width);
 				column.setHeight(height);
 				
-				if((i==1)&&(j==0)&&(isLeader[i-1])){
+				if((i>0)&&(j==0)&&(isLeader[i-1])){
 					column.setTextColor(Color.BLUE);
 				} else {
 					column.setTextColor(Color.BLACK);
@@ -167,8 +167,6 @@ public class AssignmentsActivity extends Activity {
 					column.setTextColor(color.WHITE);
 				} else {
 					column.setBackgroundColor(color.GRAY);
-					column.setTextColor(color.BLACK);
-
 				}
 				/*final TextView text = column;
 				final int currentRow = i;

@@ -38,7 +38,6 @@ import android.widget.Toast;
 public class MyAccountActivity extends Activity {
 	private static final String tag = "MyAccountActivity";
 
-	private Intent sentIntent;
 	private long requestid;
 	private ProgressDialog loading;
 	private Context context;
@@ -95,13 +94,13 @@ public class MyAccountActivity extends Activity {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
-	
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		// Save the values you need from your textview into "outState"-object
 		Log.i(tag, "onsave");
 		outState.putLong("requestid", requestid);
-	
+
 		outState.putString("name", users.get(0).subitem);
 		outState.putString("username", users.get(1).subitem);
 		outState.putString("tel", users.get(2).subitem);
@@ -118,7 +117,8 @@ public class MyAccountActivity extends Activity {
 		Log.i(tag, "restore");
 		requestid = savedInstanceState.getLong("requestid");
 
-		setArrayList(savedInstanceState.getString("name"), savedInstanceState.getString("username"), savedInstanceState.getString("tel"), savedInstanceState.getString("email"));
+		setArrayList(savedInstanceState.getString("name"), savedInstanceState.getString("username"), savedInstanceState.getString("tel"),
+				savedInstanceState.getString("email"));
 
 		refresh();
 	}
@@ -136,8 +136,8 @@ public class MyAccountActivity extends Activity {
 		user = new ListRecord("Change Password", "");
 		users.add(4, user);
 	}
-	
-	public void refresh(){
+
+	public void refresh() {
 		ListView listView = (ListView) findViewById(R.id.ListViewId);
 		listView.setAdapter(new ListItemAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, users));
 		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -270,7 +270,7 @@ public class MyAccountActivity extends Activity {
 						&& (change.getOldPass().equals(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(
 								"password", "")))) {
 					loading = ProgressDialog.show(context, "Loading", "Please wait...");
-					
+
 					Intent intent = new Intent(getApplicationContext(), MyService.class);
 					intent.putExtra("ACTION", "CHANGEUSERPASSWORD");
 					intent.putExtra("newpassword", change.getNewPass1());
@@ -292,8 +292,8 @@ public class MyAccountActivity extends Activity {
 		});
 		alertDialog.show();
 	}
-	
-	private void queryData(){
+
+	private void queryData() {
 		Uri.Builder uri = new Uri.Builder();
 		uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
@@ -303,10 +303,12 @@ public class MyAccountActivity extends Activity {
 		ContentResolver cr = getContentResolver();
 
 		Log.i(tag, "query elott");
-		Cursor c = cr.query(uri.build(), null,
+		Cursor c = cr.query(
+				uri.build(),
+				null,
 				TABLE_USERS.USERNAME + "='"
-						+ PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "")
-						+ "'", null, null);
+						+ PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "") + "'", null,
+				null);
 		Log.i(tag, "query utan");
 
 		if (c.moveToFirst()) {
@@ -331,14 +333,13 @@ public class MyAccountActivity extends Activity {
 		public void onReceive(Context context, Intent intent) {
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				if (intent.getBooleanExtra("Successful", false)) {
-					if (!intent.getBooleanExtra("change", false)) {						
+					if (!intent.getBooleanExtra("change", false)) {
 						loading.dismiss();
-						
+
 						queryData();
 					} else {
 						if (intent.getBooleanExtra("changePassword", false)) {
-							SharedPreferences pref = PreferenceManager
-									.getDefaultSharedPreferences(getApplicationContext());
+							SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 							Editor editor = pref.edit();
 
 							editor.putString("password", passWord);
@@ -346,22 +347,23 @@ public class MyAccountActivity extends Activity {
 							editor.apply();
 						}
 						if (intent.getBooleanExtra("changeUsername", false)) {
-							SharedPreferences pref = PreferenceManager
-									.getDefaultSharedPreferences(getApplicationContext());
+							SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 							Editor editor = pref.edit();
 
 							editor.putString("username", userName);
 
 							editor.apply();
 						}
-						
+
 						sendRequest(false);
 					}
 				} else {
 					loading.dismiss();
-					if ((!intent.getBooleanExtra("change", false))&&(intent.getIntExtra("error", 10000) == 0)){
+					if ((!intent.getBooleanExtra("change", false)) && (intent.getIntExtra("error", 10000) == 0)) {
 						queryData();
-					}else
+					} else if (intent.getBooleanExtra("change", false))
+						messageBoxShow(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
+					else
 						messageBoxShowRetry(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
 				}
 			}

@@ -6,6 +6,12 @@
 
     <string-array name="project_statuses">
         <item>Under development</item>
+        <item>Accepted/Ready to Start</item>
+        <item>Delivered</item>
+        <item>Done</item>
+        <item>Redy for delivery</item>
+        <item>Specification</item>
+        <item>Testing</item>
     </string-array>
     
     <string-array name="resourcetypes">

@@ -19,6 +19,10 @@ public final class Constants {
 
 	public static final int QUERYUSER = 131;
 	
+	public static final int LOGINCMD = 0;
+	public static final int PROJECTSCMD = 1;
+	public static final int PROJECTRESOURCESCMD = 2;
+	
 	public static final int LOADASSIGNMENTSCMD = 4;
 	public static final int LOADREQUESTSCMD = 6;
 
@@ -137,7 +141,7 @@ public final class Constants {
 		}
 	}
 
-	public static String convertWeekToDate2(int week) {
+	/*public static String convertWeekToDate2(int week) {
 		// Date myDate = new Date(2007, 1, 1);
 		long aWeek = 604800000;
 		// myDate.setTime(myDate.getTime() + (week * aWeek));
@@ -157,7 +161,7 @@ public final class Constants {
 		calendar.add(Calendar.WEEK_OF_YEAR, week-1);
 		Date myDate = calendar.getTime();
 		return myDate;
-	}
+	}*/
 	
 	public static String convertWeekToDate(int week){
 		Calendar calendar = new GregorianCalendar(2007, 0, 1);
@@ -171,17 +175,42 @@ public final class Constants {
 		return s;
 	}
 	
-	public static Date convertWeekToRealDate2(int week){
+	public static Date convertWeekToRealDate(int week){
+		Calendar calendar = new GregorianCalendar(2007, 0, 1);
+		calendar.add(Calendar.WEEK_OF_YEAR, week-1);
+		return calendar.getTime();
+	}
+	
+	/*public static Date convertWeekToRealDate2(int week){
 		long aWeek = 604800000;
 		// myDate.setTime(myDate.getTime() + (week * aWeek));
 		Date myDate = new Date(startDate.getTime() + ((week-1) * aWeek));
 		return myDate;
-	}
-	public static int convertDateToWeek(Date date) {
+	}*/
+	/*public static int convertDateToWeek(Date date) {
 		return weeksBetween(startDate,date)+1;
 	}
 
 	private static int weeksBetween(Date d1, Date d2) {
 		return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24 * 7));
-	}
+	}*/
+	
+	public static int convertDateToWeek( Date d1) {
+		Date d2 = new Date(107, 0, 1);
+		
+	      if( d1.after(d2) ) {    // make sure d1 < d2, else swap them  
+	         Date temp = d1;  
+	         d1 = d2;  
+	         d2 = temp;  
+	      }  
+	      GregorianCalendar c1 = new GregorianCalendar();  
+	      c1.setTime(d1);  
+	      GregorianCalendar c2 = new GregorianCalendar();  
+	      c2.setTime(d2);  
+	      for( int i=1; ; i++ ) {           
+	         c1.add( GregorianCalendar.WEEK_OF_YEAR, 1 );   // add one day, week, year, etc.  
+	         if( c1.after(c2) )  
+	            return i;  
+	      }  
+	   }  
 }

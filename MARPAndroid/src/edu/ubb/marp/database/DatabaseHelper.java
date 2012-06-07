@@ -106,10 +106,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				"ProjectID integer," +
 				"Rejected bool" +
 				"Visible bool)");*/
+		/*db.execSQL("CREATE TABLE Requests(" +
+				"RequestID integer primary key," +
+				"Week integer," +
+				"Ratio float," +
+				"Sender varchar(45)," +
+				"Resource varchar(45)," +
+				"ProjectID integer)");*/
 		db.execSQL("CREATE TABLE Requests(" +
 				"RequestID integer primary key," +
 				"Week integer," +
 				"Ratio float," +
+				"SenderID integer," +
+				"ResourceID integer," +
 				"Sender varchar(45)," +
 				"Resource varchar(45)," +
 				"ProjectID integer)");

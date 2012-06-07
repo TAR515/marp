@@ -192,7 +192,7 @@ public class MyService extends Service {
 
 		try {
 			JSONObject json = new JSONObject();
-			json.put("command", 0);
+			json.put("command", Constants.LOGINCMD);
 			json.put("username", username);
 			json.put("password", password);
 
@@ -216,7 +216,7 @@ public class MyService extends Service {
 			json.put("command", cmd);
 
 			switch (cmd) {
-			case 2:
+			case Constants.PROJECTRESOURCESCMD:
 				json.put("projectid", uri.getPathSegments().get(1));
 				break;
 			case 3:
@@ -347,7 +347,7 @@ public class MyService extends Service {
 				json.put("newprojectname", intent.getStringExtra("newprojectname"));
 				break;
 			case Constants.CHANGEPROJECTDEADLINE:
-				json.put("newdeadline", intent.getStringExtra("newdeadline"));
+				json.put("newdeadline", intent.getIntExtra("newdeadline", 0));
 				break;
 			case Constants.CHANGEPROJECTNEXTRELEASE:
 				json.put("newnextrelease", intent.getStringExtra("newnextrelease"));
@@ -356,14 +356,12 @@ public class MyService extends Service {
 				json.put("newcurrentstatus", intent.getStringExtra("newcurrentstatus"));
 				break;
 			}
-			// TODO Ezek utan kell varni valaszt?
 
 			json.put("projectid", intent.getIntExtra("projectid", -1));
 
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
 
-			// json.put("uri", uri);
 			JSONArray array = new JSONArray();
 			array.put(json);
 
@@ -691,7 +689,7 @@ public class MyService extends Service {
 			JSONObject request = req.getJSONObject(0);
 			String mainColumns[];
 			switch (request.getInt("command")) {
-			case 0:// Login
+			case Constants.LOGINCMD:// Login
 				result = r.getJSONObject(0);
 				try {
 					if (result.getInt("existsuser") == 1) {
@@ -715,7 +713,7 @@ public class MyService extends Service {
 				}
 				break;
 
-			case 1:// Query - projects
+			case Constants.PROJECTSCMD:// Query - projects
 					// Uri uri = (Uri) request.get("uri");
 				result = r.getJSONObject(0);
 				try {
@@ -747,7 +745,7 @@ public class MyService extends Service {
 				}
 				break;
 
-			case 2:// Query - booking + resources
+			case Constants.PROJECTRESOURCESCMD:// Query - booking + resources
 				try {
 					result = r.getJSONObject(0);
 					if (result.getInt("error") <= 0) {
@@ -844,7 +842,7 @@ public class MyService extends Service {
 			 * this).execute(r.getJSONArray(1)); break;
 			 */
 
-			case 131:// Query - MyAccount
+			case Constants.QUERYUSER:// Query - MyAccount
 				result = r.getJSONObject(0);
 				try {
 					if (result.getInt("error") <= 0) {
@@ -1227,6 +1225,142 @@ public class MyService extends Service {
 					mainColumns = new String[1];
 					mainColumns[0] = TABLE_REQUESTS.REQUESTID;
 					new RefreshData(uri.build(), getContentResolver(), mainColumns, requestid, this, false, false).execute(r);
+				}
+				break;
+				
+			case Constants.CHANGEPROJECTOPENEDSTATUS:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("projectopenstatuschanged") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("changeProjectOpenedStatus", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+			case Constants.CHANGEPROJECTNAME:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("projectnamechanged") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+			case Constants.CHANGEPROJECTDEADLINE:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("projectdeadlinechanged") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+			case Constants.CHANGEPROJECTNEXTRELEASE:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("projectnextreleasechanged") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+			case Constants.CHANGEPROJECTCURRENTSTATUS:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("projectcurrentstatuschanged") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
 				}
 				break;
 			}

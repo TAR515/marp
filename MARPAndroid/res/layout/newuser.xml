@@ -86,7 +86,7 @@
                 android:id="@+id/addUserButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Insert resource" />
+                android:text="Insert user" />
 
         </LinearLayout>
 

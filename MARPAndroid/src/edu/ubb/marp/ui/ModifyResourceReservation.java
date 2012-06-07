@@ -188,8 +188,8 @@ public class ModifyResourceReservation extends Activity {
 		DatePicker startDatePicker = (DatePicker) findViewById(R.id.startweekdate);
 		DatePicker endDatePicker = (DatePicker) findViewById(R.id.endweekdate);
 	
-		Date startDate = new Date(startDatePicker.getYear(),startDatePicker.getMonth(),startDatePicker.getDayOfMonth());
-		Date endDate = new Date(endDatePicker.getYear(),endDatePicker.getMonth(),endDatePicker.getDayOfMonth());
+		Date startDate = new Date(startDatePicker.getYear()-1900,startDatePicker.getMonth(),startDatePicker.getDayOfMonth());
+		Date endDate = new Date(endDatePicker.getYear()-1900,endDatePicker.getMonth(),endDatePicker.getDayOfMonth());
 		
 
 		Log.i("Start Date", ""+ startDate);

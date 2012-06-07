@@ -48,6 +48,7 @@ public class ProjectActivity extends ListActivity {
 	private String[] ids;
 	private String[] projectNames;
 	private boolean[] isLeader;
+	private boolean leaved;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,8 @@ public class ProjectActivity extends ListActivity {
 		 * bundle.putString("projectid", ids[position]);
 		 * myIntent.putExtras(bundle); startActivity(myIntent); } });
 		 */
+		
+		leaved = false;
 
 		setContentView(R.layout.projects);
 		Log.i(tag, "setcontent utan");
@@ -82,7 +85,7 @@ public class ProjectActivity extends ListActivity {
 
 		Uri.Builder uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
-		uri.path("1");
+		uri.path(Integer.toString(Constants.PROJECTSCMD));
 		// uri.appendPath("Projects");
 		uri.scheme("content");
 
@@ -98,6 +101,11 @@ public class ProjectActivity extends ListActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		
+		if(leaved){
+			leaved=false;
+			sendRequest();
+		}
 
 		registerReceiver(broadcastReceiver, new IntentFilter(
 				Constants.BROADCAST_ACTION));
@@ -157,6 +165,7 @@ public class ProjectActivity extends ListActivity {
 			startActivity(myIntent);
 			return true;
 		case R.id.projectid:
+			leaved=true;
 			myIntent = new Intent(getApplicationContext(), NewProjectActivity.class);
 			startActivity(myIntent);
 			return true;
@@ -166,6 +175,17 @@ public class ProjectActivity extends ListActivity {
 			return true;
 		case R.id.about:
 			aboutMessage();
+			return true;
+		case R.id.refreshProjects:
+			sendRequest();
+			return true;
+		case R.id.addresourcemnuitem:
+			myIntent = new Intent(getApplicationContext(), InsertNewResourceActivity.class);
+			startActivity(myIntent);
+			return true;
+		case R.id.addusermenuitem:
+			myIntent = new Intent(getApplicationContext(), InsertNewUserActivity.class);
+			startActivity(myIntent);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -263,6 +283,8 @@ public class ProjectActivity extends ListActivity {
 	};
 
 	protected void onListItemClick(ListView l, View v, int position, long id) {
+		leaved = true;
+		
 		Intent myIntent = new Intent(getApplicationContext(),
 				ResourcesActivity.class);
 		Bundle bundle = new Bundle();

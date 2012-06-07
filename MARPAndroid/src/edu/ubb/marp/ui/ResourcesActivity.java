@@ -53,6 +53,7 @@ public class ResourcesActivity extends Activity {
 	private int resourceIDs[];
 	private int numberOfBroadcasts;
 	private int minWeek;
+	private boolean leaved;
 
 	private boolean[] isUser;
 	protected int column;
@@ -102,6 +103,8 @@ public class ResourcesActivity extends Activity {
 		// setData(s,20,15);
 		// projectid=savedInstanceState.getString("projectid");
 		Log.i(tag, "onCreate");
+		
+		leaved = false;
 
 		if ((savedInstanceState == null) || (savedInstanceState.isEmpty())) {
 			projectid = getIntent().getExtras().getString("projectid");
@@ -140,6 +143,11 @@ public class ResourcesActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		
+		if(leaved){
+			leaved = false;
+			sendRequest();
+		}
 
 		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
@@ -182,6 +190,9 @@ public class ResourcesActivity extends Activity {
 
 			myIntent.putExtras(bundle);
 			startActivity(myIntent);
+			return true;
+		case R.id.refreshResources:
+			sendRequest();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -343,6 +354,8 @@ public class ResourcesActivity extends Activity {
 							bundle.putInt("minweek", minWeek + startPos - 1);
 							bundle.putInt("maxweek", minWeek + endPos - 1);
 
+							leaved = true;
+							
 							myIntent.putExtras(bundle);
 							startActivity(myIntent);
 							return true;
