@@ -11,7 +11,11 @@ import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.RequestsDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *
+ */
 public class TimerThread implements Runnable {
 	private static final Logger logger = Logger.getLogger(JdbcDaoFactory.class);
 	private int currentWeek;
@@ -20,6 +24,9 @@ public class TimerThread implements Runnable {
 	DaoFactory instance;
 	RequestsDao requests;
 
+	/**
+	 * constructor
+	 */
 	public TimerThread() {
 		startDate = new GregorianCalendar();
 		startDate.set(2007,00,01); // Starting week, this is the 0rd week in the database.
@@ -62,7 +69,13 @@ public class TimerThread implements Runnable {
 			}				
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @param d1
+	 * @param d2
+	 * @return returns the number of weeks between two dates
+	 */
 	private int weeksBetween(Date d1, Date d2) {
 		return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24 * 7));
 	}

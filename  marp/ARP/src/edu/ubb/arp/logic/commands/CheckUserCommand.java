@@ -11,7 +11,11 @@ import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.BllExceptions;
 import edu.ubb.arp.logic.HashCoding;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ * checks if exists in the database a user with a give password
+ */
 public class CheckUserCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(CheckUserCommand.class);
 	private JSONArray request = null;
@@ -19,7 +23,10 @@ public class CheckUserCommand extends BaseCommandOperations implements Command {
 	private DaoFactory instance = null;
 	private UsersDao userDao = null;
 	
-	
+	/**
+	 * constructor 
+	 * @param request contains the user name and password
+	 */
 	public CheckUserCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -35,7 +42,9 @@ public class CheckUserCommand extends BaseCommandOperations implements Command {
 		}	
 	}
 	
-	
+	/**
+	 * @return returns 1 if the user exists and an error message if not
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

@@ -14,14 +14,22 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *
+ */
 public class InsertNewProjectCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(InsertNewProjectCommand.class);
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
-
+	
+	/**
+	 * constructor 
+	 * @param request contains the necessary data to create a new project
+	 */
 	public InsertNewProjectCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 
@@ -37,7 +45,9 @@ public class InsertNewProjectCommand extends BaseCommandOperations implements Co
 		}
 
 	}
-
+	/**
+	 * @return returns the created projects id or an error message 
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

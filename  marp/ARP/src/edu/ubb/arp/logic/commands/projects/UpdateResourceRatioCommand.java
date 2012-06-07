@@ -14,7 +14,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ * updates a resource's ratio in a project
+ */
 public class UpdateResourceRatioCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(UpdateResourceRatioCommand.class);
 	private JSONArray request = null;
@@ -22,6 +26,10 @@ public class UpdateResourceRatioCommand extends BaseCommandOperations implements
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
 	
+	/**
+	 * constructor
+	 * @param request contains the necessary data to update the ratio of the resource
+	 */
 	public UpdateResourceRatioCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -37,7 +45,9 @@ public class UpdateResourceRatioCommand extends BaseCommandOperations implements
 		}
 		
 	}
-	
+	/**
+	 * @return return the id of the resource which's ratio was updated or an error message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

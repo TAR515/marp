@@ -12,7 +12,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *removes a user from a project
+ */
 public class RemoveUserFromProjectCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(RemoveUserFromProjectCommand.class);
 	private JSONArray request = null;
@@ -20,6 +24,10 @@ public class RemoveUserFromProjectCommand extends BaseCommandOperations implemen
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
 	
+	/**
+	 * constructor
+	 * @param request contains a project name a user name and a week
+	 */
 	public RemoveUserFromProjectCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -35,7 +43,9 @@ public class RemoveUserFromProjectCommand extends BaseCommandOperations implemen
 		}
 		
 	}
-	
+	/**
+	 * @return returns the removed user's id or an error message 
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

@@ -12,7 +12,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *removes expired requests 
+ */
 public class RemoveExpiredRequestsCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(RemoveExpiredRequestsCommand.class);
 	private JSONArray request = null;
@@ -20,6 +24,10 @@ public class RemoveExpiredRequestsCommand extends BaseCommandOperations implemen
 	private DaoFactory instance = null;
 	private RequestsDao requestDao = null;
 	
+	/**
+	 * constructor
+	 * @param request contains a week
+	 */
 	public RemoveExpiredRequestsCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -35,7 +43,9 @@ public class RemoveExpiredRequestsCommand extends BaseCommandOperations implemen
 		}
 		
 	}
-	
+	/**
+	 * @return returns the count of the removed requests or an error message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

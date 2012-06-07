@@ -15,7 +15,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *loads booking in all projects of a resource
+ */
 public class LoadResourceEngagedCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(LoadResourceEngagedCommand.class);
 	private JSONArray request = null;
@@ -25,6 +29,10 @@ public class LoadResourceEngagedCommand extends BaseCommandOperations implements
 	List<Integer> resultForCurrentProject = null;
 	private ResourcesDao resourceDao = null;
 	
+	/**
+	 * constructor
+	 * @param request contains a projectName an action  a resourceID , a startWeek and an endWeek
+	 */
 	public LoadResourceEngagedCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -42,6 +50,9 @@ public class LoadResourceEngagedCommand extends BaseCommandOperations implements
 		
 	}
 	
+	/**
+	 * @return returns the booking of the resource from start week to end week in all projects he works in or an error message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

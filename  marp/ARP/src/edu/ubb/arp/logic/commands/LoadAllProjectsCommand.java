@@ -14,14 +14,20 @@ import edu.ubb.arp.dao.ProjectsDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.dao.model.ResourcesWorkingOnProject;
 import edu.ubb.arp.exceptions.DalException;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ * loads all projects from the database
+ */
 public class LoadAllProjectsCommand extends BaseCommandOperations implements Command{
 	private static final Logger logger = Logger.getLogger(LoadProjectsUserIsWorkingOnCommand.class);
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private ProjectsDao projectsDao = null;
 	
-	
+	/**
+	 * constructor
+	 */
 	public LoadAllProjectsCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -36,7 +42,9 @@ public class LoadAllProjectsCommand extends BaseCommandOperations implements Com
 		
 	}
 	
-	
+	/**
+	 * @return returns all projects from the database
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

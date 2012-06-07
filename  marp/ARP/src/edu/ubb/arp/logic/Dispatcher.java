@@ -45,14 +45,21 @@ import edu.ubb.arp.logic.commands.users.ChangeUserPhoneNumberCommand;
 import edu.ubb.arp.logic.commands.users.ChangeUserResourceNameCommand;
 import edu.ubb.arp.logic.commands.users.InsertNewUserCommand;
 import edu.ubb.arp.logic.commands.users.RemoveUserFromGroupCommand;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *
+ */
 public class Dispatcher extends BaseCommandOperations {
 	private static final Logger logger = Logger.getLogger(Dispatcher.class);
 
 	private JSONArray request = null;
 	private JSONArray response = null;
 	private Command command;
-
+	/**
+	 * constructor
+	 * @param request
+	 */
 	public Dispatcher(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 
@@ -65,6 +72,10 @@ public class Dispatcher extends BaseCommandOperations {
 		}
 	}
 
+	/**
+	 * 
+	 * @return returns the result of the request 
+	 */
 	public JSONArray getResult() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		logger.debug(getClass().getName() + methodName + "-> START");

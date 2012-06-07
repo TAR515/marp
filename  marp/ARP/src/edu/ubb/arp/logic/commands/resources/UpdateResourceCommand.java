@@ -12,7 +12,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *updates a resource 
+ */
 public class UpdateResourceCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(UpdateResourceCommand.class);
 	private JSONArray request = null;
@@ -20,6 +24,10 @@ public class UpdateResourceCommand extends BaseCommandOperations implements Comm
 	private DaoFactory instance = null;
 	private ResourcesDao resourceDao = null;
 	
+	/**
+	 * constructor
+	 * @param request contains all necessary data to update the resource
+	 */
 	public UpdateResourceCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -36,6 +44,9 @@ public class UpdateResourceCommand extends BaseCommandOperations implements Comm
 		
 	}
 	
+	/**
+	 * @return returns the resource's id or an error message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

@@ -19,7 +19,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.dao.model.Resources;
 import edu.ubb.arp.datastructures.Booking;
 import edu.ubb.arp.exceptions.DalException;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *loads project table
+ */
 public class LoadProjectTableCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(LoadUserDataCommand.class);
 	private JSONArray request = null;
@@ -30,7 +34,10 @@ public class LoadProjectTableCommand extends BaseCommandOperations implements Co
 	private ProjectsDao projectsDao = null;
 	private ResourcesDao resourcesDao = null;
 	
-	
+	/**
+	 * constructor 
+	 * @param request contains a projectID
+	 */
 	public LoadProjectTableCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -50,7 +57,9 @@ public class LoadProjectTableCommand extends BaseCommandOperations implements Co
 			response = setError(0);
 		}
 	}
-	
+	/**
+	 * loads the booking of all resources in the given project
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

@@ -14,7 +14,11 @@ import edu.ubb.arp.dao.ProjectsDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.dao.model.ResourcesWorkingOnProject;
 import edu.ubb.arp.exceptions.DalException;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *loads projects of a certain user
+ */
 public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations implements Command{
 	private static final Logger logger = Logger.getLogger(LoadProjectsUserIsWorkingOnCommand.class);
 	private JSONArray request = null;
@@ -22,7 +26,10 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 	private DaoFactory instance = null;
 	private ProjectsDao projectsDao = null;
 	
-	
+	/**
+	 * constructor 
+	 * @param request is the request that came from the client containing a user name 
+	 */
 	public LoadProjectsUserIsWorkingOnCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -39,7 +46,9 @@ public class LoadProjectsUserIsWorkingOnCommand extends BaseCommandOperations im
 		
 	}
 	
-	
+	/**
+	 * @return returns the projects the given user works in
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

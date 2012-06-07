@@ -12,7 +12,12 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan
+ *sets a resource's active to true or false , if active is false the deletes the booking of the resource from the current date
+ *removes all request that were for this resource 
+ */
 public class SetResourceActiveCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(SetResourceActiveCommand.class);
 	private JSONArray request = null;
@@ -20,6 +25,10 @@ public class SetResourceActiveCommand extends BaseCommandOperations implements C
 	private DaoFactory instance = null;
 	private ResourcesDao resourceDao = null;
 	
+	/**
+	 * constructor 
+	 * @param request contains a resourceID , a currentWeek and a boolean value
+	 */
 	public SetResourceActiveCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		

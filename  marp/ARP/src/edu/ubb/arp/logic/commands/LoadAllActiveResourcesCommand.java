@@ -13,13 +13,20 @@ import edu.ubb.arp.dao.DaoFactory;
 import edu.ubb.arp.dao.ResourcesDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.dao.model.Resources;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *loads all active resources from the database 
+ */
 public class LoadAllActiveResourcesCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(LoadAllActiveResourcesCommand.class);
 	private JSONArray response = null;
 	private DaoFactory instance = null;
 	private ResourcesDao resourceDao = null;
 	
+	/**
+	 * constructor 
+	 */
 	public LoadAllActiveResourcesCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -33,7 +40,9 @@ public class LoadAllActiveResourcesCommand extends BaseCommandOperations impleme
 		}
 		
 	}
-	
+	/**
+	 * @return returns all active resources in a JSONArray
+	 */
 	@Override
 	public JSONArray execute()  {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

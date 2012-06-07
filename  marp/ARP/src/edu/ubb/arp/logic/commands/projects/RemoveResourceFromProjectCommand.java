@@ -12,7 +12,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *removes a resource from a project
+ */
 public class RemoveResourceFromProjectCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(RemoveResourceFromProjectCommand.class);
 	private JSONArray request = null;
@@ -20,6 +24,10 @@ public class RemoveResourceFromProjectCommand extends BaseCommandOperations impl
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
 	
+	/**
+	 * constructor
+	 * @param request contains a project name a resource name and a week 
+	 */
 	public RemoveResourceFromProjectCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -35,7 +43,9 @@ public class RemoveResourceFromProjectCommand extends BaseCommandOperations impl
 		}
 		
 	}
-	
+	/**
+	 * @return returns the id of the removed resource or ana errror message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

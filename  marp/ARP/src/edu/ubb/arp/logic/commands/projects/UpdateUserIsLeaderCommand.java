@@ -12,7 +12,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *updates a user to leader or user 
+ */
 public class UpdateUserIsLeaderCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(UpdateUserIsLeaderCommand.class);
 	private JSONArray request = null;
@@ -20,6 +24,10 @@ public class UpdateUserIsLeaderCommand extends BaseCommandOperations implements 
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
 	
+	/**
+	 * constructor
+	 * @param request contains a project name a user name a week and boolean isLeader value 
+	 */
 	public UpdateUserIsLeaderCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		

@@ -14,7 +14,11 @@ import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.HashCoding;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *change a user's password
+ */
 public class ChangeUserPasswordCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(ChangeUserPasswordCommand.class);
 	private JSONArray request = null;
@@ -22,7 +26,10 @@ public class ChangeUserPasswordCommand extends BaseCommandOperations implements 
 	private DaoFactory instance = null;
 	private UsersDao userDao = null;
 	
-	
+	/**
+	 * constructor
+	 * @param request contains a userName , an old password and a new password
+	 */
 	public ChangeUserPasswordCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -39,7 +46,9 @@ public class ChangeUserPasswordCommand extends BaseCommandOperations implements 
 		
 	}
 	
-	
+	/**
+	 * @return returns the id of the user or an error message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

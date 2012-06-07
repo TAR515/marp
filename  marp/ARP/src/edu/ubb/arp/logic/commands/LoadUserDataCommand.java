@@ -12,7 +12,11 @@ import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.dao.model.Users;
 import edu.ubb.arp.exceptions.DalException;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *loads all data of a user
+ */
 public class LoadUserDataCommand extends BaseCommandOperations implements Command{
 	private static final Logger logger = Logger.getLogger(LoadUserDataCommand.class);
 	private JSONArray request = null;
@@ -21,7 +25,10 @@ public class LoadUserDataCommand extends BaseCommandOperations implements Comman
 	private UsersDao userDao = null;
 	private Users user= null;
 	
-	
+	/**
+	 * constructor 
+	 * @param request contains a user name
+	 */
 	public LoadUserDataCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -38,7 +45,9 @@ public class LoadUserDataCommand extends BaseCommandOperations implements Comman
 		
 	}
 	
-	
+	/**
+	 * @return returns the userId, userName , phoneNumber , email , resourceName of the given user 
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

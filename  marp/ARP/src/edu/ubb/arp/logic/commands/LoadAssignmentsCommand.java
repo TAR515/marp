@@ -14,7 +14,11 @@ import edu.ubb.arp.dao.UsersDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.datastructures.Booking;
 import edu.ubb.arp.exceptions.DalException;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *loads booking of the user given in the request 
+ */
 public class LoadAssignmentsCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(LoadAssignmentsCommand.class);
 	private JSONArray request = null;
@@ -22,6 +26,10 @@ public class LoadAssignmentsCommand extends BaseCommandOperations implements Com
 	private DaoFactory instance = null;
 	private UsersDao userDao = null;
 	
+	/**
+	 * constructor
+	 * @param request is the request that came from the client containing a user name and a week
+	 */
 	public LoadAssignmentsCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -36,7 +44,9 @@ public class LoadAssignmentsCommand extends BaseCommandOperations implements Com
 		}
 		
 	}
-	
+	/**
+	 * @return returns the booking of the given user (from the current week to current week + 3)
+	 */
 	@Override
 	public JSONArray execute()  {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

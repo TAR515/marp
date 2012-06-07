@@ -14,7 +14,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *add a resource to a project
+ */
 public class AddResourceToprojectCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(AddResourceToprojectCommand.class);
 	private JSONArray request = null;
@@ -22,6 +26,10 @@ public class AddResourceToprojectCommand extends BaseCommandOperations implement
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
 
+	/**
+	 * constructor 
+	 * @param request contains the data needed to add the resource to the project
+	 */
 	public AddResourceToprojectCommand(JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 
@@ -37,7 +45,10 @@ public class AddResourceToprojectCommand extends BaseCommandOperations implement
 		}
 
 	}
-
+	
+	/**
+	 * @return returns the id of the inserted resource if there was no error , otherwise an error message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

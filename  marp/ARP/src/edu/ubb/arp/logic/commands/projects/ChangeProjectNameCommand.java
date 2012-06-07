@@ -12,7 +12,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *changes the name of a project
+ */
 public class ChangeProjectNameCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(ChangeProjectNameCommand.class);
 	private JSONArray request = null;
@@ -20,6 +24,10 @@ public class ChangeProjectNameCommand extends BaseCommandOperations implements C
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
 	
+	/**
+	 * constructor 
+	 * @param request contains a project id and a new project name
+	 */
 	public ChangeProjectNameCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -35,7 +43,9 @@ public class ChangeProjectNameCommand extends BaseCommandOperations implements C
 		}
 		
 	}
-	
+	/**
+	 *  @return returns the project's id or an error message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

@@ -1,12 +1,22 @@
 package edu.ubb.arp.datastructures;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *contains getters and setters , hashCode , equals and toString methods  
+ */
 public class MyAccount {
 	private String userName = null;
 	private String resourceName = null;
 	private String phoneNumber = null;
 	private String email = null;
 	
-	
+	/**
+	 * constructor
+	 * @param userName is the name of the user
+	 * @param resourceName is the resource name of the user
+	 * @param phoneNumber is the phone number of the user
+	 * @param email is the email of the user
+	 */
 	public MyAccount(String userName, String resourceName, String phoneNumber, String email) {
 		super();
 		this.userName = userName;
@@ -15,47 +25,73 @@ public class MyAccount {
 		this.email = email;
 	}
 
-
+	/**
+	 * 
+	 * @return returns userName
+	 */
 	public String getUserName() {
 		return userName;
 	}
 
-
+	/**
+	 * sets userName
+	 * @param userName is the userName to be set
+	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
 
-
+	/**
+	 * 
+	 * @return returns resourceName;
+	 */
 	public String getResourceName() {
 		return resourceName;
 	}
-
-
+	
+	/**
+	 * sets esourceName
+	 * @param resourceName is the rresourceName to be set
+	 */
 	public void setResourceName(String resourceName) {
 		this.resourceName = resourceName;
 	}
 
-
+	/**
+	 * 
+	 * @return returns phoneNumber
+	 */
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
-
+	/**
+	 * set phoneNumber
+	 * @param phoneNumber is phoneNumber to be set
+	 */
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 
-
+	/**
+	 * 
+	 * @return returns email
+	 */
 	public String getEmail() {
 		return email;
 	}
 
-
+	/**
+	 * sets email
+	 * @param email is the email to be set
+	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
-
+	/**
+	 * return a hashCode value of the object
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -67,7 +103,9 @@ public class MyAccount {
 		return result;
 	}
 
-
+	/**
+	 * Indicates whether some other object is "equal to" this one.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -100,7 +138,9 @@ public class MyAccount {
 		return true;
 	}
 
-
+	/**
+	 * @return Returns a string representation of the object.
+	 */
 	@Override
 	public String toString() {
 		return "MyAccount [userName=" + userName + ", resourceName=" + resourceName + ", phoneNumber=" + phoneNumber + ", email="

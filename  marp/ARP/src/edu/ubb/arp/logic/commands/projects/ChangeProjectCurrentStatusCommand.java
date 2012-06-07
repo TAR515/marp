@@ -12,7 +12,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ *  
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *changes a project's current status  
+ */
 public class ChangeProjectCurrentStatusCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(ChangeProjectCurrentStatusCommand.class);
 	private JSONArray request = null;
@@ -20,6 +24,10 @@ public class ChangeProjectCurrentStatusCommand extends BaseCommandOperations imp
 	private DaoFactory instance = null;
 	private ProjectsDao projectDao = null;
 	
+	/**
+	 * constructor 
+	 * @param request contains the projects id and the new status
+	 */
 	public ChangeProjectCurrentStatusCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -36,6 +44,9 @@ public class ChangeProjectCurrentStatusCommand extends BaseCommandOperations imp
 		
 	}
 	
+	/**
+	 * @return returns the project's id or an error message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

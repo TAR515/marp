@@ -32,7 +32,12 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		
 		return result;
 	}
-	
+	/**
+	 * adds a string to response JSONArray
+	 * @param key is the JSONobject's name 
+	 * @param element is the JSONobject's value
+	 * @return returns a JSONArray containing the key and element pair
+	 */
 	public JSONArray addString(String key, String element, JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONArray result = JSONArray.fromObject(response);
@@ -79,7 +84,13 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 
 		return result;
 	}
-	
+	/**
+	 * Appends response with the parameter element, if the response were null create a new response with the parameter element.
+	 * @param key is not null.
+	 * @param element
+	 * @param response 
+	 * @return unknown error if the parameter: key is null, else response appended with the new element.
+	 */
 	public JSONArray addBool(String key, boolean element, JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONArray result = JSONArray.fromObject(response);
@@ -101,11 +112,11 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 	}
 	
 	/**
-	 * Adds more key-value pairs into an JSONObject and appends "response" with it!
-	 * @param key
-	 * @param element
-	 * @param response
-	 * @return
+	 * Adds more key-value pairs into a JSONObject and appends "response" with it!
+	 * @param keys is an array strings containing keys which will be the JSONObjects names
+	 * @param elements is an array of int's containing values which will be the JSONObjects values
+	 * @param response is a JSONArray to which the keys and elements will be appended
+	 * @return returns a JSONArray containing the appended key and element pairs 
 	 */
 	public JSONArray addMoreInt(String keys[], int elements[], JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
@@ -128,7 +139,13 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 
 		return result;
 	}
-	
+	/**
+	 * Adds more key-value pairs into a JSONObject and appends "response" with it!
+	 * @param keys is an array strings containing keys which will be the JSONObjects names
+	 * @param elements is an array of strings containing values which will be the JSONObjects values
+	 * @param response is a JSONArray to which the keys and elements will be appended
+	 * @return returns a JSONArray containing the appended key and element pairs 
+	 */
 	public JSONArray addMoreStrings(String keys[], String elements[], JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONArray result = JSONArray.fromObject(response);
@@ -150,7 +167,14 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 
 		return result;
 	}
-	
+	/**
+	 * Adds more key-value pairs into a JSONObject and appends "response" with them!
+	 * @param keys is an array strings containing keys which will be the JSONObjects names
+	 * @param elements is an array of int's containing values which will be the JSONObjects values
+	 * @param element is a value which will be appended to the JSONArray
+	 * @param response is a JSONArray to which the keys and elements will be appended
+	 * @return returns a JSONArray containing the appended key and element pairs 
+	 */
 	public JSONArray addMoreIntAndOneBool(String keys[], int elements[],Boolean element, JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONArray result = JSONArray.fromObject(response);
@@ -174,7 +198,14 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		return result;
 	}
 	
-	
+	/**
+	 *Adds more key-value pairs into a JSONObject and appends "response" with them!
+	 * @param keys is an array strings containing keys which will be the JSONObjects names
+	 * @param intElement is a value which will be appended to the JSONArray
+	 * @param stringElement is a value which will be appended to the JSONArray
+	 * @param response is a JSONArray to which the keys and elements will be appended
+	 * @return returns a JSONArray containing the appended key and element pairs
+	 */
 	public JSONArray addIntAndString(String keys[], int intElement,String stringElement, JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONArray result = JSONArray.fromObject(response);
@@ -195,7 +226,14 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 
 		return result;
 	}
-	
+	/**
+	 * Adds more key-value pairs into a JSONObject and appends "response" with them!
+	 * @param keys is an array strings containing keys which will be the JSONObjects names
+	 * @param intElements is an array of int's containing values which will be the JSONObjects values
+	 * @param stringElement is an array of string's containing values which will be the JSONObjects values
+	 * @param response is a JSONArray to which the keys and elements will be appended
+	 * @return returns a JSONArray containing the appended key and element pairs
+	 */
 	public JSONArray addMoreIntAndString(String keys[], int intElements[],String stringElement[], JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONArray result = JSONArray.fromObject(response);
@@ -228,11 +266,11 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 	
 	/**
 	 * 
-	 * @param index
-	 * @param key
-	 * @param request
-	 * @return
-	 * @throws IllegalStateException if the request do not contains the given element.
+	 * @param index is the index of the name/value pair which i need
+	 * @param key is the name from the JSONArray i need 
+	 * @param request is the JSONArray from where i need the value 
+	 * @return returns a string which contains the desired value 
+	 * @throws JSONException if the request do not contains the given element.
 	 */
 	public String getString(int index, String key, JSONArray request) throws JSONException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
@@ -250,7 +288,14 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		}	
 		return result;
 	}
-	
+	/**
+	 * 
+	 * @param index is the index of the name/value pair which i need
+	 * @param key is the name from the JSONArray i need 
+	 * @param request is the JSONArray from where i need the value 
+	 * @return returns an int which contains the desired value 
+	 * @throws JSONException if the request do not contains the given element.
+	 */
 	public int getInt(int index, String key, JSONArray request) throws JSONException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		int result = 0;
@@ -267,7 +312,14 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		}	
 		return result;
 	}
-	
+	/**
+	 * 
+	 * @param index is the index of the name/value pair which i need
+	 * @param key is the value from the JSONArray i need 
+	 * @param request is the JSONArray from where i need the value 
+	 * @return returns a boolean value which contains the desired value 
+	 * @throws JSONException if the request do not contains the given element.
+	 */
 	public boolean getBool(int index, String key, JSONArray request) throws JSONException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		boolean result = false;
@@ -290,7 +342,7 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 	
     /**
 	 * 
-	 * @param response
+	 * @param response is a JSONArray which is checked if contains errors 
 	 * @return true - if the response is an error message, false if not.
 	 */
 	public boolean errorCheck(JSONArray response) {
@@ -306,7 +358,11 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		
 		return false;
 	}
-	
+	/**
+	 * @param index is the index of the required JSONArray
+	 * @param request is the JSONArray from which i need the JSONArray 
+	 * @return returns the desired JSONArray
+	 */
 	public JSONArray getJSONArray(int index , JSONArray request ) throws JSONException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONArray array = new JSONArray();
@@ -322,7 +378,11 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		}
 		return array;
 	}
-	
+	/**
+	 * @param index is the index of the required JSONObject
+	 * @param request is the JSONArray from which i need the JSONObject 
+	 * @return returns the desired JSONObject
+	 */
 	public JSONObject getJSONObject(int index , JSONArray request) throws JSONException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONObject object = new JSONObject();
@@ -339,7 +399,10 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		return object;
 	}
 	
-	
+	/**
+	 * @param
+	 * @return
+	 */
 	public JSONArray makeCheckUserRequest(JSONArray request) throws JSONException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONArray response = new JSONArray();
@@ -357,7 +420,9 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 		}
 		return response;
 	}
-	// true - if user exists
+	/**
+	 * @return returns true if user exists
+	 */
 	public boolean checkResponseIfLoginSuccessfull(JSONArray response) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -376,7 +441,13 @@ public class BaseCommandOperations implements BaseCommandOperationsInterface {
 			throw e;
 		}
 	}
-	
+	/**
+	 * @param index is the index of the value i want to change
+	 * @param key is the name from the name/value pair which i want to change
+	 * @param value is the new value of the name/value pair
+	 * @param request is a JSONArray in from which i want to change the value of a name/value pair
+	 * @return  returns a JSONArray containing the changed value
+	 */
 	public JSONArray changeInt(int index, String key, int value, JSONArray request) throws JSONException {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		JSONArray result = JSONArray.fromObject(request);

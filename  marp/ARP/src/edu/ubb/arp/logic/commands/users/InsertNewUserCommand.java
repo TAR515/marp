@@ -13,7 +13,11 @@ import edu.ubb.arp.logic.HashCoding;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
 import net.sf.json.JSONArray;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *inserts a new user into the database
+ */
 public class InsertNewUserCommand extends BaseCommandOperations implements Command{
 	private static final Logger logger = Logger.getLogger(InsertNewUserCommand.class);
 	private JSONArray request = null;
@@ -21,6 +25,10 @@ public class InsertNewUserCommand extends BaseCommandOperations implements Comma
 	private DaoFactory instance = null;
 	private UsersDao userDao = null;
 	
+	/**
+	 * constructor
+	 * @param request contains all necessary data to create a new user
+	 */
 	public InsertNewUserCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -37,6 +45,9 @@ public class InsertNewUserCommand extends BaseCommandOperations implements Comma
 		
 	}
 	
+	/**
+	 * @return returns the id of the created user or an error message 
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

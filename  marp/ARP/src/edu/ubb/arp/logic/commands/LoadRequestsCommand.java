@@ -14,7 +14,11 @@ import edu.ubb.arp.dao.RequestsDao;
 import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.dao.model.Requests;
 import edu.ubb.arp.exceptions.DalException;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *loads requests
+ */
 public class LoadRequestsCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(LoadAssignmentsCommand.class);
 	private JSONArray request = null;
@@ -23,6 +27,10 @@ public class LoadRequestsCommand extends BaseCommandOperations implements Comman
 	private RequestsDao requestsDao = null;
 	private List<Requests> result = null;
 	
+	/**
+	 * constructor 
+	 * @param request contains a user name
+	 */
 	public LoadRequestsCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -38,6 +46,9 @@ public class LoadRequestsCommand extends BaseCommandOperations implements Comman
 		
 	}
 	
+	/**
+	 * @return returns the requests which can be seen by the given user
+	 */
 	@Override
 	public JSONArray execute()  {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

@@ -12,7 +12,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *adds a user to a group
+ */
 public class AddUserToGroupCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(AddUserToGroupCommand.class);
 	private JSONArray request = null;
@@ -20,6 +24,10 @@ public class AddUserToGroupCommand extends BaseCommandOperations implements Comm
 	private DaoFactory instance = null;
 	private UsersDao userDao = null;
 	
+	/**
+	 * constructor
+	 * @param request contains a userName and a groupName
+	 */
 	public AddUserToGroupCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -35,7 +43,9 @@ public class AddUserToGroupCommand extends BaseCommandOperations implements Comm
 		}
 		
 	}
-	
+	/**
+	 * @return returns the id of the user or an error message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

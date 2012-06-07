@@ -14,7 +14,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *updates request ratios of a user
+ */
 public class UpdateRequestRatioOfUserCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(UpdateRequestRatioOfUserCommand.class);
 	private JSONArray request = null;
@@ -22,6 +26,10 @@ public class UpdateRequestRatioOfUserCommand extends BaseCommandOperations imple
 	private DaoFactory instance = null;
 	private RequestsDao requestDao = null;
 	
+	/**
+	 * 
+	 * @param request contains all necessary data o update request ratios
+	 */
 	public UpdateRequestRatioOfUserCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -37,7 +45,9 @@ public class UpdateRequestRatioOfUserCommand extends BaseCommandOperations imple
 		}
 		
 	}
-	
+	/**
+	 * @return returns the modified requests id or an error message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

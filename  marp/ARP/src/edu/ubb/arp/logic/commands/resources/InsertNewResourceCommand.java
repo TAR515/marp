@@ -12,7 +12,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan
+ *inserts a new resource into the database
+ */
 public class InsertNewResourceCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(InsertNewResourceCommand.class);
 	private JSONArray request = null;
@@ -20,6 +24,10 @@ public class InsertNewResourceCommand extends BaseCommandOperations implements C
 	private DaoFactory instance = null;
 	private ResourcesDao resourceDao = null;
 	
+	/**
+	 * constructor
+	 * @param request contains a resourceName , a resourceTypeName , a resourceGroupName and a boolean active  
+	 */
 	public InsertNewResourceCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -36,6 +44,9 @@ public class InsertNewResourceCommand extends BaseCommandOperations implements C
 		
 	}
 	
+	/**
+	 * @return returns ErrorCode if the returned value is lower than 0 | Created resource id if the returned value is bigger than 0
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";

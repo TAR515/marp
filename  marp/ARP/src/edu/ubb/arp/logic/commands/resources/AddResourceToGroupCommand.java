@@ -12,7 +12,11 @@ import edu.ubb.arp.dao.jdbc.JdbcDaoFactory;
 import edu.ubb.arp.exceptions.DalException;
 import edu.ubb.arp.logic.commands.BaseCommandOperations;
 import edu.ubb.arp.logic.commands.Command;
-
+/**
+ * 
+ * @author VargaAdorjan , TurdeanArnoldRobert
+ *adds resource to a group
+ */
 public class AddResourceToGroupCommand extends BaseCommandOperations implements Command {
 	private static final Logger logger = Logger.getLogger(AddResourceToGroupCommand.class);
 	private JSONArray request = null;
@@ -20,6 +24,10 @@ public class AddResourceToGroupCommand extends BaseCommandOperations implements 
 	private DaoFactory instance = null;
 	private ResourcesDao resourceDao = null;
 	
+	/**
+	 * constructor
+	 * @param request contains a resource name and a group name
+	 */
 	public AddResourceToGroupCommand (JSONArray request) {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
 		
@@ -35,7 +43,9 @@ public class AddResourceToGroupCommand extends BaseCommandOperations implements 
 		}
 		
 	}
-	
+	/**
+	 * @return returns the modified requests id or an error message
+	 */
 	@Override
 	public JSONArray execute() {
 		String methodName = "." + Thread.currentThread().getStackTrace()[1].getMethodName() + "() ";
