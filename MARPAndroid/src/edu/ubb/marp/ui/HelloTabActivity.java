@@ -7,46 +7,43 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TabHost;
+
 /**
  * 
  * @author Rakosi Alpar, Vizer Arnold
- *
+ * 
  */
 public class HelloTabActivity extends TabActivity {
 	/**
 	 * Initialize and create the Tab Activity
 	 */
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.i("Hellotab", "setcontent elott");
-        setContentView(R.layout.hellotab);
-        Log.i("Hellotab", "setcontent utan");
-        
-        Resources res = getResources(); // Resource object to get Drawables
-        TabHost tabHost = getTabHost();  // The activity TabHost
-        TabHost.TabSpec spec;  // Resusable TabSpec for each tab
-        Intent intent;  // Reusable Intent for each tab
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Log.i("Hellotab", "setcontent elott");
+		setContentView(R.layout.hellotab);
+		Log.i("Hellotab", "setcontent utan");
 
-        // Create an Intent to launch an Activity for the tab (to be reused)
-        Log.i("Hellotab", "intent elott");
-        intent = new Intent().setClass(this, ProjectActivity.class);
+		Resources res = getResources(); // Resource object to get Drawables
+		TabHost tabHost = getTabHost(); // The activity TabHost
+		TabHost.TabSpec spec; // Resusable TabSpec for each tab
+		Intent intent; // Reusable Intent for each tab
 
-        // Initialize a TabSpec for each tab and add it to the TabHost
-        spec = tabHost.newTabSpec("projects").setIndicator("Projects",
-                          res.getDrawable(R.drawable.ic_tab_projects))
-                      .setContent(intent);
-        tabHost.addTab(spec);
-        Log.i("Hellotab", "intent utan");
+		// Create an Intent to launch an Activity for the tab (to be reused)
+		Log.i("Hellotab", "intent elott");
+		intent = new Intent().setClass(this, ProjectActivity.class);
 
-        // Do the same for the other tabs
-        intent = new Intent().setClass(this, AssignmentsActivity.class);
-        spec = tabHost.newTabSpec("albums").setIndicator("Assignments",
-                          res.getDrawable(R.drawable.ic_tab_assignements))
-                      .setContent(intent);
-        tabHost.addTab(spec);
+		// Initialize a TabSpec for each tab and add it to the TabHost
+		spec = tabHost.newTabSpec("projects").setIndicator("Projects", res.getDrawable(R.drawable.ic_tab_projects)).setContent(intent);
+		tabHost.addTab(spec);
+		Log.i("Hellotab", "intent utan");
 
-        tabHost.setCurrentTab(2);
-    }
-   
+		// Do the same for the other tabs
+		intent = new Intent().setClass(this, AssignmentsActivity.class);
+		spec = tabHost.newTabSpec("albums").setIndicator("Assignments", res.getDrawable(R.drawable.ic_tab_assignements)).setContent(intent);
+		tabHost.addTab(spec);
+
+		tabHost.setCurrentTab(2);
+	}
+
 }

@@ -3,37 +3,26 @@ package edu.ubb.marp.ui;
 import java.util.Date;
 import java.util.StringTokenizer;
 
-import org.json.JSONArray;
-
 import edu.ubb.marp.Constants;
 import edu.ubb.marp.Constants.STRIPEACTIVITYACTIONS;
 import edu.ubb.marp.R;
 import edu.ubb.marp.database.DatabaseContract;
-import edu.ubb.marp.database.DatabaseContract.TABLE_PROJECTS;
-import edu.ubb.marp.database.DatabaseContract.TABLE_USERS;
 import edu.ubb.marp.network.MyService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.InputFilter.LengthFilter;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
@@ -47,26 +36,75 @@ import android.widget.TableRow;
  *
  */
 public class StripeActivity extends Activity {
-	private static final String tag = "StripeActivity";
 
+	/**
+	 * The loading progress dialog
+	 */
 	private ProgressDialog loading;
+	/**
+	 * The requestid
+	 */
 	private long requestid;
+	/**
+	 * The Bundle object, what received the object
+	 */
 	private Bundle bundle;
+	/**
+	 * The startweek of the activity
+	 */
 	private int startweek;
+	/**
+	 * The endweek of the activity
+	 */
 	private int endweek;
+	/**
+	 * The name of the project
+	 */
 	private String projectname;
+	/**
+	 * The id of the project
+	 */
 	private int projectID;
-	private int targetresourceid, senderresourceid;
+	/**
+	 * The id of the target resource
+	 */
+	private int targetresourceid;
+	/**
+	 * The id of the sender resource
+	 */
+	private int senderresourceid;
+	/**
+	 * The context in which the application is running
+	 */
 	private Context context;
+	/**
+	 * The reason for starting this activity
+	 */
 	private STRIPEACTIVITYACTIONS action;
+	/**
+	 * The booking of the current resource
+	 */
 	private int[] booking;
+	/**
+	 * Is the user leader in the project
+	 */
 	private boolean isleader;
+	/**
+	 * The requestid
+	 */
+	private int currentrequestid;
 
+	/**
+	 * The elements of the Row
+	 */
 	RowElement[] elements;
 	Button applyToAll;
 	int columns;
 	Display display;
 	
+	/**
+	 * With this array the elements will be filled
+	 */
 	String loadstr[][];
 	boolean klicked = false;
 
@@ -74,7 +112,6 @@ public class StripeActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i(tag, "oncreate");
 
 		context = this;
 
@@ -104,6 +141,15 @@ public class StripeActivity extends Activity {
 				projectname = bundle.getString("projectname");
 				targetresourceid = bundle.getInt("targetresourceid");
 				senderresourceid = bundle.getInt("senderresourceid");
+				booking = bundle.getIntArray("booking");
+				break;
+				
+			case request:
+				projectID = bundle.getInt("projectid");
+				projectname = bundle.getString("projectname");
+				targetresourceid = bundle.getInt("targetresourceid");
+				senderresourceid = bundle.getInt("senderresourceid");
+				currentrequestid = bundle.getInt("currentrequestid");
 				booking = bundle.getIntArray("booking");
 				break;
 			}
@@ -139,8 +185,6 @@ public class StripeActivity extends Activity {
 					elements[i].setElements(elements, columns, i);
 					applyToAll.setOnClickListener(new OnClickListener() {
 						public void onClick(View v) {
-							Log.i("melyiket piszkalom : ", "" + from);
-							Log.i("ID : ", "" + id);
 							setElements(from, rad);
 						}
 					});
@@ -176,6 +220,7 @@ public class StripeActivity extends Activity {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
+	
 	/**
 	 * initialize the array of row elements
 	 * @param n the number of columns
@@ -187,7 +232,7 @@ public class StripeActivity extends Activity {
 		for (int i = 0; i < columns; i++) {
 			elements[i] = new RowElement(this, display);
 			elements[i].setText(s[i][0], s[i][1]);
-			if (action == STRIPEACTIVITYACTIONS.update) {
+			if ((action == STRIPEACTIVITYACTIONS.update)||(action == STRIPEACTIVITYACTIONS.request)) {
 				String temp = booking[i] + " %";
 				StringTokenizer st = new StringTokenizer(temp);
 				elements[i].setPercentText(temp);
@@ -196,6 +241,7 @@ public class StripeActivity extends Activity {
 			}
 		}
 	}
+	
 	/**
 	 * set the elements to a state 
 	 * @param from the index of the beginning
@@ -222,7 +268,6 @@ public class StripeActivity extends Activity {
 				} else {
 					if (id == 4) {
 						int ratio = elements[from].getCurrentNeededRatio();
-						Log.i("lefoglalt szazalek", "" + ratio);
 
 						for (int i = from + 1; i < columns; i++) {
 							elements[i].applyMyRatioToAll2(ratio);
@@ -234,6 +279,7 @@ public class StripeActivity extends Activity {
 		}
 		elements[from].buttonDownShowHide();
 	}
+	
 	/**
 	 * cleare all the elements
 	 */
@@ -242,6 +288,7 @@ public class StripeActivity extends Activity {
 			elements[i].setInitialState();
 		}
 	}
+	
 	/**
 	 *  create the menu option
 	 */
@@ -250,6 +297,7 @@ public class StripeActivity extends Activity {
 		inflater.inflate(R.menu.newprojectmenu, menu);
 		return true;
 	}
+	
 	/**
 	 * called when an item is selected from the menu
 	 */
@@ -372,6 +420,30 @@ public class StripeActivity extends Activity {
 
 					startService(intent);
 					break;
+					
+				case request:
+					Uri.Builder uri = new Uri.Builder();
+					uri.authority(DatabaseContract.PROVIDER_NAME);
+					uri.path(Integer.toString(Constants.ACCEPTREQUESTCMD));
+					uri.scheme("content");
+					
+					intent = new Intent(this, MyService.class);
+					intent.setData(uri.build());
+					
+					intent.putExtra("ACTION", "REQUESTOPERATIONS");
+					intent.putExtra("projectid", projectID);
+					intent.putExtra("targetresourceid", targetresourceid);
+					intent.putExtra("currentrequestid", currentrequestid);
+					intent.putExtra("currentweek", startweek);
+					
+					StringTokenizer st = new StringTokenizer(elements[0].getPercentText());
+					intent.putExtra("updateratio", Integer.parseInt(st.nextToken()));
+
+					requestid = new Date().getTime();
+					intent.putExtra("requestid", requestid);
+
+					startService(intent);
+					break;
 				}
 			}
 			return true;
@@ -382,16 +454,12 @@ public class StripeActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
 	/**
 	 * restore the state of the activity after rotating the screen
 	 * @param savedInstanceState
 	 */
 	protected void RestoreInstanceState(Bundle savedInstanceState) {
-		// super.onRestoreInstanceState(savedInstanceState);
-		// Read values from the "savedInstanceState"-object and put them in your
-		
-		Log.i(tag, "restore");
-
 		requestid = savedInstanceState.getLong("requestid");
 		bundle = savedInstanceState.getBundle("bundle");
 		startweek = savedInstanceState.getInt("startweek");
@@ -427,13 +495,13 @@ public class StripeActivity extends Activity {
 			}
 		}
 	}
+	
 	/**
 	 * save the activity state before rotating the screen
 	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		// Save the values you need from your textview into "outState"-object
-		Log.i(tag, "onsave");
 		outState.putLong("requestid", requestid);
 		outState.putBundle("bundle", bundle);
 		outState.putInt("startweeek", startweek);
@@ -455,8 +523,8 @@ public class StripeActivity extends Activity {
 			outState.putBoolean("yellow" + i, elements[i].isYellow());
 		}
 		super.onSaveInstanceState(outState);
-
 	}
+	
 	/**
 	 * is called when the items are sent
 	 * @param message is the message of the message box
@@ -475,13 +543,16 @@ public class StripeActivity extends Activity {
 		});
 		alertDialog.show();
 	}
+	
 	/**
-	 * 
+	 * Receives the broadcasts
 	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		/* (non-Javadoc)
+		 * @see android.content.BroadcastReceiver#onReceive(android.content.Context, android.content.Intent)
+		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i(tag, "BroadcastReceiver");
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				loading.dismiss();
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/refreshProjects"
+        android:icon="@drawable/ic_menu_refresh"
+        android:title="Refresh">
+    </item>
+    
+    <item android:id="@+id/newid" android:title="Add"
+        android:icon="@android:drawable/ic_menu_add">
+        <menu>
+            <item android:id="@+id/addusermenuitem" android:title="Add User"/>
+            <item android:id="@+id/addresourcemnuitem" android:title="Add Resource"/>
+            <item android:id="@+id/reactivateresource" android:title="Reactivate Resource"/>
+        </menu>
+    </item>
+    
+    <item
+        android:id="@+id/deleteresource"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="Delete resource">
+    </item>
+    
+    <item
+        android:id="@+id/myaccountid"
+        android:icon="@drawable/ic_menu_friendslist"
+        android:title="My Account">
+    </item>
+    <item
+        android:id="@+id/about"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="About">
+    </item>
+    <item
+        android:id="@+id/logout"
+        android:icon="@android:drawable/ic_lock_power_off"
+        android:title="Logout">
+    </item>
+
+</menu>

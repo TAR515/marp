@@ -7,24 +7,14 @@
         android:title="Refresh">
     </item>
     <item
+        android:id="@+id/requestsmenuitem"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="Requests">
+    </item>
+    <item
         android:id="@+id/projectid"
         android:icon="@android:drawable/ic_menu_add"
         android:title="New project">
-    </item>
-    <item
-        android:id="@+id/deleteresource"
-        android:icon="@android:drawable/ic_lock_power_off"
-        android:title="Delete resource">
-    </item>
-    <item
-        android:id="@+id/reactivateresource"
-        android:icon="@android:drawable/ic_lock_power_off"
-        android:title="Re-activate resource">
-    </item>
-    <item
-        android:id="@+id/requestsid"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="Requests">
     </item>
     <item
         android:id="@+id/myaccountid"
@@ -40,21 +30,6 @@
         android:id="@+id/logout"
         android:icon="@android:drawable/ic_lock_power_off"
         android:title="Logout">
-    </item>
-    <item
-        android:id="@+id/addresourcemnuitem"
-        android:icon="@android:drawable/ic_lock_power_off"
-        android:title="Add resource">
-    </item>
-    <item
-        android:id="@+id/addusermenuitem"
-        android:icon="@drawable/ic_menu_logout"
-        android:title="Add user">
-    </item>
-    <item
-        android:id="@+id/requestsmenuitem"
-        android:icon="@drawable/ic_menu_logout"
-        android:title="Requests">
     </item>
 
 </menu>

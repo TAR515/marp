@@ -7,7 +7,6 @@ import edu.ubb.marp.Constants;
 import edu.ubb.marp.R;
 import edu.ubb.marp.database.DatabaseContract;
 import edu.ubb.marp.database.DatabaseContract.TABLE_PROJECTS;
-import edu.ubb.marp.database.DatabaseContract.TABLE_USERS;
 import edu.ubb.marp.network.MyService;
 
 import android.app.Activity;
@@ -19,13 +18,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -35,23 +30,53 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Spinner;
+
 /**
  * 
  * @author Rakosi Alpar, Vizer Arnold
- *
+ * 
  */
 public class ModifyProjectActivity extends Activity {
-	private static final String tag = "ModifyProjectActivity";
 
+	/**
+	 * The requestID
+	 */
 	private long requestid;
+	/**
+	 * The loading progress dialog
+	 */
 	private ProgressDialog loading;
+	/**
+	 * The context in which the application is running
+	 */
 	private Context context;
-	private String passWord, userName;
+	/**
+	 * The projectid which will be updated
+	 */
 	private int projectID;
-	private String projectName, nextRelease, currentStatus;
-	private int openedStatus, deadLine;
+	/**
+	 * The name of the project
+	 */
+	private String projectName;
+	/**
+	 * The next release of the projec
+	 */
+	private String nextRelease;
+	/**
+	 * The current status of the project
+	 */
+	private String currentStatus;
+	/**
+	 * Is opened the project
+	 */
+	private int openedStatus;
+	/**
+	 * The deadline of the project
+	 */
+	private int deadLine;
 
 	ArrayList<ListRecord> listItems = new ArrayList<ListRecord>();
+
 	/**
 	 * Called when the activity is first created.
 	 */
@@ -60,7 +85,7 @@ public class ModifyProjectActivity extends Activity {
 		setContentView(R.layout.myaccount);
 
 		context = this;
-		
+
 		projectID = getIntent().getExtras().getInt("projectid");
 
 		Uri.Builder uri = new Uri.Builder();
@@ -72,11 +97,8 @@ public class ModifyProjectActivity extends Activity {
 		ContentResolver cr = getContentResolver();
 
 		Cursor c = cr.query(uri.build(), null, TABLE_PROJECTS.PROJECTID + " = " + Integer.toString(projectID), null, null);
-		Log.i(tag, "query utan");
 
 		if (c.moveToFirst()) {
-			Log.i(tag, "ifben");
-
 			projectName = c.getString(c.getColumnIndex(TABLE_PROJECTS.PROJECTNAME));
 			openedStatus = c.getInt(c.getColumnIndex(TABLE_PROJECTS.OPENEDSTATUS));
 			deadLine = c.getInt(c.getColumnIndex(TABLE_PROJECTS.DEADLINE));
@@ -86,8 +108,11 @@ public class ModifyProjectActivity extends Activity {
 			setListItems(projectName, openedStatus, deadLine, nextRelease, currentStatus);
 		}
 	}
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see android.app.Activity#onStart()
 	 */
 	@Override
 	protected void onStart() {
@@ -95,21 +120,30 @@ public class ModifyProjectActivity extends Activity {
 
 		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see android.app.Activity#onStop()
 	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
+
 	/**
 	 * 
-	 * @param name name of the project
-	 * @param openedStatus is the status of the project, example Opened or Closed
-	 * @param deadline is the date when the project ends
-	 * @param nextReliese is the version number of the project
-	 * @param currentStatus	is the current status of the project
+	 * @param name
+	 *            name of the project
+	 * @param openedStatus
+	 *            is the status of the project, example Opened or Closed
+	 * @param deadline
+	 *            is the date when the project ends
+	 * @param nextReliese
+	 *            is the version number of the project
+	 * @param currentStatus
+	 *            is the current status of the project
 	 */
 	private void setListItems(String name, int openedStatus, int deadline, String nextReliese, String currentStatus) {
 		listItems = new ArrayList<ListRecord>();
@@ -130,9 +164,6 @@ public class ModifyProjectActivity extends Activity {
 		listItems.add(item);
 
 		item = new ListRecord("Current Status", currentStatus);
-		listItems.add(item);
-
-		item = new ListRecord("Modify", "");
 		listItems.add(item);
 
 		ListView listView = (ListView) findViewById(R.id.ListViewId);
@@ -160,11 +191,15 @@ public class ModifyProjectActivity extends Activity {
 			}
 		});
 	}
+
 	/**
 	 * 
-	 * @param title title of the edit box
-	 * @param editableText is the text, which will be edited
-	 * @param position is the position of the clicked list item
+	 * @param title
+	 *            title of the edit box
+	 * @param editableText
+	 *            is the text, which will be edited
+	 * @param position
+	 *            is the position of the clicked list item
 	 */
 	public void editDialog(String title, String editableText, int position) {
 
@@ -176,7 +211,7 @@ public class ModifyProjectActivity extends Activity {
 		alertDialog.setTitle(title);
 		alertDialog.setView(editDialog);
 		final int myPosition = position;
-		
+
 		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
@@ -231,11 +266,15 @@ public class ModifyProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
+
 	/**
 	 * 
-	 * @param title is the title of the message box
-	 * @param status is the status of the project, which is Opened or Closed
-	 * @param position is the position of the list item
+	 * @param title
+	 *            is the title of the message box
+	 * @param status
+	 *            is the status of the project, which is Opened or Closed
+	 * @param position
+	 *            is the position of the list item
 	 */
 	public void editOpenedStatus(String title, String status, int position) {
 
@@ -250,11 +289,9 @@ public class ModifyProjectActivity extends Activity {
 		alertDialog.setTitle(title);
 		alertDialog.setView(check);
 		final int myPosition = position;
-		// final String newText = editDialog.getText().toString();
 		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				// Intent intent;
 				loading = ProgressDialog.show(context, "Loading", "Please wait...");
 
 				switch (myPosition) {
@@ -289,11 +326,15 @@ public class ModifyProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
+
 	/**
 	 * 
-	 * @param title is the message box title
-	 * @param date is the deadline date of the project
-	 * @param position is the position of the clicked list item
+	 * @param title
+	 *            is the message box title
+	 * @param date
+	 *            is the deadline date of the project
+	 * @param position
+	 *            is the position of the clicked list item
 	 */
 	public void editDeadline(String title, String date, int position) {
 
@@ -305,11 +346,11 @@ public class ModifyProjectActivity extends Activity {
 		alertDialog.setTitle(title);
 		alertDialog.setView(d);
 		final int myPosition = position;
-		
+
 		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				
+
 				loading = ProgressDialog.show(context, "Loading", "Please wait...");
 
 				switch (myPosition) {
@@ -322,7 +363,7 @@ public class ModifyProjectActivity extends Activity {
 					Intent intent = new Intent(getApplicationContext(), MyService.class);
 					intent.putExtra("ACTION", "CHANGEPROJECT");
 					intent.setData(uri.build());
-					Date selectedDate = new Date(d.getYear()-1900, d.getMonth(), d.getDayOfMonth());
+					Date selectedDate = new Date(d.getYear() - 1900, d.getMonth(), d.getDayOfMonth());
 					deadLine = Constants.convertDateToWeek(selectedDate);
 					intent.putExtra("newdeadline", deadLine);
 					intent.putExtra("projectid", projectID);
@@ -343,10 +384,13 @@ public class ModifyProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
+
 	/**
 	 * 
-	 * @param title is the message box title
-	 * @param position is the position of the clicked list item
+	 * @param title
+	 *            is the message box title
+	 * @param position
+	 *            is the position of the clicked list item
 	 */
 	public void editCurrentStatus(String title, int position) {
 		String s[] = { "Accepted/Ready to Start", "Delivered", "Done", "Redy for delivery", "Specification", "Testing",
@@ -362,11 +406,10 @@ public class ModifyProjectActivity extends Activity {
 		alertDialog.setView(spinner);
 		final int myPosition = position;
 
-		
 		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				
+
 				loading = ProgressDialog.show(context, "Loading", "Please wait...");
 
 				switch (myPosition) {
@@ -398,10 +441,12 @@ public class ModifyProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
+
 	/**
-	 * 
-	 * @param message is the message of the Message Box
-	 * @param title	is the message box's title
+	 * @param message
+	 *            is the message of the Message Box
+	 * @param title
+	 *            is the message box's title
 	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
@@ -415,10 +460,18 @@ public class ModifyProjectActivity extends Activity {
 		});
 		alertDialog.show();
 	}
+
 	/**
-	 * 
+	 * Receives the broadcasts
 	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
+		 * android.content.Intent)
+		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {

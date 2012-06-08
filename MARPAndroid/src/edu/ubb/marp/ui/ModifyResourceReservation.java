@@ -6,9 +6,7 @@ import edu.ubb.marp.Constants;
 import edu.ubb.marp.R;
 import edu.ubb.marp.database.DatabaseContract;
 import edu.ubb.marp.database.DatabaseContract.TABLE_RESOURCES;
-import edu.ubb.marp.database.DatabaseContract.TABLE_USERS;
 import edu.ubb.marp.network.MyService;
-import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -23,19 +21,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
-import android.widget.RadioGroup;
-import android.widget.ScrollView;
-import android.widget.Spinner;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 /**
@@ -44,16 +32,50 @@ import android.widget.TextView;
  * 
  */
 public class ModifyResourceReservation extends Activity {
-	private static final String tag = "ModifyResourceReservation";
+	/**
+	 * The loading progress dialog
+	 */
 	private ProgressDialog loading;
+	/**
+	 * The requestid
+	 */
 	private long requestid;
+	/**
+	 * The resourceid of the user
+	 */
 	private int myresourceid;
+	/**
+	 * The resourceid of the resource which will be modified
+	 */
 	private int resourceID;
+	/**
+	 * The projectid in which the resources reservation will be modified
+	 */
 	private int projectID;
-	private int startWeek, endWeek;
+	/**
+	 * The startweek of the project
+	 */
+	private int startWeek;
+	/**
+	 * The endweek of the project
+	 */
+	private int endWeek;
+	/**
+	 * The name of the project
+	 */
 	private String projectName;
+	/**
+	 * The booking of the resource
+	 */
 	private int[] booking;
-	private int minWeek, maxWeek;
+	/**
+	 * The start of the modify
+	 */
+	private int minWeek;
+	/**
+	 * The end of the modify
+	 */
+	private int maxWeek;
 
 	/**
 	 * Called when the activity is first created.
@@ -61,12 +83,10 @@ public class ModifyResourceReservation extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i(tag, "onCreate");
 
 		setContentView(R.layout.modifyresourcereservation);
 
-		SharedPreferences pref = PreferenceManager
-				.getDefaultSharedPreferences(this);
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 
 		Uri.Builder uri = new Uri.Builder();
 		uri = new Uri.Builder();
@@ -78,14 +98,12 @@ public class ModifyResourceReservation extends Activity {
 
 		String projection[] = { TABLE_RESOURCES.RESOURCEID };
 
-		Cursor c = cr.query(uri.build(), projection, TABLE_RESOURCES.USERNAME
-				+ " = '" + pref.getString("username", "") + "'", null, null);
+		Cursor c = cr.query(uri.build(), projection, TABLE_RESOURCES.USERNAME + " = '" + pref.getString("username", "") + "'", null, null);
 
 		c.moveToFirst();
 
 		TextView toModify = (TextView) findViewById(R.id.tomodify);
-		toModify.setText("Modify: "
-				+ getIntent().getExtras().getString("resourcename"));
+		toModify.setText("Modify: " + getIntent().getExtras().getString("resourcename"));
 
 		myresourceid = c.getInt(c.getColumnIndex(TABLE_RESOURCES.RESOURCEID));
 
@@ -99,17 +117,12 @@ public class ModifyResourceReservation extends Activity {
 		DatePicker startDatePicker = (DatePicker) findViewById(R.id.startweekdate);
 		DatePicker endDatePicker = (DatePicker) findViewById(R.id.endweekdate);
 
-		Log.i("Start Date min", "" + minWeek);
-		Log.i("End Date max", "" + maxWeek);
-
 		Date startWeekDate = Constants.convertWeekToRealDate(minWeek);
 		Date endWeekDate = Constants.convertWeekToRealDate(maxWeek);
 
-		startDatePicker.init(startWeekDate.getYear() + 1900,
-				startWeekDate.getMonth(), startWeekDate.getDate(), null);
+		startDatePicker.init(startWeekDate.getYear() + 1900, startWeekDate.getMonth(), startWeekDate.getDate(), null);
 
-		endDatePicker.init(endWeekDate.getYear() + 1900,
-				endWeekDate.getMonth(), endWeekDate.getDate(), null);
+		endDatePicker.init(endWeekDate.getYear() + 1900, endWeekDate.getMonth(), endWeekDate.getDate(), null);
 
 		Button addButton = (Button) findViewById(R.id.next);
 		addButton.setOnClickListener(new View.OnClickListener() {
@@ -120,52 +133,49 @@ public class ModifyResourceReservation extends Activity {
 			}
 		});
 	}
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see android.app.Activity#onStart()
 	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
 
-		registerReceiver(broadcastReceiver, new IntentFilter(
-				Constants.BROADCAST_ACTION));
+		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see android.app.Activity#onStop()
 	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
+
 	/**
-	 * 
+	 * Send the request for querying the available resources
 	 */
 	private void sendRequest() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
 		Uri.Builder uriSending = new Uri.Builder();
 		uriSending.authority(DatabaseContract.PROVIDER_NAME);
-		uriSending
-				.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
+		uriSending.path(Integer.toString(Constants.QUERYAVAILABLERESOURCESCODE));
 		uriSending.scheme("content");
 
 		DatePicker startDatePicker = (DatePicker) findViewById(R.id.startweekdate);
 		DatePicker endDatePicker = (DatePicker) findViewById(R.id.endweekdate);
 
-		Date startDate = new Date(startDatePicker.getYear() - 1900,
-				startDatePicker.getMonth(), startDatePicker.getDayOfMonth());
-		Date endDate = new Date(endDatePicker.getYear() - 1900,
-				endDatePicker.getMonth(), endDatePicker.getDayOfMonth());
-
-		Log.i("Start Date", "" + startDate);
-		Log.i("End Date", "" + endDate);
+		Date startDate = new Date(startDatePicker.getYear() - 1900, startDatePicker.getMonth(), startDatePicker.getDayOfMonth());
+		Date endDate = new Date(endDatePicker.getYear() - 1900, endDatePicker.getMonth(), endDatePicker.getDayOfMonth());
 
 		startWeek = Constants.convertDateToWeek(startDate);
 		endWeek = Constants.convertDateToWeek(endDate);
-
-		Log.i("StartWeek", "" + startWeek);
-		Log.i("EndWeek", "" + endWeek);
 
 		if (endWeek - startWeek > 24)
 			endWeek = startWeek + 24;
@@ -186,8 +196,11 @@ public class ModifyResourceReservation extends Activity {
 
 	/**
 	 * is called when a message box with OK button needs to be appeared
-	 * @param message is the message box's message
-	 * @param title is the message box's title
+	 * 
+	 * @param message
+	 *            is the message box's message
+	 * @param title
+	 *            is the message box's title
 	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
@@ -201,10 +214,15 @@ public class ModifyResourceReservation extends Activity {
 		});
 		alertDialog.show();
 	}
+
 	/**
-	 * is called when a message box with Retry and Cancel buttons needs to be appeared
-	 * @param message is the message of the message box
-	 * @param title is the title of the message box
+	 * is called when a message box with Retry and Cancel buttons needs to be
+	 * appeared
+	 * 
+	 * @param message
+	 *            is the message of the message box
+	 * @param title
+	 *            is the title of the message box
 	 */
 	public void messageBoxShowRetry(String message, String title) {
 		AlertDialog alertDialog;
@@ -223,13 +241,20 @@ public class ModifyResourceReservation extends Activity {
 		});
 		alertDialog.show();
 	}
+
 	/**
-	 * 
+	 * Receives the broadcasts
 	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
+		 * android.content.Intent)
+		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i(tag, "BroadcastReceiver");
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				loading.dismiss();
 
@@ -237,8 +262,7 @@ public class ModifyResourceReservation extends Activity {
 					// finish();
 					int[] results = intent.getIntArrayExtra("results");
 
-					Intent myIntent = new Intent(getApplicationContext(),
-							StripeActivity.class);
+					Intent myIntent = new Intent(getApplicationContext(), StripeActivity.class);
 					Bundle bundle = new Bundle();
 
 					bundle.putString("ACTION", "update");
@@ -260,8 +284,7 @@ public class ModifyResourceReservation extends Activity {
 					myIntent.putExtras(bundle);
 					startActivity(myIntent);
 				} else {
-					messageBoxShowRetry(Constants.getErrorMessage(intent
-							.getIntExtra("error", 0)), "Error");
+					messageBoxShowRetry(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
 				}
 			}
 		}

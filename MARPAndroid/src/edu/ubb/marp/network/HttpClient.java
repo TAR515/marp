@@ -10,102 +10,106 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
+
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.DefaultedHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.os.AsyncTask;
-import android.util.Log;
 
+/**
+ * AsyncTask class, which sends and receives the messages between the client and
+ * the server
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ * 
+ */
 public class HttpClient extends AsyncTask<JSONArray, Integer, JSONArray> {
+	/**
+	 * Static variable, which contains the servers URL
+	 */
+	private static final String URL = "http://188.24.87.112:8080/MARP/AndroidServlet";
+	/**
+	 * Timeout constant
+	 */
+	private static final int TIMEOUT = 6000;
+	/**
+	 * Socket timeout constant
+	 */
+	private static final int SOTIMEOUT = 8000;
 
-	private static final String URL = "http://188.24.89.35:8080/MARP/AndroidServlet";
-	private static final int TIMEOUT=6000;
-	private static final int SOTIMEOUT=8000;
-	// private static final String URL =
-	// "http://192.168.1.100:8080/MARP/AndroidServlet";
-	private static final String tag = "HttpClient";
-
+	/**
+	 * The HttpClient object
+	 */
 	private static DefaultHttpClient httpclient;
 
+	/**
+	 * The service object
+	 */
 	private MyService service;
+	/**
+	 * It contains the JSONArray, which will be sent to the server
+	 */
 	private JSONArray requestJSON;
-	// private Intent originalIntent;
+	/**
+	 * Requestid, which identifies the request
+	 */
 	private long requestid;
 
+	/**
+	 * Public constructor, which initializes the variables
+	 * 
+	 * @param service
+	 *            The service object
+	 * @param requestid
+	 *            Requestid, which identifies the request
+	 */
 	public HttpClient(MyService service, long requestid) {
 		this.service = service;
-		// this.originalIntent = originalIntent;
 		this.requestid = requestid;
 		if (httpclient == null) {
 			httpclient = new DefaultHttpClient();
-			/*SchemeRegistry schemeRegistry = new SchemeRegistry();
-			schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-			schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
-
-			HttpParams params = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(params, TIMEOUT);
-			HttpConnectionParams.setSoTimeout(params, SOTIMEOUT);
-
-			//SingleClientConnManager mgr = new SingleClientConnManager(params, schemeRegistry);
-			ClientConnectionManager mgr = new ThreadSafeClientConnManager(params, schemeRegistry);
-
-			httpclient = new DefaultHttpClient(mgr, params);*/
-			
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.os.AsyncTask#doInBackground(Params[])
+	 */
 	@Override
 	protected JSONArray doInBackground(JSONArray... jsonObjSend) {
 		requestJSON = jsonObjSend[0];
 		try {
-			// DefaultHttpClient httpclient = new DefaultHttpClient();
 			HttpPost httpPostRequest = new HttpPost(URL);
 
 			StringEntity se;
 			se = new StringEntity(requestJSON.toString());
-			// se = new StringEntity(new JSONObject().toString());
-
-			Log.i(tag, requestJSON.toString());
 
 			// Set HTTP parameters
 			httpPostRequest.setEntity(se);
 			httpPostRequest.setHeader("Accept", "application/json");
 			httpPostRequest.setHeader("Content-type", "application/json");
 			httpPostRequest.setHeader("user-agent", "Android");
-			// httpPostRequest.setHeader("Accept-Encoding", "gzip");
 
-			HttpParams parameters=httpclient.getParams();
+			HttpParams parameters = httpclient.getParams();
 			HttpConnectionParams.setConnectionTimeout(parameters, TIMEOUT);
 			HttpConnectionParams.setSoTimeout(parameters, SOTIMEOUT);
-			
+
 			httpclient.setParams(parameters);
-			
+
 			HttpResponse response = httpclient.execute(httpPostRequest);
-			Log.i(tag, "response jott");
 
 			// Get hold of the response entity (-> the data):
 			HttpEntity entity = response.getEntity();
 
 			if (entity != null) {
 				InputStream instream = entity.getContent();
-				Header contentEncoding = response
-						.getFirstHeader("Content-Encoding");
-				if (contentEncoding != null
-						&& contentEncoding.getValue().equalsIgnoreCase("gzip")) {
+				Header contentEncoding = response.getFirstHeader("Content-Encoding");
+				if (contentEncoding != null && contentEncoding.getValue().equalsIgnoreCase("gzip")) {
 					instream = new GZIPInputStream(instream);
 				}
 
@@ -113,23 +117,11 @@ public class HttpClient extends AsyncTask<JSONArray, Integer, JSONArray> {
 				String resultString = convertStreamToString(instream);
 				instream.close();
 
-				Log.i(tag, resultString);
-
 				// Transform the String into a JSONObject
-				// JSONObject jsonObjRecv = new JSONObject(resultString);
 				JSONArray jsonArrayRecv = new JSONArray(resultString);
 
-				// return jsonObjRecv;
 				return jsonArrayRecv;
 			}
-			/*JSONArray array1=new JSONArray();
-			JSONArray array=new JSONArray();
-			array.put(10);
-			array.put(20);
-			array.put(40);
-			array.put(30);
-			array1.put(array);
-			return array1;*/
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,33 +137,15 @@ public class HttpClient extends AsyncTask<JSONArray, Integer, JSONArray> {
 			}
 		}
 		return null;
-		/*
-		 * try { JSONArray array=new JSONArray(); JSONObject obj=new
-		 * JSONObject();
-		 * 
-		 * obj.put("ProjectID", 2); obj.put("OpenedStatus", 22);
-		 * obj.put("DeadLine", 22); obj.put("ProjectName", "proba22");
-		 * obj.put("NextRelease", 33); obj.put("CurrentStatus", 33);
-		 * obj.put("Role", "User"); array.put(obj);
-		 * 
-		 * obj=new JSONObject(); obj.put("ProjectID", 4);
-		 * obj.put("OpenedStatus", 44); obj.put("DeadLine", 44);
-		 * obj.put("ProjectName", "proba44"); obj.put("NextRelease", 55);
-		 * obj.put("CurrentStatus", 55); obj.put("Role", "User");
-		 * array.put(obj);
-		 * 
-		 * obj=new JSONObject(); obj.put("ProjectID", 8);
-		 * obj.put("OpenedStatus", 88); obj.put("DeadLine", 88);
-		 * obj.put("ProjectName", "proba88"); obj.put("NextRelease", 99);
-		 * obj.put("CurrentStatus", 99); obj.put("Role", "User");
-		 * array.put(obj);
-		 * 
-		 * //return new JSONArray().put(new JSONObject().put("eredmeny",
-		 * "mukodik")); return array; } catch (JSONException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } return null;
-		 */
 	}
 
+	/**
+	 * Converts a stream to a String object
+	 * 
+	 * @param is
+	 *            The input stream
+	 * @return The String object
+	 */
 	private String convertStreamToString(InputStream is) {
 		/*
 		 * To convert the InputStream to String we use the
@@ -204,7 +178,6 @@ public class HttpClient extends AsyncTask<JSONArray, Integer, JSONArray> {
 	}
 
 	protected void onPostExecute(JSONArray result) {
-		Log.i(tag, "onPostExecute");
 		service.setResults(requestJSON, result, requestid);
 	}
 

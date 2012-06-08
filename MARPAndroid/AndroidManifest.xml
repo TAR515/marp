@@ -103,7 +103,7 @@
         </activity>
         <activity
             android:name=".ui.RequestActivity"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar" android:noHistory="true">
         </activity>
 
         <provider

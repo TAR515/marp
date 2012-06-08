@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,15 +27,23 @@ import edu.ubb.marp.network.MyService;
  * 
  */
 public class ReActivateResourceActivity extends Activity {
-	private final static String tag = "ReActivateResourceActivity";
 
+	/**
+	 * The loading progress dialog
+	 */
 	private ProgressDialog loading;
-	private int projectid;
+	/**
+	 * The requestid
+	 */
 	private long requestid;
+	/**
+	 * The ids of the resources
+	 */
 	private int[] resourceids;
+	/**
+	 * The names of the resources
+	 */
 	private String[] resourcenames;
-	private int myresourceid;
-	private String projectName;
 
 	/**
 	 * Called when the activity is first created.
@@ -63,8 +70,7 @@ public class ReActivateResourceActivity extends Activity {
 	protected void onStart() {
 		super.onStart();
 
-		registerReceiver(broadcastReceiver, new IntentFilter(
-				Constants.BROADCAST_ACTION));
+		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
 
 	/**
@@ -147,7 +153,7 @@ public class ReActivateResourceActivity extends Activity {
 	}
 
 	/**
-	 * 
+	 * Sends a request for querying the resources
 	 */
 	private void sendRequestForResources() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
@@ -167,7 +173,7 @@ public class ReActivateResourceActivity extends Activity {
 	}
 
 	/**
-	 * 
+	 * Sends a request for reactivating a resource
 	 */
 	private void sendRequestToReActivateResource() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
@@ -192,39 +198,30 @@ public class ReActivateResourceActivity extends Activity {
 	}
 
 	/**
-	 * 
+	 * Receives the broadcasts
 	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-
-			Log.i(tag, "Broadcast received");
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				loading.dismiss();
 				if (intent.getBooleanExtra("Successful", false)) {
 					if (intent.getBooleanExtra("Resources", false)) {
 						resourceids = intent.getIntArrayExtra("resourceid");
-						resourcenames = intent
-								.getStringArrayExtra("resourcename");
+						resourcenames = intent.getStringArrayExtra("resourcename");
 
 						Spinner sp = (Spinner) findViewById(R.id.resourcesActivateSpinner);
-						ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-								getApplicationContext(),
-								android.R.layout.simple_spinner_dropdown_item,
-								resourcenames);
+						ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
+								android.R.layout.simple_spinner_dropdown_item, resourcenames);
 						sp.setAdapter(adapter);
 					} else {
 						finish();
 					}
 				} else {
 					if (intent.getBooleanExtra("Resources", false)) {
-						messageBoxShowForResources(
-								Constants.getErrorMessage(intent.getIntExtra(
-										"error", 0)), "Error");
+						messageBoxShowForResources(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
 					} else {
-						messageBoxShowToReActivateResource(
-								Constants.getErrorMessage(intent.getIntExtra(
-										"error", 0)), "Error");
+						messageBoxShowToReActivateResource(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
 					}
 				}
 			}

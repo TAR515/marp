@@ -6,7 +6,6 @@ import edu.ubb.marp.Constants;
 import edu.ubb.marp.database.DatabaseContract;
 import edu.ubb.marp.database.DatabaseContract.TABLE_BOOKING;
 import edu.ubb.marp.database.DatabaseContract.TABLE_PROJECTS;
-import edu.ubb.marp.database.DatabaseContract.TABLE_RESOURCES;
 import edu.ubb.marp.database.DatabaseContract.TABLE_USERS;
 import edu.ubb.marp.network.MyService;
 import android.app.Activity;
@@ -24,10 +23,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -35,38 +32,69 @@ import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
 /**
  * 
  * @author Rakosi Alpar, Vizer Arnold
- *
+ * 
  */
 public class AssignmentsActivity extends Activity {
-	private final static String tag = "AssignmentsActivity";
 
+	/**
+	 * The loading progress dialog
+	 */
 	private ProgressDialog loading;
 
-	// private Intent sentIntent;
+	/**
+	 * The requestid
+	 */
 	private long requestid;
 
+	/**
+	 * The number of columns in the table
+	 */
 	protected int column;
+	/**
+	 * The number of rows in the table
+	 */
 	protected int row;
-	
-	private int currentWeek;
-	private int myResourceID;
-	private boolean[] isLeader;
-	private int[] projectIDs;
-	
-	protected String[][] data;
-	
-	public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        /*TextView textview = new TextView(this);
-        textview.setText("This is the Assignements tab");
-        setContentView(textview);*/
-        
-        sendRequest();
-    }
 
+	/**
+	 * The current week
+	 */
+	private int currentWeek;
+	/**
+	 * The users resourceID
+	 */
+	private int myResourceID;
+	/**
+	 * It contains true, if the user is leader on the project
+	 */
+	private boolean[] isLeader;
+	/**
+	 * It contains the projectIDs
+	 */
+	private int[] projectIDs;
+
+	/**
+	 * The table is filled with this
+	 */
+	protected String[][] data;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		sendRequest();
+	}
+
+	/**
+	 * Sends the request for the assignments
+	 */
 	private void sendRequest() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
@@ -75,19 +103,22 @@ public class AssignmentsActivity extends Activity {
 		uri.path(Integer.toString(Constants.LOADASSIGNMENTSCMD));
 		uri.scheme("content");
 
-		//currentWeek = Constants.convertDateToWeek(new Date());
-		currentWeek = 60;
+		currentWeek = Constants.convertDateToWeek(new Date());
 
 		Intent intent = new Intent(this, MyService.class);
 		intent.putExtra("ACTION", "QUERY");
 		intent.putExtra("currentweek", currentWeek);
 		intent.setData(uri.build());
-		// sentIntent=intent;
 		requestid = new Date().getTime();
 		intent.putExtra("requestid", requestid);
 		startService(intent);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onStart()
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -95,12 +126,20 @@ public class AssignmentsActivity extends Activity {
 		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onStop()
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
 
+	/**
+	 * It shows a messagebox
+	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
 
@@ -119,6 +158,9 @@ public class AssignmentsActivity extends Activity {
 		alertDialog.show();
 	}
 
+	/**
+	 * Refreshes the table
+	 */
 	public void refresh() {
 		LinearLayout linear = new LinearLayout(this);
 		linear.setOrientation(LinearLayout.VERTICAL);
@@ -156,74 +198,23 @@ public class AssignmentsActivity extends Activity {
 				int height = display.getHeight() / 10;
 				column.setWidth(width);
 				column.setHeight(height);
-				
-				if((i>0)&&(j==0)&&(isLeader[i-1])){
+
+				if ((i > 0) && (j == 0) && (isLeader[i - 1])) {
 					column.setTextColor(Color.BLUE);
 				} else {
 					column.setTextColor(Color.BLACK);
 				}
-				
+
 				column.setText(data[i][j]);
 
-				// column.setTextSize(15);
 				if ((i == 0)) {
 					column.setBackgroundColor(color.DKGRAY);
 					column.setTextColor(color.WHITE);
 				} else {
 					column.setBackgroundColor(color.GRAY);
 				}
-				/*final TextView text = column;
-				final int currentRow = i;
-				column.setOnClickListener(new View.OnClickListener() {
 
-					public void onClick(View v) {
-						// messageBoxShow(text.getText().toString(), "click");
-						if (isUser[currentRow]) {
-							Intent myIntent = new Intent(getApplicationContext(), ResourceActivity.class);
-							Bundle bundle = new Bundle();
-							bundle.putString("username", data[currentRow][0]);
-							myIntent.putExtras(bundle);
-							startActivity(myIntent);
-						}
-					}
-				});
-
-				if (isLeader)
-					column.setOnLongClickListener(new View.OnLongClickListener() {
-
-						public boolean onLongClick(View v) {
-							Intent myIntent = new Intent(getApplicationContext(), ModifyResourceReservation.class);
-							Bundle bundle = new Bundle();
-							bundle.putString("projectname", projectName);
-							bundle.putInt("projectid", Integer.parseInt(projectid));
-							bundle.putInt("resourceid", resourceIDs[currentRow - 1]);
-							bundle.putString("resourcename", data[currentRow][0]);
-							// bundle.putStringArray("bookings",
-							// data[currentRow]);
-
-							int startPos = 1;
-							int endPos = data[0].length - 1;
-							while (data[currentRow][startPos].isEmpty())
-								startPos++;
-							while (data[currentRow][endPos].isEmpty())
-								endPos--;
-
-							int[] booking = new int[endPos - startPos + 1];
-							int l = 0;
-							for (int k = startPos; k <= endPos; k++)
-								booking[l++] = Integer.parseInt(data[currentRow][k].split("\\.")[0]);
-
-							bundle.putIntArray("booking", booking);
-							bundle.putInt("minweek", minWeek + startPos - 1);
-							bundle.putInt("maxweek", minWeek + endPos - 1);
-
-							myIntent.putExtras(bundle);
-							startActivity(myIntent);
-							return true;
-						}
-					});*/
 				row.addView(column);
-
 			}
 
 			if (i != 0) {
@@ -238,6 +229,9 @@ public class AssignmentsActivity extends Activity {
 		setContentView(hscroll);
 	}
 
+	/**
+	 * Queries the data from the database
+	 */
 	private void queryData() {
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -251,23 +245,27 @@ public class AssignmentsActivity extends Activity {
 
 		String projection[] = { TABLE_USERS.USERID };
 
-		Cursor c = cr.query(uri.build(), projection, TABLE_USERS.USERNAME + " = '" + pref.getString("username", "") + "'", null,
-				null);
+		Cursor c = cr.query(uri.build(), projection, TABLE_USERS.USERNAME + " = '" + pref.getString("username", "") + "'", null, null);
 
 		c.moveToFirst();
 
 		myResourceID = c.getInt(c.getColumnIndex(TABLE_USERS.USERID));
-		
+
 		uri = new Uri.Builder();
 		uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
 		uri.path(DatabaseContract.TABLE_BOOKINGASSIGNMENTS);
 		uri.scheme("content");
 
-		Cursor cBooking = cr.query(uri.build(), null, TABLE_BOOKING.RESOURCEID + " = " + Integer.toString(myResourceID) +" AND "+TABLE_BOOKING.WEEK+" >= "+Integer.toString(currentWeek)+" AND "+TABLE_BOOKING.WEEK+" < " + Integer.toString(currentWeek+3), null, TABLE_BOOKING.PROJECTID);
+		Cursor cBooking = cr.query(
+				uri.build(),
+				null,
+				TABLE_BOOKING.RESOURCEID + " = " + Integer.toString(myResourceID) + " AND " + TABLE_BOOKING.WEEK + " >= "
+						+ Integer.toString(currentWeek) + " AND " + TABLE_BOOKING.WEEK + " < " + Integer.toString(currentWeek + 3), null,
+				TABLE_BOOKING.PROJECTID);
 
 		uri.path(DatabaseContract.TABLE_PROJECTS);
-		String projection2[] = {TABLE_PROJECTS.PROJECTID, TABLE_PROJECTS.PROJECTNAME, TABLE_PROJECTS.ISLEADER };
+		String projection2[] = { TABLE_PROJECTS.PROJECTID, TABLE_PROJECTS.PROJECTNAME, TABLE_PROJECTS.ISLEADER };
 		Cursor cProjects = cr.query(uri.build(), projection2, null, null, TABLE_PROJECTS.PROJECTID);
 
 		row = cProjects.getCount() + 1;
@@ -286,10 +284,11 @@ public class AssignmentsActivity extends Activity {
 		projectIDs = new int[row];
 		for (int i = 1; i < row; i++) {
 			projectIDs[i - 1] = cProjects.getInt(cProjects.getColumnIndex(TABLE_PROJECTS.PROJECTID));
-			isLeader[i - 1] = cProjects.getString(cProjects.getColumnIndex(TABLE_PROJECTS.ISLEADER)).equals("Leader");;
+			isLeader[i - 1] = cProjects.getString(cProjects.getColumnIndex(TABLE_PROJECTS.ISLEADER)).equals("Leader");
+			;
 
 			data[i][0] = cProjects.getString(cProjects.getColumnIndex(TABLE_PROJECTS.PROJECTNAME));
-			
+
 			cProjects.moveToNext();
 		}
 
@@ -325,19 +324,25 @@ public class AssignmentsActivity extends Activity {
 
 		refresh();
 	}
-	
+
+	/**
+	 * Receives the broadcasts
+	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
+		 * android.content.Intent)
+		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// if(sentIntent.equals(intent)){
-			Log.i(tag, "Broadcast received");
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				if (intent.getBooleanExtra("Successful", false)) {
+					loading.dismiss();
 
-						Log.i(tag, "ifben");
-						loading.dismiss();
-
-						queryData();
+					queryData();
 				} else {
 					loading.dismiss();
 					if (intent.getIntExtra("error", 10000) == 0) {
@@ -348,6 +353,5 @@ public class AssignmentsActivity extends Activity {
 			}
 		}
 	};
-	
-	
+
 }

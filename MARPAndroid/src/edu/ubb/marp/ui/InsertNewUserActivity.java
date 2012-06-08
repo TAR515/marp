@@ -16,15 +16,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+
 /**
  * 
  * @author Rakosi Alpar, Vizer Arnold
- *
+ * 
  */
 public class InsertNewUserActivity extends Activity {
 	private static final String tag = "InsertNewUserActivity";
@@ -37,7 +37,6 @@ public class InsertNewUserActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i(tag, "onCreate");
 
 		setContentView(R.layout.newuser);
 
@@ -48,8 +47,11 @@ public class InsertNewUserActivity extends Activity {
 			}
 		});
 	}
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see android.app.Activity#onStart()
 	 */
 	@Override
 	protected void onStart() {
@@ -57,16 +59,20 @@ public class InsertNewUserActivity extends Activity {
 
 		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see android.app.Activity#onStop()
 	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
+
 	/**
-	 * 
+	 * Send the reqeust for inserting the new user
 	 */
 	private void sendRequest() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
@@ -107,8 +113,11 @@ public class InsertNewUserActivity extends Activity {
 
 	/**
 	 * is called when a message box needs to be appeared with 2 buttons
-	 * @param message is the message is the message box
-	 * @param title is the title of the message box
+	 * 
+	 * @param message
+	 *            is the message is the message box
+	 * @param title
+	 *            is the title of the message box
 	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
@@ -129,12 +138,18 @@ public class InsertNewUserActivity extends Activity {
 	}
 
 	/**
-	 * 
+	 * Receives the broadcasts
 	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
+		 * android.content.Intent)
+		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i(tag, "BroadcastReceiver");
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				loading.dismiss();
 

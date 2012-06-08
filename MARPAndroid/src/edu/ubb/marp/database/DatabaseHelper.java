@@ -4,17 +4,28 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
+/**
+ * DatabaseHelper class, which helps maintaining the database
+ * @author Rakosi Alpar, Vizer Arnold
+ */
 public class DatabaseHelper extends SQLiteOpenHelper {
-
-	private static final String tag = "Database";
-
+	
+	/**
+	 * Public constructor, which initializes this object
+	 * @param context The context, in which the object is working
+	 * @param name The name of the database
+	 * @param factory Factory for the cursors
+	 * @param version Database version
+	 */
 	public DatabaseHelper(Context context, String name, CursorFactory factory,
 			int version) {
 		super(context, name, factory, version);
 	}
 
+	/* (non-Javadoc)
+	 * @see android.database.sqlite.SQLiteOpenHelper#onCreate(android.database.sqlite.SQLiteDatabase)
+	 */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE Proba(" +
@@ -22,15 +33,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				"nev varchar(30), " +
 				"szuletes char(4), " +
 				"eletkor integer)");
-		
-		/*db.execSQL("CREATE TABLE Projects(" +
-				"ProjectID integer primary key," +
-				"OpenedStatus bool," +
-				"DeadLine integer," +
-				"ProjectName varchar(45)," +
-				"NextRelease varchar(10)," +
-				"CurrentStatus varchar(45)," +
-				"Role varchar(45))");*/
 		
 		db.execSQL("CREATE TABLE Projects(" +
 				"projectid integer primary key," +
@@ -41,14 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				"statusname varchar(45)," +
 				"startweek integer,"+
 				"isleader varchar(25))");
-				//"_id integer)");
 		
-		/*db.execSQL("CREATE TABLE Resources(" +
-				"resourceid integer primary key," +
-				"resourcename varchar(45)," +
-				"resourcetypename varchar(45),"+
-				"isactive bool,"+
-				"username varchar(45))");*/
 		db.execSQL("CREATE TABLE Resources(" +
 				"resourceid integer," +
 				"resourcename varchar(45)," +
@@ -59,29 +54,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE Users(" +
 				"userid integer primary key," +
 				"username varchar(45)," +
-				//"password varchar(45)," +
-				//"hired bool," +
 				"userphonenumber varchar(15)," +
 				"useremail varchar(45)," +
 				"userresourcename varchar(45))");
-
-		/*db.execSQL("CREATE TABLE ResourceIsUser(" +
-				"ResourceID integer references Resources(ResourceID)," +
-				"UserID integer references Users(UserID)," +
-				"primary key(ResourceID, UserID))");*/
 		
 		db.execSQL("CREATE TABLE Leaders(" +
 				"ResourceID integer references Resources(ResourceID)," +
 				"ProjectID integer references Projects(ProjectID)," +
 				"primary key(ResourceID, ProjectID))");
-		
-		/*db.execSQL("CREATE TABLE Booking(" +
-				"resourceid integer references Resources(ResourceID)," +
-				"projectid integer references Projects(ProjectID)," +
-				"week integer," +
-				"ratio float," +
-				"isleader bool," +
-				"primary key(resourceid, projectid, week))");*/
 		
 		db.execSQL("CREATE TABLE Booking(" +
 				"resourceid integer references Resources(ResourceID)," +
@@ -96,23 +76,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				"week integer," +
 				"ratio float," +
 				"isleader bool)");
-		
-		/*db.execSQL("CREATE TABLE Requests(" +
-				"RequestID integer primary key," +
-				"Week integer," +
-				"Ratio float," +
-				"Sender varchar(45)," +
-				"Resource varchar(45)," +
-				"ProjectID integer," +
-				"Rejected bool" +
-				"Visible bool)");*/
-		/*db.execSQL("CREATE TABLE Requests(" +
-				"RequestID integer primary key," +
-				"Week integer," +
-				"Ratio float," +
-				"Sender varchar(45)," +
-				"Resource varchar(45)," +
-				"ProjectID integer)");*/
+
 		db.execSQL("CREATE TABLE Requests(" +
 				"requestid integer primary key," +
 				"week integer," +
@@ -131,10 +95,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				"ResourceID integer," +
 				"GroupID integer," +
 				"primary key(ResourceID, GroupID))");
-		
-		Log.i(tag, "Database created");
 	}
 
+	/* (non-Javadoc)
+	 * @see android.database.sqlite.SQLiteOpenHelper#onUpgrade(android.database.sqlite.SQLiteDatabase, int, int)
+	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 	}

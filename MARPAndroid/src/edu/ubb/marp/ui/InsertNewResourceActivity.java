@@ -16,30 +16,27 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+
 /**
  * 
  * @author Rakosi Alpar, Vizer Arnold
- *
+ * 
  */
 public class InsertNewResourceActivity extends Activity {
-	private static final String tag = "InsertNewResourceActivity";
 	private ProgressDialog loading;
 	private long requestid;
 
-	
 	/**
-	 *  Called when the activity is first created.
+	 * Called when the activity is first created.
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i(tag, "onCreate");
 
 		setContentView(R.layout.newresource);
 
@@ -50,8 +47,11 @@ public class InsertNewResourceActivity extends Activity {
 			}
 		});
 	}
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see android.app.Activity#onStart()
 	 */
 	@Override
 	protected void onStart() {
@@ -59,17 +59,20 @@ public class InsertNewResourceActivity extends Activity {
 
 		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
-	/**
-	 * 
-	 */
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onStop()
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
+
 	/**
-	 * 
+	 * Send the reqeust for inserting the new resource
 	 */
 	private void sendRequest() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
@@ -101,8 +104,9 @@ public class InsertNewResourceActivity extends Activity {
 		}
 	}
 
-	/** 
-	 * this method is called when a messagebox with 2 buttons needs to be appered 
+	/**
+	 * this method is called when a messagebox with 2 buttons needs to be
+	 * appered
 	 * */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
@@ -121,13 +125,20 @@ public class InsertNewResourceActivity extends Activity {
 		});
 		alertDialog.show();
 	}
+
 	/**
-	 * 
+	 * Receives the broadcasts
 	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
+		 * android.content.Intent)
+		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i(tag, "BroadcastReceiver");
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				loading.dismiss();
 

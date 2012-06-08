@@ -6,20 +6,24 @@ import java.util.GregorianCalendar;
 
 import android.graphics.YuvImage;
 
+/**
+ * Class for collecting the constant values
+ * @author Rakosi Alpar, Vizer Arnold
+ */
 public final class Constants {
 
 	/**
 	 * Identifies the action, which is taken by the service 
 	 */
 	public enum ACTIONS {
-		LOGIN, QUERY, QUERYWITHOUTSTORING, NEWPROJECT, CHANGEPROJECT, RESOURCEMODIFICATIONS, USERMODIFICATIONS, REQUESTS, ADDRESOURCETOPROJECT, RESOURCERESERVATIONMODIFICATION, CHANGEUSERNAME, CHANGEUSERRESOURCENAME, CHANGEUSERPHONENUMBER, CHANGEUSEREMAIL, CHANGEUSERPASSWORD, SETRESOURCEACTIVE
+		LOGIN, QUERY, QUERYWITHOUTSTORING, NEWPROJECT, CHANGEPROJECT, RESOURCEMODIFICATIONS, USERMODIFICATIONS, ADDRESOURCETOPROJECT, RESOURCERESERVATIONMODIFICATION, CHANGEUSERNAME, CHANGEUSERRESOURCENAME, CHANGEUSERPHONENUMBER, CHANGEUSEREMAIL, CHANGEUSERPASSWORD, SETRESOURCEACTIVE, REQUESTOPERATIONS
 	}
 
 	/**
 	 * Identifies the action, which is taken by the StripeActivity
 	 */
 	public enum STRIPEACTIVITYACTIONS {
-		insert, update, newproject
+		insert, update, newproject, request
 	}
 
 	/**
@@ -40,6 +44,10 @@ public final class Constants {
 	 * Commandcode of querying the active projects
 	 */
 	public static final int PROJECTSCMD = 1;
+	/**
+	 * Commandcode of querying all projects
+	 */
+	public static final int ALLPROJECTSCMD = 5;
 	/**
 	 * Commandcode of querying the assignments in a given project
 	 */
@@ -160,6 +168,15 @@ public final class Constants {
 	 * Commandcode of changing a users phonenumber
 	 */
 	public static final int CHANGEUSERPHONENUMBERCMD = 124;
+	
+	/**
+	 * Commandcode of accepting a request
+	 */
+	public static final int ACCEPTREQUESTCMD = 229;
+	/**
+	 * Commandcode of rejecting a request
+	 */
+	public static final int REJECTREQUESTCMD = 411;
 
 	/**
 	 * The start of the saving time

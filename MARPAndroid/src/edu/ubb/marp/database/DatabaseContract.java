@@ -2,17 +2,47 @@ package edu.ubb.marp.database;
 
 import android.content.UriMatcher;
 
+/**
+ * Class for collecting the constant values related to the database
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ */
 public final class DatabaseContract {
+
+	/**
+	 * The applications providers name
+	 */
 	public static final String PROVIDER_NAME = "edu.ubb.marp.database.provider";
+	/**
+	 * The applications providers authority
+	 */
 	public static final String AUTHORITY = "edu.ubb.marp.database.provider";
+	/**
+	 * The name of the database
+	 */
 	public static final String DATABASE_NAME = "MARPDatabase";
+	/**
+	 * Database version
+	 */
 	public static final int DATABASE_VERSION = 1;
 
+	/**
+	 * Code of the query type, when multiple rows are queried
+	 */
 	public static final int MULTIPLE = 1;
+	/**
+	 * Code of the query type, when only 1 row is queried
+	 */
 	public static final int ROW = 2;
 
+	/**
+	 * Name of the projects table
+	 */
 	public static final String TABLE_PROJECTS = "Projects";
 
+	/**
+	 * The column names of the projects table
+	 */
 	public static final class TABLE_PROJECTS {
 		public static final String PROJECTID = "projectid";
 		public static final String OPENEDSTATUS = "openedstatus";
@@ -24,8 +54,14 @@ public final class DatabaseContract {
 		public static final String ISLEADER = "isleader";
 	}
 
+	/**
+	 * Name of the resources table
+	 */
 	public static final String TABLE_RESOURCES = "Resources";
 
+	/**
+	 * The column names of the resources table
+	 */
 	public static final class TABLE_RESOURCES {
 		public static final String RESOURCEID = "resourceid";
 		public static final String RESOURCENAME = "resourcename";
@@ -34,35 +70,60 @@ public final class DatabaseContract {
 		public static final String USERNAME = "username";
 	}
 
+	/**
+	 * Name of the users table
+	 */
 	public static final String TABLE_USERS = "Users";
 
+	/**
+	 * The column names of the users table
+	 */
 	public static final class TABLE_USERS {
 		public static final String USERID = "userid";
 		public static final String USERNAME = "username";
-		//public static final String PASSWORD = "password";
-		//public static final String HIRED = "hired";
 		public static final String USERPHONENUMBER = "userphonenumber";
 		public static final String USEREMAIL = "useremail";
 		public static final String USERRESOURCENAME = "userresourcename";
 	}
 
+	/**
+	 * Name of the resourceisuser table
+	 */
 	public static final String TABLE_RESOURCEISUSER = "ResourceIsUser";
 
+	/**
+	 * The column names of the resourceisuser table
+	 */
 	public static final class TABLE_RESOURCEISUSER {
 		public static final String RESOURCEID = "ResourceID";
 		public static final String USERID = "UserID";
 	}
 
+	/**
+	 * Name of the leaders table
+	 */
 	public static final String TABLE_LEADERS = "Leaders";
 
+	/**
+	 * The column names of the leaders table
+	 */
 	public static final class TABLE_LEADERS {
 		public static final String RESOURCEID = "ResourceID";
 		public static final String PROJECTID = "UserID";
 	}
-	
+
+	/**
+	 * Name of the bookingassignments table
+	 */
 	public static final String TABLE_BOOKINGASSIGNMENTS = "BookingAssignments";
+	/**
+	 * Name of the booking table
+	 */
 	public static final String TABLE_BOOKING = "Booking";
 
+	/**
+	 * The column names of the booking and bookingassignments tables
+	 */
 	public static final class TABLE_BOOKING {
 		public static final String RESOURCEID = "resourceid";
 		public static final String PROJECTID = "projectid";
@@ -71,18 +132,14 @@ public final class DatabaseContract {
 		public static final String ISLEADER = "isleader";
 	}
 
+	/**
+	 * Name of the requests table
+	 */
 	public static final String TABLE_REQUESTS = "Requests";
 
-	/*public static final class TABLE_REQUESTS {
-		public static final String REQUESTID = "RequestID";
-		public static final String WEEK = "Week";
-		public static final String RATIO = "Ratio";
-		public static final String SENDERID = "SenderID";
-		public static final String RESOURCEID = "ResourceID";
-		public static final String PROJECTID = "ProjectID";
-		public static final String REJECTED = "Rejected";
-		public static final String VISIBLE = "Visible";
-	}*/
+	/**
+	 * The column names of the booking and requests tables
+	 */
 	public static final class TABLE_REQUESTS {
 		public static final String REQUESTID = "requestid";
 		public static final String WEEK = "week";
@@ -94,20 +151,9 @@ public final class DatabaseContract {
 		public static final String PROJECTID = "projectid";
 	}
 
-	public static final String TABLE_GROUPS = "Groups";
-
-	public static final class TABLE_GROUPS {
-		public static final String GROUPID = "GroupID";
-		public static final String GROUPNAME = "GroupName";
-	}
-
-	public static final String TABLE_RESOURCESGROUPS = "ResourcesGroups";
-
-	public static final class TABLE_RESOURCESGROUPS {
-		public static final String RESOURCEID = "ResourceID";
-		public static final String GROUPID = "GroupID";
-	}
-
+	/**
+	 * UriMatcher object, which classifies a URI
+	 */
 	public static final UriMatcher sUriMatcher;
 
 	static {
@@ -123,7 +169,5 @@ public final class DatabaseContract {
 		sUriMatcher.addURI(AUTHORITY, TABLE_BOOKING + "/#", ROW);
 		sUriMatcher.addURI(AUTHORITY, TABLE_REQUESTS, MULTIPLE);
 		sUriMatcher.addURI(AUTHORITY, TABLE_REQUESTS + "/#", ROW);
-		sUriMatcher.addURI(AUTHORITY, TABLE_GROUPS, MULTIPLE);
-		sUriMatcher.addURI(AUTHORITY, TABLE_GROUPS + "/#", ROW);
 	}
 }

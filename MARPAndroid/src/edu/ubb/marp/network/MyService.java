@@ -1,7 +1,5 @@
 package edu.ubb.marp.network;
 
-import java.util.Date;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +12,6 @@ import edu.ubb.marp.database.RefreshData;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -25,19 +22,40 @@ import android.os.Process;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+/**
+ * The service object, which coordinates the requests, and the answers for the
+ * requests
+ * 
+ * @author Rakosi Alpar, Vizer Arnold
+ */
 public class MyService extends Service {
 	private static final String tag = "MyService";
 
+	/**
+	 * The Looper thread
+	 */
 	private Looper mServiceLooper;
+	/**
+	 * Handler that receives messages from the thread
+	 */
 	private ServiceHandler mServiceHandler;
+	/**
+	 * The number of the pending requests
+	 */
 	private int pendingRequests;
 
-	// Handler that receives messages from the thread
+	/**
+	 * Handler that receives messages from the thread
+	 */
 	private final class ServiceHandler extends Handler {
 		public ServiceHandler(Looper looper) {
 			super(looper);
 		}
 
+		/*
+		 * This method gets the messages serialized, and calls the appropriate
+		 * methods
+		 */
 		@Override
 		public void handleMessage(Message msg) {
 			Intent intent = (Intent) msg.obj;
@@ -65,7 +83,7 @@ public class MyService extends Service {
 			case CHANGEPROJECT:
 				changeProject(intent);
 				break;
-				
+
 			case ADDRESOURCETOPROJECT:
 				addResourceToProject(intent);
 				break;
@@ -77,68 +95,64 @@ public class MyService extends Service {
 			case RESOURCEMODIFICATIONS:
 				resourceModifications(intent);
 				break;
-				
+
 			case USERMODIFICATIONS:
 				userModifications(intent);
 				break;
 
-			case REQUESTS:
-				requests(intent);
-				
 			case CHANGEUSERNAME:
 				changeUserName(intent);
 				break;
-				
+
 			case CHANGEUSERRESOURCENAME:
 				changeUserResourceName(intent);
 				break;
-				
+
 			case CHANGEUSERPHONENUMBER:
 				changeUserPhoneNumber(intent);
 				break;
-				
+
 			case CHANGEUSEREMAIL:
 				changeUserEmail(intent);
 				break;
-				
+
 			case CHANGEUSERPASSWORD:
 				changeUserPassword(intent);
+				break;
+
+			case REQUESTOPERATIONS:
+				requestOperations(intent);
 				break;
 
 			default:
 				break;
 			}
-
-			// Stop the service using the startId, so that we don't stop
-			// the service in the middle of handling another job
-			/*
-			 * if (!isRequestPending()) stopSelf(msg.arg1);
-			 */
 		}
 	}
 
+	/**
+	 * Start up the thread running the service. Note that we create a separate
+	 * thread because the service normally runs in the process's main thread,
+	 * which we don't want to block. We also make it background priority so
+	 * CPU-intensive work will not disrupt our UI.
+	 */
 	@Override
 	public void onCreate() {
-		// Start up the thread running the service. Note that we create a
-		// separate thread because the service normally runs in the process's
-		// main thread, which we don't want to block. We also make it
-		// background priority so CPU-intensive work will not disrupt our UI.
+		//
 		HandlerThread thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_BACKGROUND);
 		thread.start();
 
-		// Get the HandlerThread's Looper and use it for our Handler
 		mServiceLooper = thread.getLooper();
 		mServiceHandler = new ServiceHandler(mServiceLooper);
 		pendingRequests = 0;
-
-		Log.i(tag, "Thread " + Thread.currentThread().getId());
 	}
 
+	/**
+	 * For each start request, send a message to start a job and deliver the
+	 * start ID so we know which request we're stopping when we finish the job
+	 */
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		// For each start request, send a message to start a job and deliver the
-		// start ID so we know which request we're stopping when we finish the
-		// job
 		Message msg = mServiceHandler.obtainMessage();
 		msg.arg1 = startId;
 		msg.obj = intent;
@@ -148,45 +162,52 @@ public class MyService extends Service {
 		return START_STICKY;
 	}
 
+	/**
+	 * Don't provide binding, so return null
+	 */
 	@Override
 	public IBinder onBind(Intent intent) {
-		// We don't provide binding, so return null
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Service#onDestroy()
+	 */
 	@Override
 	public void onDestroy() {
-		// Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
 		Log.i(tag, "Service destroyed");
 	}
 
+	/**
+	 * Inrements with 1 the number of the pending requests
+	 */
 	private synchronized void incRequests() {
 		pendingRequests++;
 	}
 
+	/**
+	 * Decrements with 1 the number of the pending requests
+	 */
 	private synchronized void decRequests() {
 		pendingRequests--;
 	}
 
+	/**
+	 * @return True, if there are pending requests
+	 */
 	private synchronized boolean isRequestPending() {
 		return pendingRequests > 0;
 	}
 
-	/*
-	 * private void login() { Log.i(tag, "login()");
+	/**
+	 * Sends a login request
 	 * 
-	 * SharedPreferences pref = PreferenceManager
-	 * .getDefaultSharedPreferences(getApplicationContext());
-	 * 
-	 * try { JSONObject json = new JSONObject(); json.put("command", 0);
-	 * json.put("username", pref.getString("username", ""));
-	 * json.put("password", pref.getString("password", ""));
-	 * 
-	 * new HttpClient(this).execute(json); } catch (JSONException e) { } }
+	 * @param intent
+	 *            The intent, which received
 	 */
-
 	private void login(Intent intent) {
-		Log.i(tag, "login(intent)");
 		String username = intent.getStringExtra("username");
 		String password = intent.getStringExtra("password");
 
@@ -204,8 +225,13 @@ public class MyService extends Service {
 		}
 	}
 
+	/**
+	 * Send a query request
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
 	private void query(Intent intent) {
-		Log.i(tag, "query");
 		Uri uri = intent.getData();
 		int cmd = Integer.parseInt(uri.getPathSegments().get(0));
 
@@ -236,18 +262,20 @@ public class MyService extends Service {
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
 
-			// json.put("uri", uri);
 			JSONArray array = new JSONArray();
 			array.put(json);
-
-			Log.i(tag, "httpclient elott " + json.toString());
 			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
 		} catch (JSONException e) {
 		}
 	}
 
+	/**
+	 * Send a query reqeust without storing the results in the database
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
 	private void queryWithoutStoring(Intent intent) {
-		Log.i(tag, "querywithoutstoring");
 		Uri uri = intent.getData();
 		int cmd = Integer.parseInt(uri.getPathSegments().get(0));
 
@@ -273,16 +301,19 @@ public class MyService extends Service {
 			JSONArray array = new JSONArray();
 			array.put(json);
 
-			Log.i(tag, "httpclient elott " + json.toString());
 			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
 		} catch (JSONException e) {
 		}
 
 	}
 
+	/**
+	 * Sends a new project request to the server
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
 	private void newProject(Intent intent) {
-		Log.i(tag, "newProject");
-
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		try {
@@ -291,15 +322,6 @@ public class MyService extends Service {
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
 
-			/*intent.putExtra("resourceid", bundle.getInt("resourceid"));
-					intent.putExtra("projectname", bundle.getString("projectname"));
-					intent.putExtra("openedstatus", bundle.getBoolean("openedstatus"));
-					intent.putExtra("startweek", bundle.getInt("startweek"));
-					intent.putExtra("endweek", bundle.getInt("endweek"));
-					intent.putExtra("deadline", bundle.getInt("deadline"));
-					intent.putExtra("nextrelease", bundle.getString("nextrelease"));
-					intent.putExtra("statusname", bundle.getString("statusname"));*/
-			
 			json.put("resourceid", intent.getIntExtra("resourceid", 0));
 			json.put("projectname", intent.getStringExtra("projectname"));
 			json.put("openedstatus", intent.getBooleanExtra("openedstatus", false));
@@ -327,8 +349,12 @@ public class MyService extends Service {
 		}
 	}
 
+	/**
+	 * Sends a project changing request to the server
+	 * 
+	 * @param intent
+	 */
 	private void changeProject(Intent intent) {
-		Log.i(tag, "changeProject");
 		Uri uri = intent.getData();
 		int cmd = Integer.parseInt(uri.getPathSegments().get(0));
 
@@ -340,7 +366,6 @@ public class MyService extends Service {
 
 			switch (cmd) {
 			case Constants.CHANGEPROJECTOPENEDSTATUS:
-				// json.put("projectid", uri.getPathSegments().get(1));
 				json.put("openedstatus", intent.getBooleanExtra("openedstatus", false));
 				break;
 			case Constants.CHANGEPROJECTNAME:
@@ -365,14 +390,18 @@ public class MyService extends Service {
 			JSONArray array = new JSONArray();
 			array.put(json);
 
-			Log.i(tag, "httpclient elott " + json.toString());
 			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
 		} catch (JSONException e) {
 		}
 	}
-	
-	private void addResourceToProject(Intent intent){
-		Log.i(tag, "addResourceToProject");
+
+	/**
+	 * Sends an "add resoure to project" request to the server
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
+	private void addResourceToProject(Intent intent) {
 
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -407,8 +436,13 @@ public class MyService extends Service {
 		}
 	}
 
+	/**
+	 * Sends a "resource reservation modification" request to the server
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
 	private void resourceReservationModification(Intent intent) {
-		Log.i(tag, "resourceReservationModification");
 
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -442,8 +476,13 @@ public class MyService extends Service {
 		}
 	}
 
+	/**
+	 * Sends a "resource modifications" request to the server
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
 	private void resourceModifications(Intent intent) {
-		Log.i(tag, "resourceModifications");
 		Uri uri = intent.getData();
 		int cmd = Integer.parseInt(uri.getPathSegments().get(0));
 
@@ -481,18 +520,21 @@ public class MyService extends Service {
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
 
-			// json.put("uri", uri);
 			JSONArray array = new JSONArray();
 			array.put(json);
 
-			Log.i(tag, "httpclient elott " + json.toString());
 			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
 		} catch (JSONException e) {
 		}
 	}
-	
-	private void userModifications(Intent intent){
-		Log.i(tag, "userModifications");
+
+	/**
+	 * Sends a "user modifications" request to the server
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
+	private void userModifications(Intent intent) {
 		Uri uri = intent.getData();
 		int cmd = Integer.parseInt(uri.getPathSegments().get(0));
 
@@ -504,7 +546,6 @@ public class MyService extends Service {
 
 			switch (cmd) {
 			case Constants.INSERTNEWUSER:
-				// json.put("projectid", uri.getPathSegments().get(1));
 				json.put("targetusername", intent.getStringExtra("targetusername"));
 				json.put("targetpassword", intent.getStringExtra("targetpassword"));
 				json.put("phonenumber", intent.getStringExtra("phonenumber"));
@@ -518,19 +559,21 @@ public class MyService extends Service {
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
 
-			// json.put("uri", uri);
 			JSONArray array = new JSONArray();
 			array.put(json);
 
-			Log.i(tag, "httpclient elott " + json.toString());
 			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
 		} catch (JSONException e) {
 		}
 	}
-	
-	private void changeUserName(Intent intent){
-		Log.i(tag, "changeUserName");
 
+	/**
+	 * Sends a "change username" request to the server
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
+	private void changeUserName(Intent intent) {
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		try {
@@ -547,10 +590,14 @@ public class MyService extends Service {
 		} catch (JSONException e) {
 		}
 	}
-	
-	private void changeUserResourceName(Intent intent){
-		Log.i(tag, "changeUserResourceName");
 
+	/**
+	 * Sends a "change resource name" request to the server
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
+	private void changeUserResourceName(Intent intent) {
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		try {
@@ -567,10 +614,14 @@ public class MyService extends Service {
 		} catch (JSONException e) {
 		}
 	}
-	
-	private void changeUserPhoneNumber(Intent intent){
-		Log.i(tag, "changeUserPhoneNumber");
 
+	/**
+	 * Sends a "change the users phonenumber" request to the server
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
+	private void changeUserPhoneNumber(Intent intent) {
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		try {
@@ -587,10 +638,14 @@ public class MyService extends Service {
 		} catch (JSONException e) {
 		}
 	}
-	
-	private void changeUserEmail(Intent intent){
-		Log.i(tag, "changeUserEmail");
 
+	/**
+	 * Sends a "change the users e-mail address" request to the server
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
+	private void changeUserEmail(Intent intent) {
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		try {
@@ -607,10 +662,14 @@ public class MyService extends Service {
 		} catch (JSONException e) {
 		}
 	}
-	
-	private void changeUserPassword(Intent intent){
-		Log.i(tag, "changeUserPassword");
 
+	/**
+	 * Sends a "change the users password" request to the server
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
+	private void changeUserPassword(Intent intent) {
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		try {
@@ -628,8 +687,13 @@ public class MyService extends Service {
 		}
 	}
 
-	private void requests(Intent intent) {
-		Log.i(tag, "resourceCommands");
+	/**
+	 * It contains operations, which could be affected on requests
+	 * 
+	 * @param intent
+	 *            The intent, which received
+	 */
+	private void requestOperations(Intent intent) {
 		Uri uri = intent.getData();
 		int cmd = Integer.parseInt(uri.getPathSegments().get(0));
 
@@ -640,36 +704,41 @@ public class MyService extends Service {
 			json.put("command", cmd);
 
 			switch (cmd) {
-			case Constants.CREATENEWREQUESTFORUSER:
+			case Constants.ACCEPTREQUESTCMD:
+				json.put("projectid", intent.getIntExtra("projectid", 0));
+				json.put("targetresourceid", intent.getIntExtra("targetresourceid", 0));
+				json.put("requestid", intent.getIntExtra("currentrequestid", 0));
+				json.put("currentweek", intent.getIntExtra("currentweek", 0));
+				json.put("updateratio", intent.getIntExtra("updateratio", 0));
 				break;
-			case Constants.CREATENEWREQUESTFORRESOURCE:
-				break;
-			case Constants.REMOVEREQUESTFROMSOMEBODY:
-				json.put("resourceid", intent.getStringExtra("resourceid"));
-				json.put("requestid", intent.getStringExtra("requestid"));
-				json.put("projectid", intent.getStringExtra("projectid"));
-				break;
-			case Constants.REMOVEEXPIREDREQUESTS:
-				json.put("currentweek", intent.getStringExtra("currentweek"));
-				break;
-			case Constants.UPDATEREQUESTRATIOOFUSER:
+			case Constants.REJECTREQUESTCMD:
+				json.put("projectid", intent.getIntExtra("projectid", 0));
+				json.put("resourceid", intent.getIntExtra("resourceid", 0));
+				json.put("requestid", intent.getIntExtra("currentrequestid", 0));
 				break;
 			}
-			// TODO Ezek utan kell varni valaszt?
 
 			json.put("username", pref.getString("username", ""));
 			json.put("password", pref.getString("password", ""));
 
-			// json.put("uri", uri);
 			JSONArray array = new JSONArray();
 			array.put(json);
 
-			Log.i(tag, "httpclient elott " + json.toString());
 			new HttpClient(this, intent.getLongExtra("requestid", 0)).execute(array);
 		} catch (JSONException e) {
 		}
 	}
 
+	/**
+	 * It gets the results of a request, and makes the appropriate operations
+	 * 
+	 * @param req
+	 *            The request, which was sent to the server
+	 * @param r
+	 *            The results of the request
+	 * @param requestid
+	 *            The request id, which identifes the reqeust
+	 */
 	public synchronized void setResults(JSONArray req, JSONArray r, long requestid) {
 		decRequests();
 		Uri.Builder uri;
@@ -679,7 +748,7 @@ public class MyService extends Service {
 			JSONObject request = req.getJSONObject(0);
 			String mainColumns[];
 			switch (request.getInt("command")) {
-			case Constants.LOGINCMD:// Login
+			case Constants.LOGINCMD:
 				result = r.getJSONObject(0);
 				try {
 					if (result.getInt("existsuser") == 1) {
@@ -703,8 +772,7 @@ public class MyService extends Service {
 				}
 				break;
 
-			case Constants.PROJECTSCMD:// Query - projects
-					// Uri uri = (Uri) request.get("uri");
+			case Constants.PROJECTSCMD:
 				result = r.getJSONObject(0);
 				try {
 					if (result.getInt("error") <= 0) {
@@ -735,7 +803,38 @@ public class MyService extends Service {
 				}
 				break;
 
-			case Constants.PROJECTRESOURCESCMD:// Query - booking + resources
+			case Constants.ALLPROJECTSCMD:
+				result = r.getJSONObject(0);
+				try {
+					if (result.getInt("error") <= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", false);
+						intent.putExtra("error", result.getInt("error"));
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					uri = new Uri.Builder();
+					uri.authority(DatabaseContract.PROVIDER_NAME);
+					uri.path(DatabaseContract.TABLE_PROJECTS);
+					uri.scheme("content");
+
+					for (int i = 0; i < r.length(); i++) {
+						JSONObject obj = r.getJSONObject(i);
+						if (obj.getBoolean("isleader") == true)
+							obj.put("isleader", "Leader");
+						else
+							obj.put("isleader", "User");
+						r.put(i, obj);
+					}
+
+					mainColumns = new String[1];
+					mainColumns[0] = TABLE_PROJECTS.PROJECTID;
+					new RefreshData(uri.build(), getContentResolver(), mainColumns, requestid, this, false, false).execute(r);
+				}
+				break;
+
+			case Constants.PROJECTRESOURCESCMD:
 				try {
 					result = r.getJSONObject(0);
 					if (result.getInt("error") <= 0) {
@@ -777,7 +876,7 @@ public class MyService extends Service {
 							.execute(r.getJSONArray(1));
 				}
 				break;
-				
+
 			case Constants.LOADASSIGNMENTSCMD:
 				try {
 					result = r.getJSONObject(0);
@@ -800,39 +899,7 @@ public class MyService extends Service {
 				}
 				break;
 
-			/*case 201: // New project
-				try {
-					result = r.getJSONObject(0);
-					if (result.getInt("error") <= 0) {
-						Intent intent = new Intent(Constants.BROADCAST_ACTION);
-						intent.putExtra("originalReqeustid", requestid);
-						intent.putExtra("Successful", false);
-						intent.putExtra("error", result.getInt("error"));
-						afterRefresh(intent);
-					}
-				} catch (JSONException errorRead) {
-					Intent intent = new Intent(Constants.BROADCAST_ACTION);
-					intent.putExtra("originalReqeustid", requestid);
-					intent.putExtra("Successful", true);
-					afterRefresh(intent);
-				}
-				break;*/
-
-			/*
-			 * case 3:// Query - resourceisUser + users uri = new Uri.Builder();
-			 * uri.authority(DatabaseContract.PROVIDER_NAME);
-			 * uri.path(DatabaseContract.TABLE_RESOURCEISUSER);
-			 * uri.scheme("content"); new RefreshData(uri.build(),
-			 * getContentResolver(), TABLE_RESOURCEISUSER.RESOURCEID, null,
-			 * this).execute(r.getJSONArray(0));
-			 * 
-			 * uri.path(DatabaseContract.TABLE_USERS); new
-			 * RefreshData(uri.build(), getContentResolver(),
-			 * TABLE_USERS.USERID, originalIntent,
-			 * this).execute(r.getJSONArray(1)); break;
-			 */
-
-			case Constants.QUERYUSER:// Query - MyAccount
+			case Constants.QUERYUSER:
 				result = r.getJSONObject(0);
 				try {
 					if (result.getInt("error") <= 0) {
@@ -869,13 +936,20 @@ public class MyService extends Service {
 					intent.putExtra("Successful", true);
 
 					try {
-						//JSONArray array = r.getJSONArray(0);
+						boolean updateCmd = req.getJSONObject(0).getString("action").equals("update");
 
 						int results[] = new int[r.length()];
-						for (int i = 0; i < r.length(); i++)
-							results[i] = r.getJSONObject(i).getInt("ratiototal");
+						int currentProjectResults[] = new int[r.length()];
+						for (int i = 0; i < r.length(); i++) {
+							JSONObject obj = r.getJSONObject(i);
+							results[i] = obj.getInt("ratiototal");
+							if (updateCmd)
+								currentProjectResults[i] = obj.getInt("ratioincurrentproject");
+						}
 
 						intent.putExtra("results", results);
+						if (updateCmd)
+							intent.putExtra("ratioincurrentproject", currentProjectResults);
 
 						afterRefresh(intent);
 					} catch (JSONException errorReal) {
@@ -883,7 +957,7 @@ public class MyService extends Service {
 					}
 				}
 				break;
-				
+
 			case Constants.NEWPROJECT:
 				result = null;
 				try {
@@ -909,7 +983,7 @@ public class MyService extends Service {
 					afterRefresh(intent);
 				}
 				break;
-				
+
 			case Constants.ADDRESOURCETOPROJECTCMD:
 				result = null;
 				try {
@@ -961,7 +1035,7 @@ public class MyService extends Service {
 					afterRefresh(intent);
 				}
 				break;
-				
+
 			case Constants.CHANGEUSERNAMECMD:
 				result = null;
 				try {
@@ -990,7 +1064,7 @@ public class MyService extends Service {
 					afterRefresh(intent);
 				}
 				break;
-				
+
 			case Constants.CHANGEUSERRESOURCENAMECMD:
 				result = null;
 				try {
@@ -1018,7 +1092,7 @@ public class MyService extends Service {
 					afterRefresh(intent);
 				}
 				break;
-				
+
 			case Constants.CHANGEUSEREMAILCMD:
 				result = null;
 				try {
@@ -1046,7 +1120,7 @@ public class MyService extends Service {
 					afterRefresh(intent);
 				}
 				break;
-				
+
 			case Constants.CHANGEUSERPHONENUMBERCMD:
 				result = null;
 				try {
@@ -1074,7 +1148,7 @@ public class MyService extends Service {
 					afterRefresh(intent);
 				}
 				break;
-				
+
 			case Constants.CHANGEUSERPASSWORDCMD:
 				result = null;
 				try {
@@ -1103,7 +1177,7 @@ public class MyService extends Service {
 					afterRefresh(intent);
 				}
 				break;
-				
+
 			case Constants.LOADRESOURCES:
 				try {
 					result = r.getJSONObject(0);
@@ -1122,12 +1196,10 @@ public class MyService extends Service {
 					intent.putExtra("Resources", true);
 
 					try {
-						//JSONArray array = r.getJSONArray(0);
-
 						int resourceids[] = new int[r.length()];
 						String resourcenames[] = new String[r.length()];
-						for (int i = 0; i < r.length(); i++){
-							JSONObject obj=r.getJSONObject(i);
+						for (int i = 0; i < r.length(); i++) {
+							JSONObject obj = r.getJSONObject(i);
 							resourceids[i] = obj.getInt("resourceid");
 							resourcenames[i] = obj.getString("resourcename");
 						}
@@ -1141,7 +1213,7 @@ public class MyService extends Service {
 					}
 				}
 				break;
-				
+
 			case Constants.LOADINACTIVERESOURCES:
 				try {
 					result = r.getJSONObject(0);
@@ -1160,12 +1232,10 @@ public class MyService extends Service {
 					intent.putExtra("Resources", true);
 
 					try {
-						//JSONArray array = r.getJSONArray(0);
-
 						int resourceids[] = new int[r.length()];
 						String resourcenames[] = new String[r.length()];
-						for (int i = 0; i < r.length(); i++){
-							JSONObject obj=r.getJSONObject(i);
+						for (int i = 0; i < r.length(); i++) {
+							JSONObject obj = r.getJSONObject(i);
 							resourceids[i] = obj.getInt("resourceid");
 							resourcenames[i] = obj.getString("resourcename");
 						}
@@ -1179,7 +1249,7 @@ public class MyService extends Service {
 					}
 				}
 				break;
-				
+
 			case Constants.INSERTNEWRESOURCE:
 				result = null;
 				try {
@@ -1206,7 +1276,7 @@ public class MyService extends Service {
 					afterRefresh(intent);
 				}
 				break;
-				
+
 			case Constants.INSERTNEWUSER:
 				result = null;
 				try {
@@ -1233,7 +1303,7 @@ public class MyService extends Service {
 					afterRefresh(intent);
 				}
 				break;
-				
+
 			case Constants.LOADREQUESTSCMD:
 				result = r.getJSONObject(0);
 				try {
@@ -1255,7 +1325,7 @@ public class MyService extends Service {
 					new RefreshData(uri.build(), getContentResolver(), mainColumns, requestid, this, false, false).execute(r);
 				}
 				break;
-				
+
 			case Constants.CHANGEPROJECTOPENEDSTATUS:
 				result = null;
 				try {
@@ -1391,12 +1461,66 @@ public class MyService extends Service {
 					afterRefresh(intent);
 				}
 				break;
-				
+
 			case Constants.SETRESOURCEACTIVECMD:
 				result = null;
 				try {
 					result = r.getJSONObject(0);
 					if (result.getInt("setactive") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						intent.putExtra("change", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					intent.putExtra("change", true);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+
+			case Constants.ACCEPTREQUESTCMD:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("resourceratioupdated") >= 0) {
+						Intent intent = new Intent(Constants.BROADCAST_ACTION);
+						intent.putExtra("originalReqeustid", requestid);
+						intent.putExtra("Successful", true);
+						afterRefresh(intent);
+					}
+				} catch (JSONException errorRead) {
+					Intent intent = new Intent(Constants.BROADCAST_ACTION);
+					intent.putExtra("originalReqeustid", requestid);
+					intent.putExtra("Successful", false);
+					int errorCode = -1;
+					if (result != null)
+						try {
+							errorCode = result.getInt("error");
+						} catch (JSONException errorCodeException) {
+							errorCode = -1;
+						}
+					intent.putExtra("error", errorCode);
+					afterRefresh(intent);
+				}
+				break;
+
+			case Constants.REJECTREQUESTCMD:
+				result = null;
+				try {
+					result = r.getJSONObject(0);
+					if (result.getInt("requestremoved") >= 0) {
 						Intent intent = new Intent(Constants.BROADCAST_ACTION);
 						intent.putExtra("originalReqeustid", requestid);
 						intent.putExtra("Successful", true);
@@ -1428,20 +1552,13 @@ public class MyService extends Service {
 			afterRefresh(intent);
 		} catch (Exception e) {
 		}
-
-		/*
-		 * if (!isRequestPending()){ stopSelf(); Log.i(tag,
-		 * "elvileg leallitja"); }
-		 */
 	}
 
 	public synchronized void afterRefresh(Intent intent) {
-		Log.i(tag, "afterrefresh");
 		sendBroadcast(intent);
 
 		if (!isRequestPending()) {
 			stopSelf();
-			Log.i(tag, "elvileg leallitja");
 		}
 	}
 }

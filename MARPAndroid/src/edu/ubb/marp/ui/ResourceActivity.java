@@ -22,14 +22,11 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
 /**
@@ -38,19 +35,28 @@ import android.widget.Toast;
  * 
  */
 public class ResourceActivity extends Activity {
-	private static final String tag = "MyAccountActivity";
 
-	private Intent sentIntent;
+	/**
+	 * The requestid
+	 */
 	private long requestid;
+	/**
+	 * The username of the resource
+	 */
 	private String targetUserName;
+	/**
+	 * The loading progress dialog
+	 */
 	private ProgressDialog loading;
 
+	/**
+	 * The list of the elements
+	 */
 	ArrayList<ListRecord> users = new ArrayList<ListRecord>();
 
 	/**
 	 * Called when the activity is first created.
 	 * */
-
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.myaccount);
@@ -59,7 +65,7 @@ public class ResourceActivity extends Activity {
 	}
 
 	/**
-	 * 
+	 * Sends a request for querying the users data
 	 */
 	private void sendRequest() {
 		loading = ProgressDialog.show(this, "Loading", "Please wait...");
@@ -85,7 +91,8 @@ public class ResourceActivity extends Activity {
 	/**
 	 * the method starts a phone call to the given phone number
 	 * 
-	 * @param number is the phone number
+	 * @param number
+	 *            is the phone number
 	 */
 	private void call(String number) {
 		try {
@@ -96,6 +103,7 @@ public class ResourceActivity extends Activity {
 			Log.e("Android dial", "Call failed", e);
 		}
 	}
+
 	/**
 	 * Called when the activity is reloaded
 	 */
@@ -103,9 +111,9 @@ public class ResourceActivity extends Activity {
 	protected void onStart() {
 		super.onStart();
 
-		registerReceiver(broadcastReceiver, new IntentFilter(
-				Constants.BROADCAST_ACTION));
+		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
+
 	/**
 	 * Called before the activity goes on background
 	 */
@@ -114,15 +122,21 @@ public class ResourceActivity extends Activity {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
+
 	/**
-	 * called when the activity starts and load the list view with the user details 
-	 * @param name is the name of the user
-	 * @param username is the user name of the user
-	 * @param telephone is the telephone number of the user
-	 * @param email is the e-mail of the user
+	 * called when the activity starts and load the list view with the user
+	 * details
+	 * 
+	 * @param name
+	 *            is the name of the user
+	 * @param username
+	 *            is the user name of the user
+	 * @param telephone
+	 *            is the telephone number of the user
+	 * @param email
+	 *            is the e-mail of the user
 	 */
-	public void setArrayList(String name, String username, String telephone,
-			String email) {
+	public void setArrayList(String name, String username, String telephone, String email) {
 		ListRecord user = new ListRecord("Name", name);
 		users.add(user);
 		user = new ListRecord("Username", username);
@@ -132,10 +146,14 @@ public class ResourceActivity extends Activity {
 		user = new ListRecord("E-mail", email);
 		users.add(user);
 	}
+
 	/**
-	 * Called when a message box needs to bee appeared 
-	 * @param message is the message of the Message Box
-	 * @param title is the title of the Message Box
+	 * Called when a message box needs to bee appeared
+	 * 
+	 * @param message
+	 *            is the message of the Message Box
+	 * @param title
+	 *            is the title of the Message Box
 	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
@@ -154,11 +172,17 @@ public class ResourceActivity extends Activity {
 		});
 		alertDialog.show();
 	}
+
 	/**
-	 * Called when the user long clicked on the telephone list item, to dial a human resource
-	 * @param message is the message of the Message Box 
-	 * @param title is the title of the Message Box
-	 * @param number is the phone number of the resource which will be dialed
+	 * Called when the user long clicked on the telephone list item, to dial a
+	 * human resource
+	 * 
+	 * @param message
+	 *            is the message of the Message Box
+	 * @param title
+	 *            is the title of the Message Box
+	 * @param number
+	 *            is the phone number of the resource which will be dialed
 	 */
 	private void callmessageBox(String message, String title, String number) {
 		AlertDialog alertDialog;
@@ -177,10 +201,18 @@ public class ResourceActivity extends Activity {
 		});
 		alertDialog.show();
 	}
+
 	/**
-	 * 
+	 * Receives the broadcasts
 	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
+		 * android.content.Intent)
+		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
@@ -194,61 +226,38 @@ public class ResourceActivity extends Activity {
 
 					ContentResolver cr = getContentResolver();
 
-					Log.i(tag, "query elott");
-					Cursor c = cr.query(uri.build(), null, TABLE_USERS.USERNAME
-							+ "='" + targetUserName + "'", null, null);
-					Log.i(tag, "query utan");
+					Cursor c = cr.query(uri.build(), null, TABLE_USERS.USERNAME + "='" + targetUserName + "'", null, null);
 
 					if (c.moveToFirst()) {
-						Log.i(tag, "ifben");
-						String name = c.getString(c
-								.getColumnIndex(TABLE_USERS.USERRESOURCENAME));
-						String username = c.getString(c
-								.getColumnIndex(TABLE_USERS.USERNAME));
-						String tel = c.getString(c
-								.getColumnIndex(TABLE_USERS.USERPHONENUMBER));
-						String email = c.getString(c
-								.getColumnIndex(TABLE_USERS.USEREMAIL));
-						Log.i(tag, name + " " + username + " " + tel + " "
-								+ email);
+						String name = c.getString(c.getColumnIndex(TABLE_USERS.USERRESOURCENAME));
+						String username = c.getString(c.getColumnIndex(TABLE_USERS.USERNAME));
+						String tel = c.getString(c.getColumnIndex(TABLE_USERS.USERPHONENUMBER));
+						String email = c.getString(c.getColumnIndex(TABLE_USERS.USEREMAIL));
 
 						setArrayList(name, username, tel, email);
 
 						ListView listView = (ListView) findViewById(R.id.ListViewId);
-						listView.setAdapter(new ListItemAdapter(
-								getApplicationContext(),
-								android.R.layout.simple_list_item_1, users));
+						listView.setAdapter(new ListItemAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, users));
 						listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-							public boolean onItemLongClick(AdapterView<?> arg0,
-									View arg1, int pos, long id) {
+							public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
 
 								if (pos == 2) {
 									ListRecord valami = users.get(2);
-									callmessageBox(
-											"Are you sure to call this User?",
-											"Call", valami.subitem);
+									callmessageBox("Are you sure to call this User?", "Call", valami.subitem);
 
 								} else {
 									if (pos == 3) {
-										Intent i = new Intent(
-												Intent.ACTION_SEND);
+										Intent i = new Intent(Intent.ACTION_SEND);
 
 										i.setType("text/plain");
-										i.putExtra(
-												Intent.EXTRA_EMAIL,
-												new String[] { users.get(3).subitem });
-										i.putExtra(Intent.EXTRA_SUBJECT,
-												"subject of email");
-										i.putExtra(Intent.EXTRA_TEXT,
-												"body of email");
+										i.putExtra(Intent.EXTRA_EMAIL, new String[] { users.get(3).subitem });
+										i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
+										i.putExtra(Intent.EXTRA_TEXT, "body of email");
 										try {
-											startActivity(Intent.createChooser(
-													i, "Send mail..."));
+											startActivity(Intent.createChooser(i, "Send mail..."));
 										} catch (android.content.ActivityNotFoundException ex) {
-											Toast.makeText(
-													ResourceActivity.this,
-													"There are no email clients installed.",
+											Toast.makeText(ResourceActivity.this, "There are no email clients installed.",
 													Toast.LENGTH_SHORT).show();
 										}
 									}
@@ -259,8 +268,7 @@ public class ResourceActivity extends Activity {
 					}
 				} else {
 					loading.dismiss();
-					messageBoxShow(Constants.getErrorMessage(intent
-							.getIntExtra("error", 0)), "Error");
+					messageBoxShow(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
 				}
 			}
 		}

@@ -1,6 +1,5 @@
 package edu.ubb.marp.ui;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import edu.ubb.marp.Constants;
@@ -24,60 +23,72 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
+
 /**
  * 
  * @author Rakosi Alpar, Vizer Arnold
- *
+ * 
  */
 public class ProjectActivity extends ListActivity {
-	private static final String tag = "ProjectActivity";
 
+	/**
+	 * The loading progress dialog
+	 */
 	private ProgressDialog loading;
 
-
+	/**
+	 * The requestid
+	 */
 	private long requestid;
+	/**
+	 * The ids of the projects
+	 */
 	private String[] ids;
+	/**
+	 * The names of the projects
+	 */
 	private String[] projectNames;
+	/**
+	 * Is the user leader in that project
+	 */
 	private boolean[] isLeader;
+	/**
+	 * The user leaved the activity
+	 */
 	private boolean leaved;
+
 	/**
 	 * Called when the activity is first created.
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i(tag, "onCreate");
-		
-		
+
 		leaved = false;
 
 		setContentView(R.layout.projects);
-		Log.i(tag, "setcontent utan");
 		sendRequest();
 	}
+
 	/**
-	 * 
+	 * Sends a request for querying the active projects
 	 */
 	private void sendRequest() {
-		loading = ProgressDialog.show(this, "Loading",
-				"Please wait...");
+		loading = ProgressDialog.show(this, "Loading", "Please wait...");
 
 		Uri.Builder uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
-		uri.path(Integer.toString(Constants.PROJECTSCMD));
+		if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "").equals("manager")) {
+			uri.path(Integer.toString(Constants.ALLPROJECTSCMD));
+		} else {
+			uri.path(Integer.toString(Constants.PROJECTSCMD));
+		}
 		uri.scheme("content");
 
 		Intent intent = new Intent(this, MyService.class);
@@ -87,43 +98,58 @@ public class ProjectActivity extends ListActivity {
 		intent.putExtra("requestid", requestid);
 		startService(intent);
 	}
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see android.app.Activity#onStart()
 	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
-		
-		if(leaved){
-			leaved=false;
+
+		if (leaved) {
+			leaved = false;
 			sendRequest();
 		}
 
-		registerReceiver(broadcastReceiver, new IntentFilter(
-				Constants.BROADCAST_ACTION));
+		registerReceiver(broadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
 	}
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see android.app.Activity#onStop()
 	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		unregisterReceiver(broadcastReceiver);
 	}
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.project, menu);
+		if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "").equals("manager")) {
+			inflater.inflate(R.menu.projectmanager, menu);
+		} else {
+			inflater.inflate(R.menu.project, menu);
+		}
 		return true;
 	}
 
-	/** 
-	 * is called when a message box needs to be appeared 
-	 * @param message is the message of the message box
-	 * @param title is the title of the message box
+	/**
+	 * is called when a message box needs to be appeared
+	 * 
+	 * @param message
+	 *            is the message of the message box
+	 * @param title
+	 *            is the title of the message box
 	 */
 	public void messageBoxShow(String message, String title) {
 		AlertDialog alertDialog;
@@ -142,8 +168,9 @@ public class ProjectActivity extends ListActivity {
 		});
 		alertDialog.show();
 	}
+
 	/**
-	 * is called when the user selects one of the menu items 
+	 * is called when the user selects one of the menu items
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -155,8 +182,7 @@ public class ProjectActivity extends ListActivity {
 			startActivity(myIntent);
 			return true;
 		case R.id.logout:
-			SharedPreferences pref = PreferenceManager
-					.getDefaultSharedPreferences(getApplicationContext());
+			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			Editor editor = pref.edit();
 			editor.putBoolean("remember", false);
 
@@ -167,12 +193,8 @@ public class ProjectActivity extends ListActivity {
 			startActivity(myIntent);
 			return true;
 		case R.id.projectid:
-			leaved=true;
+			leaved = true;
 			myIntent = new Intent(getApplicationContext(), NewProjectActivity.class);
-			startActivity(myIntent);
-			return true;
-		case R.id.requestsid:
-			myIntent = new Intent(getApplicationContext(), RequestsActivity.class);
 			startActivity(myIntent);
 			return true;
 		case R.id.about:
@@ -205,10 +227,11 @@ public class ProjectActivity extends ListActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
 	/**
-	 * 
+	 * Queries the active projects from the database
 	 */
-	private void queryData(){
+	private void queryData() {
 		Uri.Builder uri = new Uri.Builder();
 		uri = new Uri.Builder();
 		uri.authority(DatabaseContract.PROVIDER_NAME);
@@ -216,15 +239,10 @@ public class ProjectActivity extends ListActivity {
 		uri.scheme("content");
 
 		ContentResolver cr = getContentResolver();
-		Log.i(tag, "query elott");
 
-		String projection[] = { TABLE_PROJECTS.PROJECTNAME,
-				TABLE_PROJECTS.ISLEADER,
-				TABLE_PROJECTS.PROJECTID + " as _id" };
+		String projection[] = { TABLE_PROJECTS.PROJECTNAME, TABLE_PROJECTS.ISLEADER, TABLE_PROJECTS.PROJECTID + " as _id" };
 
-		Cursor c = cr.query(uri.build(), projection, null, null,
-				TABLE_PROJECTS.PROJECTID);
-		Log.i(tag, "query utan");
+		Cursor c = cr.query(uri.build(), projection, null, null, TABLE_PROJECTS.PROJECTID);
 
 		ids = new String[c.getCount()];
 		projectNames = new String[c.getCount()];
@@ -234,79 +252,76 @@ public class ProjectActivity extends ListActivity {
 			int index = c.getColumnIndex("_id");
 			int index2 = c.getColumnIndex(TABLE_PROJECTS.PROJECTNAME);
 			int index3 = c.getColumnIndex(TABLE_PROJECTS.ISLEADER);
-			Log.i(tag, "while elott");
 			ids[i] = c.getString(index);
 			projectNames[i] = c.getString(index2);
 			isLeader[i++] = c.getString(index3).equals("Leader");
-			Log.i(tag, "lekerdezes " + ids[i - 1]);
 			while (c.moveToNext()) {
 				ids[i] = c.getString(index);
 				projectNames[i] = c.getString(index2);
 				isLeader[i++] = c.getString(index3).equals("Leader");
-				Log.i(tag, "lekerdezes " + ids[i - 1]);
 			}
-			Log.i(tag, "while utan");
 		}
 
 		c.moveToFirst();
 		startManagingCursor(c);
 
-		String[] from = { TABLE_PROJECTS.PROJECTNAME,
-				TABLE_PROJECTS.ISLEADER };
-		
+		String[] from = { TABLE_PROJECTS.PROJECTNAME, TABLE_PROJECTS.ISLEADER };
+
 		int[] to = { R.id.text1, R.id.text2 };
-		SimpleCursorAdapter projects = new SimpleCursorAdapter(
-				getApplicationContext(), R.layout.projects_row, c,
-				from, to);
+		SimpleCursorAdapter projects = new SimpleCursorAdapter(getApplicationContext(), R.layout.projects_row, c, from, to);
 		setListAdapter(projects);
 	}
+
 	/**
-	 * 
+	 * Receives the broadcasts
 	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
+		 * android.content.Intent)
+		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i(tag, "megjott a broadcast");
-			
+
 			if (requestid == intent.getLongExtra("originalReqeustid", 0)) {
 				if (intent.getBooleanExtra("Successful", false)) {
 					loading.dismiss();
 					queryData();
-					
+
 					Uri.Builder uri = new Uri.Builder();
 					uri.authority(DatabaseContract.PROVIDER_NAME);
 					uri.path("131");
-					
+
 					uri.scheme("content");
 
-					Intent myIntent = new Intent(getApplicationContext(),
-							MyService.class);
+					Intent myIntent = new Intent(getApplicationContext(), MyService.class);
 					myIntent.putExtra("ACTION", "QUERY");
 					myIntent.setData(uri.build());
 
-					
-					myIntent.putExtra("requestid", (long)0);
+					myIntent.putExtra("requestid", (long) 0);
 					startService(myIntent);
 				} else {
 					loading.dismiss();
-					if(intent.getIntExtra("error", 10000)==0){
+					if (intent.getIntExtra("error", 10000) == 0) {
 						queryData();
-					}else{
-						messageBoxShow(Constants.getErrorMessage(intent
-							.getIntExtra("error", 0)), "Error");
+					} else {
+						messageBoxShow(Constants.getErrorMessage(intent.getIntExtra("error", 0)), "Error");
 					}
 				}
 			}
 		}
 	};
+
 	/**
 	 * 
 	 */
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		leaved = true;
-		
-		Intent myIntent = new Intent(getApplicationContext(),
-				ResourcesActivity.class);
+
+		Intent myIntent = new Intent(getApplicationContext(), ResourcesActivity.class);
 		Bundle bundle = new Bundle();
 		bundle.putString("projectid", ids[position]);
 		bundle.putString("projectname", projectNames[position]);
@@ -314,13 +329,15 @@ public class ProjectActivity extends ListActivity {
 		myIntent.putExtras(bundle);
 		startActivity(myIntent);
 	}
+
 	/**
-	 * the method shows a windows abut creators and the version number of the project
+	 * the method shows a windows abut creators and the version number of the
+	 * project
 	 */
 	public void aboutMessage() {
 
 		AboutMessage about = new AboutMessage(this);
-		
+
 		AlertDialog alertDialog;
 		alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle("About");
@@ -329,12 +346,10 @@ public class ProjectActivity extends ListActivity {
 		alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-			
-		
-					
+
 			}
 		});
-		
+
 		alertDialog.show();
 	}
 }
